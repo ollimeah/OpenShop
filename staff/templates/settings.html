@@ -1,0 +1,18 @@
+{% extends "main.html" %}
+
+{% block title %}Settings{% endblock title %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between">
+        <h1>Settings</h1>
+        <!-- <button class="btn btn-secondary">Save</button> -->
+    </div>
+    
+    <form action="{% url 'staff-settings' %}" method="POST">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Submit">
+    </form>
+</div>
+{% endblock content %}
