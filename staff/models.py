@@ -43,3 +43,17 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+class Product(models.Model):
+    name = models.CharField(max_length=75)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=7, decimal_places=2)
+    image = models.ImageField()
+    category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    available = models.BooleanField(default=True)
+    hidden = models.BooleanField(default=False)
+    min = models.IntegerField()
+    max = models.IntegerField()
+    
+    def __str__(self):
+        return self.name
