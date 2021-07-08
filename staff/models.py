@@ -37,3 +37,9 @@ class Settings():
     
     def is_primary_light_or_dark(self):
         return "light" if self.get_text_colour_primary() == "#000000" else "dark"
+
+class Category(models.Model):
+    name = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.name
