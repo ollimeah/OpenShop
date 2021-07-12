@@ -8,17 +8,19 @@
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
   {% load static %}
   <style>
-    .primary-colour {background-color: {{ settings.primary_colour }};}
+    {% with primary=settings.primary_colour primary_text=settings.get_text_colour_primary secondary=settings.secondary_colour secondary_text=settings.get_text_colour_secondary %}
+    .primary-colour {background-color: {{ primary }};}
     .btn-primary {
-      color: {{ settings.get_text_colour_secondary }};
-      background-color: {{ settings.secondary_colour }};
-      border-color: {{ settings.secondary_colour }};
+      color: {{ secondary_text }};
+      background-color: {{ secondary }};
+      border-color: {{ secondary }};
     }
     .btn-primary:hover {
-      color: {{ settings.get_text_colour_primary }};
-      background-color: {{ settings.primary_colour }};
-      border-color: {{ settings.primary_colour }};
+      color: {{ primary_text }};
+      background-color: {{ primary }};
+      border-color: {{ primary }};
     }
+    {% endwith %}
   </style>
 </head>
 <body>
