@@ -27,16 +27,24 @@ class Settings():
                 return json.load(settings_file)
         except:
             return None
-
-    def get_text_colour_primary(self):
-        colour = self.primary_colour[1:]
+    
+    @classmethod
+    def to_rgb(settings, colour):
         r = int(colour[0:2], 16); # hexToR
         g = int(colour[2:4], 16); # hexToG
         b = int(colour[4:6], 16); # hexToB
+        return r, g, b
+
+    def get_text_colour_primary(self):
+        r, g, b = Settings.to_rgb(self.primary_colour[1:])
         return "#000000" if (((r * 0.299) + (g * 0.587) + (b * 0.114)) > 186) else "#FFFFFF"
     
     def is_primary_light_or_dark(self):
         return "light" if self.get_text_colour_primary() == "#000000" else "dark"
+
+    def get_text_colour_secondary(self):
+        r, g, b = Settings.to_rgb(self.secondary_colour[1:])
+        return "#000000" if (((r * 0.299) + (g * 0.587) + (b * 0.114)) > 186) else "#FFFFFF"
 
 class Category(models.Model):
     name = models.CharField(max_length=30)
