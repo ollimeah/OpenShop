@@ -1,12 +1,15 @@
 from django.shortcuts import render
 from .forms import *
 from .models import *
+from django.views import generic
 
 def dashboard(request):
     return render(request, 'dashboard.html')
 
-def products(request):
-    return render(request, 'products/index.html')
+class ProductListView(generic.ListView):
+    model = Product
+    context_object_name = 'products'
+    template_name = 'products/index.html'
 
 def settings(request):
     settings = Settings()
