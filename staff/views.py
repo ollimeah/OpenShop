@@ -11,6 +11,12 @@ class ProductListView(generic.ListView):
     context_object_name = 'products'
     template_name = 'products/index.html'
 
+class ProductDetailView(generic.DetailView):
+    model = Product
+    template_name = 'products/detail.html'
+    slug_field = 'name'
+    slug_url_kwarg = 'name'
+
 def settings(request):
     settings = Settings()
     if request.method == 'POST':
