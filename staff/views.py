@@ -17,6 +17,11 @@ class ProductDetailView(generic.DetailView):
     slug_field = 'name'
     slug_url_kwarg = 'name'
 
+class ProductCreateView(generic.edit.CreateView):
+    model = Product
+    fields = '__all__'
+    template_name = 'products/new.html'
+
 def settings(request):
     settings = Settings()
     if request.method == 'POST':
