@@ -4,4 +4,203 @@
 
 {% block content %}
 
+<div class="container py-5">
+    <div class="d-flex justify-content-between mb-5 pb-2 border-bottom">
+        <h2>{{object.name}}</h2>
+        <a href="{% url 'staff-products' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Products</button></a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-3 col-6">
+            <div class="card py-2 mb-4">
+                <div class="card-body">
+                    <p class="font-weight-bold text-primary text-uppercase mb-0">Sold</p>
+                    <p class="text-uppercase text-secondary small mb-0">All time</p>
+                    <p class="h3 mb-0 text-right">-1</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-6">
+            <div class="card py-2 mb-4">
+                <div class="card-body">
+                    <p class="font-weight-bold text-primary text-uppercase mb-0">Sold</p>
+                    <p class="text-uppercase text-secondary small mb-0">Today</p>
+                    <p class="h3 mb-0 text-right">-1</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-6">
+            <div class="card py-2 mb-4">
+                <div class="card-body">
+                    <p class="font-weight-bold text-success text-uppercase mb-0">In Basket</p>
+                    <p class="text-uppercase text-secondary small mb-0">Not sold yet</p>
+                    <p class="h3 mb-0 text-right">-1</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-6">
+            <div class="card py-2 mb-4">
+                <div class="card-body">
+                    <p class="font-weight-bold text-warning text-uppercase mb-0">Views</p>
+                    <p class="text-uppercase text-secondary small mb-0">Today</p>
+                    <p class="h3 mb-0 text-right">-1</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-5 shadow">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Basic Information</h5>
+        </div>
+        <div class="card-body">
+            <h6>{{ object.name }}</h6>
+            <p>{{ object.description }}</p>
+        </div>
+    </div>
+
+    <div class="card mb-5 shadow">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Pricing and Availability</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col">
+                    <p>£{{ object.price }}</p>
+                </div>
+                <div class="col">
+                    <p>Min: {{ object.min }}</p>
+                </div>
+                <div class="col">
+                    <p>Max: {{ object.max }}</p>
+                </div>
+            </div>
+            <div class="mb-3">
+                <p>{{ object.category }}</p>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <p>Available: {{ object.available }}</p>
+                </div>
+                <div class="col">
+                    <p>Hidden: {{ object.hidden }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-5 shadow">
+      <div class="card-header bg-white d-flex justify-content-between">
+        <h5 class="mb-0 align-self-center">Main Image</h5>
+        <fieldset class="form-group mb-0">
+          <a onclick="$('#main_file').click()" class="btn btn-dark">CHANGE IMAGE</a>
+          <input id="main_file" type="file" class="d-none" name="main_file"/>
+        </fieldset>
+      </div>
+      <div class="card-body">
+        <div class="col-lg-2 col-md-4 col-6">
+          <img src="{{object.imageURL}}" id="preview" class="w-100">
+        </div>
+      </div>
+    </div>
+
+    {% comment %} <div class="card mb-5 shadow">
+      <div class="card-header bg-white d-flex justify-content-between">
+        <h5 class="mb-0 align-self-center">Additional Images</h5>
+        <fieldset class="form-group mb-0">
+          <a onclick="$('#files').click()" class="btn btn-dark">ADD IMAGE</a>
+          <input id="files" type="file" multiple class="d-none" name="files"/>
+        </fieldset>
+      </div>
+      <div class="card-body">
+        <div class="d-flex flex-wrap align-items-end">
+          {% for image in product.images %}
+          <div class="col-lg-2 col-md-4 col-6 p-2">
+            <img src="{{image.imageURL}}" alt="{{product.name}}" class="w-100">
+            <button onclick="deleteImage({{ image.id }})" class="btn btn-block btn-danger mt-2">Delete</button>
+          </div>
+          {% endfor %}
+        </div>
+        <output id="result" class="d-flex flex-wrap"/>
+      </div>
+    </div> {% endcomment %}
+</div>
 {% endblock content %}
+
+{% block scripts %}
+{% comment %} <script type="text/javascript">
+window.onload = function() {
+
+  //Check File API support
+  if (window.File && window.FileList && window.FileReader) {
+    var filesInput = document.getElementById("files");
+    filesInput.addEventListener("change", function(event) {
+
+      var files = event.target.files; //FileList object
+      var output = document.getElementById("result");
+
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+
+        //Only pics
+        if (!file.type.match('image'))
+          continue;
+
+        var picReader = new FileReader();
+
+        picReader.addEventListener("load", function(event) {
+
+          var picFile = event.target;
+
+          var div = document.createElement("div");
+          div.classList.add("col-lg-2", "col-md-4", "col-6", "p-2")
+          div.innerHTML = "<img class='w-100' src='" + picFile.result + "'" +
+            "title='" + picFile.name + "'/>";
+          output.insertBefore(div, null);
+        });
+
+        //Read the image
+        picReader.readAsDataURL(file);
+      }
+
+    });
+  } else {
+    console.log("Your browser does not support File API");
+  }
+}
+
+var fileTag = document.getElementById("main_file"),
+    preview = document.getElementById("preview");
+
+fileTag.addEventListener("change", function() {
+  changeImage(this);
+});
+
+function changeImage(input) {
+  var reader;
+
+  if (input.files && input.files[0]) {
+    reader = new FileReader();
+
+    reader.onload = function(e) {
+      preview.setAttribute('src', e.target.result);
+    }
+
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function deleteImage(id) {
+  var url = "{% url 'staff-delete-image' %}";
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", url, true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('X-CSRFToken', '{{csrf_token}}');
+  xhr.send(JSON.stringify( {'id': id} ));
+}
+</script> {% endcomment %}
+{% endblock scripts %}
