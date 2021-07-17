@@ -7,7 +7,10 @@
 <div class="container py-5">
     <div class="d-flex justify-content-between mb-5 pb-2 border-bottom">
         <h2>{{object.name}}</h2>
-        <a href="{% url 'staff-products' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Products</button></a>
+        <div>
+            <a href="{% url 'staff-products' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Products</button></a>
+            <a href="{% url 'staff-product-update' object.name %}"><button type="button" class="btn btn-primary"><i class="bi bi-pencil-fill"></i> Edit</button></a>
+        </div>
     </div>
 
     <div class="row justify-content-center">

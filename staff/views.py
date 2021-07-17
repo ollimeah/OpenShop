@@ -22,6 +22,13 @@ class ProductCreateView(generic.edit.CreateView):
     fields = '__all__'
     template_name = 'products/new.html'
 
+class ProductUpdateView(generic.UpdateView):
+    model = Product
+    slug_field = 'name'
+    slug_url_kwarg = 'name'
+    fields = '__all__'
+    template_name = 'products/update.html'
+
 def settings(request):
     settings = Settings()
     if request.method == 'POST':
