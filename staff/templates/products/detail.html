@@ -10,6 +10,7 @@
         <div>
             <a href="{% url 'staff-products' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Products</button></a>
             <a href="{% url 'staff-product-update' object.name %}"><button type="button" class="btn btn-primary"><i class="bi bi-pencil-fill"></i> Edit</button></a>
+            <a href="{% url 'staff-product-delete' object.name %}"><button type="button" class="btn btn-primary"><i class="bi bi-trash-fill"></i> Delete</button></a>
         </div>
     </div>
 

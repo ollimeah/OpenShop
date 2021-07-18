@@ -65,3 +65,7 @@ class Product(models.Model):
     
     def __str__(self):
         return self.name
+
+    def delete(self, *args, **kwargs):
+        self.image.delete()
+        super().delete(*args, **kwargs)
