@@ -19,7 +19,7 @@ class Settings():
             with open("staff/settings.json", "w") as settings_file: 
                 json.dump(new_settings, settings_file)
         except:
-            print("Error")
+            return "Could not update"
     
     def as_dict(self):
         try:
