@@ -1,6 +1,6 @@
-from .forms import ProductForm
-from .models import Category, Product
+from staff.models import Category, Product
 from django.views import generic
+from django.urls import reverse
 
 class CategoryListView(generic.ListView):
     model = Category
@@ -19,7 +19,7 @@ class CategoryCreateView(generic.edit.CreateView):
     template_name = 'categories/new.html'
 
     def get_success_url(self):
-        return reverse('staff-product', kwargs={'name' : self.object.name})
+        return reverse('staff-category', kwargs={'name' : self.object.name})
 
 class CategoryUpdateView(generic.UpdateView):
     model = Category
@@ -29,7 +29,7 @@ class CategoryUpdateView(generic.UpdateView):
     template_name = 'categories/update.html'
 
     def get_success_url(self):
-        return reverse('staff-product', kwargs={'name' : self.object.name})
+        return reverse('staff-category', kwargs={'name' : self.object.name})
 
 class CategoryDeleteView(generic.DeleteView):
     model = Category
@@ -38,7 +38,7 @@ class CategoryDeleteView(generic.DeleteView):
     template_name = 'categories/delete.html'
 
     def get_success_url(self):
-        return reverse('staff-products')
+        return reverse('staff-categories')
 
 class ProductListView(generic.ListView):
     model = Product

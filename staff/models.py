@@ -51,6 +51,14 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def items(self):
+        return Product.objects.filter(category=self)
+
+    @property
+    def item_count(self):
+        return self.items().count()
+
 
 class Product(models.Model):
     name = models.CharField(max_length=75)

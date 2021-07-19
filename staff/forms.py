@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product
+from .models import Category, Product
 
 class SettingsForm(forms.Form):
     shop_name = forms.CharField(label="Shop Name", max_length=50, required=True, strip=True)
@@ -9,4 +9,9 @@ class SettingsForm(forms.Form):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
+        fields = '__all__'
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
         fields = '__all__'

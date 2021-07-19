@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .forms import SettingsForm
-from .models import Settings
+from staff.forms import SettingsForm
+from staff.models import Settings
 
 def dashboard(request):
     return render(request, 'dashboard.html')
