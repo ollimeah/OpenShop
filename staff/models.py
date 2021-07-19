@@ -47,7 +47,7 @@ class Settings():
         return "#000000" if (((r * 0.299) + (g * 0.587) + (b * 0.114)) > 186) else "#FFFFFF"
 
 class Category(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, unique=True)
 
     def __str__(self):
         return self.name
@@ -61,7 +61,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=75)
+    name = models.CharField(max_length=75, unique=True)
     description = models.TextField()
     price = models.DecimalField(max_digits=7, decimal_places=2)
     image = models.ImageField()
