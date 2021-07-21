@@ -52,6 +52,10 @@ class Category(models.Model):
     def __str__(self):
         return self.name
     
+    def delete(self, *args, **kwargs):
+        for item in self.items(): item.delete()
+        super().delete(*args, **kwargs)
+    
     def items(self):
         return Product.objects.filter(category=self)
 
@@ -65,7 +69,7 @@ class Product(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=7, decimal_places=2)
     image = models.ImageField()
-    category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     available = models.BooleanField(default=True)
     hidden = models.BooleanField(default=False)
     min = models.IntegerField()
