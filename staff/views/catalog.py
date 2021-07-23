@@ -1,6 +1,8 @@
+from staff.forms import CategoryProductForm
 from staff.models import Category, Product
 from django.views import generic
 from django.urls import reverse
+from django.shortcuts import get_object_or_404, render
 
 class CategoryListView(generic.ListView):
     model = Category
@@ -39,6 +41,21 @@ class CategoryDeleteView(generic.DeleteView):
 
     def get_success_url(self):
         return reverse('staff-categories')
+
+def category_add_products(request, name):
+    category = get_object_or_404(Category, name=name)
+    products = {'products' : category.items().values_list(flat=True)}
+
+    if request.method == 'POST':
+        form = CategoryProductForm(request.POST, initial = products)
+        if form.is_valid():
+            print(form.cleaned_data)
+            #add selected products to category
+            #hide and make unavailable unselected products
+            #redirect to detail page
+    
+    context={'category' : category, 'form' : CategoryProductForm(initial = products)}
+    return render(request, 'categories/products.html', context)
 
 class ProductListView(generic.ListView):
     model = Product

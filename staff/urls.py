@@ -15,6 +15,7 @@ urlpatterns = [
     path('category/<str:name>/', views.CategoryDetailView.as_view(), name='staff-category'),
     path('category/<str:name>/update/', views.CategoryUpdateView.as_view(), name='staff-category-update'),
     path('category/<str:name>/delete/', views.CategoryDeleteView.as_view(), name='staff-category-delete'),
+    path('category/<str:name>/products/', views.category_add_products, name='staff-category-products'),
 
     path('settings/', views.settings, name='staff-settings'),
 ]

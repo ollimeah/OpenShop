@@ -9,6 +9,7 @@
         <h2>{{object.name}}</h2>
         <div>
             <a href="{% url 'staff-categories' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Categories</button></a>
+            <a href="{% url 'staff-category-products' object.name %}"><button type="button" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i> Add Products</button></a>
             <a href="{% url 'staff-category-update' object.name %}"><button type="button" class="btn btn-primary"><i class="bi bi-pencil-fill"></i> Edit</button></a>
             <a href="{% url 'staff-category-delete' object.name %}"><button type="button" class="btn btn-primary"><i class="bi bi-trash-fill"></i> Delete</button></a>
         </div>
