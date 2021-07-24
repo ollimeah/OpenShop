@@ -2,7 +2,7 @@ from staff.forms import CategoryProductForm
 from staff.models import Category, Product
 from django.views import generic
 from django.urls import reverse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 
 class CategoryListView(generic.ListView):
     model = Category
@@ -49,10 +49,15 @@ def category_add_products(request, name):
     if request.method == 'POST':
         form = CategoryProductForm(request.POST, initial = products)
         if form.is_valid():
-            print(form.cleaned_data)
-            #add selected products to category
-            #hide and make unavailable unselected products
-            #redirect to detail page
+            for product in form.cleaned_data['products']:
+                product.category = category
+                product.save()
+            for product in category.items():
+                if not product in form.cleaned_data['products']:
+                    product.hidden = True
+                    product.available = False
+                    product.save()
+            return redirect('staff-category', name = category.name)
     
     context={'category' : category, 'form' : CategoryProductForm(initial = products)}
     return render(request, 'categories/products.html', context)
