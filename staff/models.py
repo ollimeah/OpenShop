@@ -59,6 +59,11 @@ class Category(models.Model):
     def items(self):
         return Product.objects.filter(category=self)
 
+    def add_products(self, products):
+        for product in products:
+            product.category = self
+            product.save()
+
     @property
     def item_count(self):
         return self.items().count()

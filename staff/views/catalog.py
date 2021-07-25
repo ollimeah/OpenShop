@@ -49,9 +49,7 @@ def category_add_products(request, name):
     if request.method == 'POST':
         form = CategoryProductForm(request.POST, initial = products)
         if form.is_valid():
-            for product in form.cleaned_data['products']:
-                product.category = category
-                product.save()
+            category.add_products(form.cleaned_data['products'])
             for product in category.items():
                 if not product in form.cleaned_data['products']:
                     product.hidden = True
@@ -61,6 +59,8 @@ def category_add_products(request, name):
     
     context={'category' : category, 'form' : CategoryProductForm(initial = products)}
     return render(request, 'categories/products.html', context)
+
+#product bulk operations
 
 class ProductListView(generic.ListView):
     model = Product
