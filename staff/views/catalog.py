@@ -60,8 +60,6 @@ def category_add_products(request, name):
     context={'category' : category, 'form' : CategoryProductForm(initial = products)}
     return render(request, 'categories/products.html', context)
 
-#product bulk operations
-
 class ProductListView(generic.ListView):
     model = Product
     context_object_name = 'products'
@@ -99,3 +97,6 @@ class ProductDeleteView(generic.DeleteView):
 
     def get_success_url(self):
         return reverse('staff-products')
+
+def manage_products(request):
+    return render(request, 'products/manage.html', {})
