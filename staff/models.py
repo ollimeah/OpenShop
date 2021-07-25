@@ -82,7 +82,36 @@ class Product(models.Model):
     
     def __str__(self):
         return self.name
+    
+    def hide(self):
+        self.hidden = True
+        self.save()
 
     def delete(self, *args, **kwargs):
         self.image.delete()
         super().delete(*args, **kwargs)
+    
+    def set_available(self):
+        self.available = True
+        self.hidden = False
+        self.save()
+    
+    def set_unavailable(self):
+        self.available = False
+        self.save()
+
+    @classmethod
+    def hide_products(product, products):
+        for product in products: product.hide()
+    
+    @classmethod
+    def delete_products(product, products):
+        for product in products: product.delete()
+    
+    @classmethod
+    def make_products_available(product, products):
+        for product in products: product.set_available()
+
+    @classmethod
+    def make_products_unavailable(product, products):
+        for product in products: product.set_unavailable()

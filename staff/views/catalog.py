@@ -1,4 +1,4 @@
-from staff.forms import CategoryProductForm
+from staff.forms import CategoryProductForm, ProductManagementForm
 from staff.models import Category, Product
 from django.views import generic
 from django.urls import reverse
@@ -99,4 +99,18 @@ class ProductDeleteView(generic.DeleteView):
         return reverse('staff-products')
 
 def manage_products(request):
-    return render(request, 'products/manage.html', {})
+    if request.POST:
+        form = ProductManagementForm(request.POST)
+        if form.is_valid():
+            action = form.cleaned_data['action']
+            products = form.cleaned_data['products']
+            if action == 'hide':
+                Product.hide_products(products)
+            elif action == 'delete':
+                Product.delete_products(products)
+            elif action == 'available':
+                Product.make_products_available(products)
+            elif action == 'unavailable':
+                Product.make_products_unavailable(products)
+        return redirect('staff-products')
+    return render(request, 'products/manage.html', {'form' : ProductManagementForm()})
