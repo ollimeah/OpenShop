@@ -68,7 +68,6 @@ class Category(models.Model):
     def item_count(self):
         return self.items().count()
 
-
 class Product(models.Model):
     name = models.CharField(max_length=75, unique=True)
     description = models.TextField()
@@ -115,3 +114,10 @@ class Product(models.Model):
     @classmethod
     def make_products_unavailable(product, products):
         for product in products: product.set_unavailable()
+
+class Collection(models.Model):
+    name = models.CharField(max_length=40, unique=True)
+    price = models.DecimalField(max_digits=7, decimal_places=2)
+    available = models.BooleanField(default=True)
+    hidden = models.BooleanField(default=False)
+    products = models.ManyToManyField(Product)
