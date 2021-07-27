@@ -18,5 +18,12 @@ urlpatterns = [
     path('category/<str:name>/delete/', views.CategoryDeleteView.as_view(), name='staff-category-delete'),
     path('category/<str:name>/products/', views.category_add_products, name='staff-category-products'),
 
+    path('collections/', views.CollectionListView.as_view(), name='staff-collections'),
+    path('collections/new/', views.CollectionCreateView.as_view(), name='staff-collections-new'),
+    path('collection/<str:name>/', views.CollectionDetailView.as_view(), name='staff-collection'),
+    path('collection/<str:name>/update/', views.CollectionUpdateView.as_view(), name='staff-collection-update'),
+    path('collection/<str:name>/delete/', views.CollectionDeleteView.as_view(), name='staff-collection-delete'),
+    path('collection/<str:name>/products/', views.collection_add_products, name='staff-collection-products'),
+
     path('settings/', views.settings, name='staff-settings'),
 ]

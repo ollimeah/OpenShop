@@ -121,3 +121,7 @@ class Collection(models.Model):
     available = models.BooleanField(default=True)
     hidden = models.BooleanField(default=False)
     products = models.ManyToManyField(Product)
+
+    def add_products(self, products):
+        for product in products:
+            self.products.add(product)

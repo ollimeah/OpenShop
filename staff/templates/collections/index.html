@@ -1,0 +1,25 @@
+{% extends "main.html" %}
+
+{% block title %}Collections{% endblock title %}
+
+{% block content %}
+
+<div class='container py-5'>
+    <div class="d-flex justify-content-between pb-3">
+        <h2>Collections</h2>
+        <a href="{% url 'staff-collections-new' %}" class="align-self-center"><button type="button" class="btn btn-primary">Create collection</button></a>
+    </div>
+
+    <div class="list-group">
+        {% for collection in collections %}
+        <a href="{% url 'staff-collection' collection.name %}" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ collection.name }}</h5>
+                <h5 class="mb-1">Product count: {{ collection.products.count }}</h5>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

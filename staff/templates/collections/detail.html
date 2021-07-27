@@ -1,0 +1,44 @@
+{% extends "main.html" %}
+
+{% block title %}{{ collection.name }}{% endblock title %}
+
+{% block content %}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between mb-5 pb-2 border-bottom">
+        <h2>{{object.name}}</h2>
+        <div>
+            <a href="{% url 'staff-collections' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Collections</button></a>
+            <a href="{% url 'staff-collection-products' object.name %}"><button type="button" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i> Add Products</button></a>
+            <a href="{% url 'staff-collection-update' object.name %}"><button type="button" class="btn btn-primary"><i class="bi bi-pencil-fill"></i> Edit</button></a>
+            <a href="{% url 'staff-collection-delete' object.name %}"><button type="button" class="btn btn-primary"><i class="bi bi-trash-fill"></i> Delete</button></a>
+        </div>
+    </div>
+
+    <div class="card mb-5 shadow">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Products</h5>
+        </div>
+        <div class="card-body">
+            <div class="list-group list-group-flush">
+              {% for product in collection.products.all %}
+              <a href="{% url 'staff-product' product.name %}" class="list-group-item list-group-item-action">
+                  <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1">{{ product.name }}</h5>
+                      {% if product.hidden %}
+                      <small>Hidden</small>
+                      {% elif not product.available %}
+                      <small>Unavailable</small>
+                      {% else %}
+                      <small>Available</small>
+                      {% endif %}
+                  </div>
+                  <p class="mb-1">Category: {{ product.category }}</p>
+                  <small>£{{ product.price }}</small>
+              </a>
+              {% endfor %}
+          </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

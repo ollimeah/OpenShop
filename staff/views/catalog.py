@@ -1,5 +1,5 @@
-from staff.forms import CategoryProductForm, ProductManagementForm
-from staff.models import Category, Product
+from staff.forms import CategoryProductForm, CollectionProductForm, ProductManagementForm
+from staff.models import Category, Collection, Product
 from django.views import generic
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -114,3 +114,57 @@ def manage_products(request):
                 Product.make_products_unavailable(products)
         return redirect('staff-products')
     return render(request, 'products/manage.html', {'form' : ProductManagementForm()})
+
+class CollectionListView(generic.ListView):
+    model = Collection
+    context_object_name = 'collections'
+    template_name = 'collections/index.html'
+
+class CollectionDetailView(generic.DetailView):
+    model = Collection
+    template_name = 'collections/detail.html'
+    slug_field = 'name'
+    slug_url_kwarg = 'name'
+
+class CollectionCreateView(generic.edit.CreateView):
+    model = Collection
+    fields = '__all__'
+    template_name = 'collections/new.html'
+
+    def get_success_url(self):
+        return reverse('staff-collection', kwargs={'name' : self.object.name})
+
+class CollectionUpdateView(generic.UpdateView):
+    model = Collection
+    slug_field = 'name'
+    slug_url_kwarg = 'name'
+    fields = '__all__'
+    template_name = 'collections/update.html'
+
+    def get_success_url(self):
+        return reverse('staff-collection', kwargs={'name' : self.object.name})
+
+class CollectionDeleteView(generic.DeleteView):
+    model = Collection
+    slug_field = 'name'
+    slug_url_kwarg = 'name'
+    template_name = 'collections/delete.html'
+
+    def get_success_url(self):
+        return reverse('staff-collections')
+
+def collection_add_products(request, name):
+    collection = get_object_or_404(Collection, name=name)
+    products = {'products' : collection.products.all()}
+
+    if request.method == 'POST':
+        form = CollectionProductForm(request.POST, initial = products)
+        if form.is_valid():
+            collection.add_products(form.cleaned_data['products'])
+            for product in collection.products.all():
+                if not product in form.cleaned_data['products']:
+                    collection.products.remove(product)
+            return redirect('staff-collection', name = collection.name)
+    
+    context={'collection' : collection, 'form' : CollectionProductForm(initial = products)}
+    return render(request, 'collections/products.html', context)
