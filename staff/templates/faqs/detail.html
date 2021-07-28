@@ -1,0 +1,26 @@
+{% extends "main.html" %}
+
+{% block title %}FAQ{% endblock title %}
+
+{% block content %}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between mb-5 pb-2 border-bottom">
+        <h2>FAQ</h2>
+        <div>
+            <a href="{% url 'staff-faqs' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> FAQs</button></a>
+            <a href="{% url 'staff-faq-update' object.id %}"><button type="button" class="btn btn-primary"><i class="bi bi-pencil-fill"></i> Edit</button></a>
+            <a href="{% url 'staff-faq-delete' object.id %}"><button type="button" class="btn btn-primary"><i class="bi bi-trash-fill"></i> Delete</button></a>
+        </div>
+    </div>
+
+    <div class="card mb-5 shadow">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">{{ faq.question }}</h5>
+        </div>
+        <div class="card-body">
+            <p>{{ faq.answer }}</p>
+        </div>
+    </div>
+</div>
+{% endblock content %}

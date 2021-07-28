@@ -1,0 +1,23 @@
+{% extends "main.html" %}
+
+{% block title %}FAQs{% endblock title %}
+
+{% block content %}
+
+<div class='container py-5'>
+    <div class="d-flex justify-content-between pb-3">
+        <h2>FAQs</h2>
+        <a href="{% url 'staff-faqs-new' %}" class="align-self-center"><button type="button" class="btn btn-primary">Create FAQ</button></a>
+    </div>
+
+    <div class="list-group">
+        {% for faq in faqs %}
+        <a href="{% url 'staff-faq' faq.id %}" class="list-group-item list-group-item-action">
+            <h5 class="mb-1">{{ faq.question }}</h5>
+            <p>{{ faq.answer }}</p>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}
