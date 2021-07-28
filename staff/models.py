@@ -125,3 +125,7 @@ class Collection(models.Model):
     def add_products(self, products):
         for product in products:
             self.products.add(product)
+
+class FAQ(models.Model):
+    question = models.TextField()
+    answer = models.TextField()
