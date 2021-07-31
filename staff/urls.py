@@ -31,5 +31,11 @@ urlpatterns = [
     path('faq/<int:pk>/update/', views.FAQUpdateView.as_view(), name='staff-faq-update'),
     path('faq/<int:pk>/delete/', views.FAQDeleteView.as_view(), name='staff-faq-delete'),
 
+    path('promotions/', views.PromotionListView.as_view(), name='staff-promotions'),
+    path('promotions/new/', views.PromotionCreateView.as_view(), name='staff-promotions-new'),
+    path('promotion/<str:code>/', views.PromotionDetailView.as_view(), name='staff-promotion'),
+    path('promotion/<str:code>/update/', views.PromotionUpdateView.as_view(), name='staff-promotion-update'),
+    path('promotion/<str:code>/delete/', views.PromotionDeleteView.as_view(), name='staff-promotion-delete'),
+
     path('settings/', views.settings, name='staff-settings'),
 ]

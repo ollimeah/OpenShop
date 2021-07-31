@@ -129,3 +129,19 @@ class Collection(models.Model):
 class FAQ(models.Model):
     question = models.TextField()
     answer = models.TextField()
+
+class Promotion(models.Model):
+    PERCENTAGE = 'Percentage'
+    FIXED_PRICE = 'Fixed Price'
+    TYPE_CHOICES = [(PERCENTAGE, 'Percentage'), (FIXED_PRICE, 'Fixed Price')]
+
+    code = models.CharField(max_length=30, unique=True)
+    type = models.CharField(max_length=30, choices=TYPE_CHOICES)
+    max_uses = models.IntegerField(null=True)
+    amount = models.IntegerField()
+    max_discount = models.IntegerField(null=True)
+    min_spend = models.IntegerField(null=True)
+    customer_limit = models.IntegerField(null=True)
+    active = models.BooleanField(default=True)
+    expiry = models.DateTimeField(null=True)
+    used = models.IntegerField(default=0)

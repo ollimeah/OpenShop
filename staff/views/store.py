@@ -1,4 +1,4 @@
-from staff.models import FAQ
+from staff.models import FAQ, Promotion
 from django.views import generic
 from django.urls import reverse
 
@@ -33,3 +33,41 @@ class FAQDeleteView(generic.DeleteView):
 
     def get_success_url(self):
         return reverse('staff-faqs')
+
+class PromotionListView(generic.ListView):
+    model = Promotion
+    context_object_name = 'promotions'
+    template_name = 'promotions/index.html'
+
+class PromotionDetailView(generic.DetailView):
+    model = Promotion
+    template_name = 'promotions/detail.html'
+    slug_field = 'code'
+    slug_url_kwarg = 'code'
+
+class PromotionCreateView(generic.edit.CreateView):
+    model = Promotion
+    fields = '__all__'
+    template_name = 'promotions/new.html'
+
+    def get_success_url(self):
+        return reverse('staff-promotion', kwargs={'code' : self.object.code})
+
+class PromotionUpdateView(generic.UpdateView):
+    model = Promotion
+    fields = '__all__'
+    slug_field = 'code'
+    slug_url_kwarg = 'code'
+    template_name = 'promotions/update.html'
+
+    def get_success_url(self):
+        return reverse('staff-promotion', kwargs={'code' : self.object.code})
+
+class PromotionDeleteView(generic.DeleteView):
+    model = Promotion
+    template_name = 'promotions/delete.html'
+    slug_field = 'code'
+    slug_url_kwarg = 'code'
+
+    def get_success_url(self):
+        return reverse('staff-promotions')
