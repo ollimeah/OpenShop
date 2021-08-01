@@ -5,7 +5,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-  {% comment %} <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css"> {% endcomment %}
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
   {% load static %}
   <style>
@@ -27,38 +26,38 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-{{ settings.is_primary_light_or_dark }} primary-colour">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">{{ settings.shop_name }}</a>
+      <a class="navbar-brand" href="{% url 'home' %}">{{ settings.shop_name }}</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       
       <div class="collapse navbar-collapse" id="navbarContent">
         <div class="navbar-nav me-auto">
-          <a class="nav-link active" href="{% url 'staff-dashboard' %}">Dashboard</a>
+          <a class="nav-link active" href="#">Shop</a>
+          {% if categories %}
           <div class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle active" href="#" id="storeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Store</a>
-            <ul class="dropdown-menu" aria-labelledby="storeDropdown">
-              <li><a class="dropdown-item" href="#">Home Page</a></li>
-              <li><a class="dropdown-item" href="#">Contact</a></li>
-              <li><a class="dropdown-item" href="{% url 'staff-faqs' %}">FAQs</a></li>
-              <li><a class="dropdown-item" href="{% url 'staff-promotions' %}">Promotions</a></li>
+            <a class="nav-link dropdown-toggle active" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
+            <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+            {% for category in categories %}
+              <li><a class="dropdown-item" href="#">{{ category.name }}</a></li>
+            {% endfor %}
             </ul>
           </div>
-          <a class="nav-link active" href="#">Orders</a>
+          {% endif %}
+          {% if collections %}
           <div class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle active" href="#" id="catalogDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Catalog</a>
-            <ul class="dropdown-menu" aria-labelledby="catalogDropdown">
-              <li><a class="dropdown-item" href="{% url 'staff-products' %}">Products</a></li>
-              <li><a class="dropdown-item" href="{% url 'staff-categories' %}">Categories</a></li>
-              <li><a class="dropdown-item" href="{% url 'staff-collections' %}">Collections</a></li>
+            <a class="nav-link dropdown-toggle active" href="#" id="collectionsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Collections</a>
+            <ul class="dropdown-menu" aria-labelledby="collectionsDropdown">
+            {% for collection in collections %}
+              <li><a class="dropdown-item" href="#">{{ collection.name }}</a></li>
+            {% endfor %}
             </ul>
           </div>
-          <a class="nav-link active" href="#">Customers</a>
-          <a class="nav-link active" href="{% url 'staff-settings' %}">Settings</a>
+          {% endif %}
+          <a class="nav-link active" href="#">Contact</a>
         </div>
         <div class="navbar-nav">
-          <a class="nav-link" href="{% url 'home' %}">Main site</a>
-          <a class="nav-link" href="#">Log out</a>
+          <a class="nav-link active" href="#">Basket</a>
         </div>
       </div>
     </div>
@@ -67,7 +66,6 @@
   {% endblock content %}
 </body>
 
-{% comment %} <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script> {% endcomment %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 {% block scripts %}
 {% endblock scripts %}

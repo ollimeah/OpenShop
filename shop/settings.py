@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'staff',
+    'storefront',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +67,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
 
                 'staff.context_processors.settings',
+                'storefront.context_processors.categories',
+                'storefront.context_processors.collections',
             ],
         },
     },

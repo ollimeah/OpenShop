@@ -67,6 +67,10 @@ class Category(models.Model):
     @property
     def item_count(self):
         return self.items().count()
+    
+    @classmethod
+    def get_visible(category):
+        return Category.objects.all()
 
 class Product(models.Model):
     name = models.CharField(max_length=75, unique=True)
@@ -125,6 +129,10 @@ class Collection(models.Model):
     def add_products(self, products):
         for product in products:
             self.products.add(product)
+    
+    @classmethod
+    def get_visible(collection):
+        return Collection.objects.filter(hidden=False)
 
 class FAQ(models.Model):
     question = models.TextField()
