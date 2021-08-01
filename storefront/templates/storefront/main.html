@@ -10,7 +10,7 @@
   <style>
     {% with primary=settings.primary_colour primary_text=settings.get_text_colour_primary secondary=settings.secondary_colour secondary_text=settings.get_text_colour_secondary %}
     .primary-colour {background-color: {{ primary }};}
-    .btn-primary {
+    .btn-primary, .btn-primary:disabled {
       color: {{ secondary_text }};
       background-color: {{ secondary }};
       border-color: {{ secondary }};
@@ -19,6 +19,16 @@
       color: {{ primary_text }};
       background-color: {{ primary }};
       border-color: {{ primary }};
+    }
+    .form-check-input:checked {
+      background-color: {{ secondary }};
+      border-color: {{ secondary }};
+    }
+    .form-switch .form-check-input {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='{{secondary}}'/%3e%3c/svg%3e");
+    }
+    .form-switch .form-check-input:checked {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='{{primary}}'/%3e%3c/svg%3e");
     }
     {% endwith %}
   </style>
@@ -33,7 +43,7 @@
       
       <div class="collapse navbar-collapse" id="navbarContent">
         <div class="navbar-nav me-auto">
-          <a class="nav-link active" href="#">Shop</a>
+          <a class="nav-link active" href="{% url 'shop' %}">Shop</a>
           {% if categories %}
           <div class="nav-item dropdown">
             <a class="nav-link dropdown-toggle active" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Categories</a>

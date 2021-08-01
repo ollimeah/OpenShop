@@ -1,6 +1,7 @@
 from django.urls import path
-from storefront import views
+from storefront.views import *
 
 urlpatterns = [
-    path('', views.home, name='home'),
+    path('', home, name='home'),
+    path('shop/', ProductListView.as_view(), name='shop'),
 ]
