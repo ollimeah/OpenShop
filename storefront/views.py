@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render
-from staff.models import Category, Product
+from staff.models import Category, Collection, Product
 from django.views import generic
 
 def home(request):
@@ -39,3 +39,10 @@ class ProductDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         context['range'] = range(self.object.min, self.object.max + 1)
         return context
+
+class CollectionDetailView(generic.DetailView):
+    model = Collection
+    template_name = 'storefront/collection.html'
+    slug_field = 'name'
+    slug_url_kwarg = 'name'
+    queryset = Collection.objects.filter(hidden=False)

@@ -118,14 +118,6 @@ class Product(models.Model):
     @classmethod
     def make_products_unavailable(product, products):
         for product in products: product.set_unavailable()
-    
-    @classmethod
-    def get_available(product):
-        return Product.objects.filter(available=True, hidden=False)
-
-    @classmethod
-    def get_unavailable(product):
-        return Product.objects.filter(available=False, hidden=False)
 
 class Collection(models.Model):
     name = models.CharField(max_length=40, unique=True)

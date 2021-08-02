@@ -59,7 +59,7 @@
             <a class="nav-link dropdown-toggle active" href="#" id="collectionsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Collections</a>
             <ul class="dropdown-menu" aria-labelledby="collectionsDropdown">
             {% for collection in collections %}
-              <li><a class="dropdown-item" href="#">{{ collection.name }}</a></li>
+              <li><a class="dropdown-item" href="{% url 'collection' collection.name %}">{{ collection.name }}</a></li>
             {% endfor %}
             </ul>
           </div>
