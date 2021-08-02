@@ -28,3 +28,8 @@ class ProductDetailView(generic.DetailView):
     slug_field = 'name'
     slug_url_kwarg = 'name'
     queryset = Product.objects.filter(hidden=False)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['range'] = range(self.object.min, self.object.max + 1)
+        return context
