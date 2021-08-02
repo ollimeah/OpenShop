@@ -21,3 +21,10 @@ class ProductListView(generic.ListView):
         context['available'] = Product.get_available()
         context['unavailable'] = Product.get_unavailable()
         return context
+
+class ProductDetailView(generic.DetailView):
+    model = Product
+    template_name = 'storefront/product.html'
+    slug_field = 'name'
+    slug_url_kwarg = 'name'
+    queryset = Product.objects.filter(hidden=False)
