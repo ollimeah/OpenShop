@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container">
   <div class="d-flex flex-sm-row flex-column justify-content-between pb-1 my-5 border-bottom">
-    <h1>All Products</h1>
+    <h1>{{ title }}</h1>
     {% if unavailable %}
     <div class="form-check form-switch align-self-sm-center">
         <input class="form-check-input" type="checkbox" data-bs-toggle="collapse" data-bs-target="#unavailable" aria-expanded="false" aria-controls="unavailable">

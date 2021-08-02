@@ -49,7 +49,7 @@
             <a class="nav-link dropdown-toggle active" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
             <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
             {% for category in categories %}
-              <li><a class="dropdown-item" href="#">{{ category.name }}</a></li>
+              <li><a class="dropdown-item" href="{% url 'shop-category' category.name %}">{{ category.name }}</a></li>
             {% endfor %}
             </ul>
           </div>
