@@ -69,6 +69,7 @@ TEMPLATES = [
                 'staff.context_processors.settings',
                 'storefront.context_processors.categories',
                 'storefront.context_processors.collections',
+                'storefront.context_processors.device_id',
             ],
         },
     },
