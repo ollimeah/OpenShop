@@ -1,3 +1,4 @@
+from storefront.forms import AddToBasketForm
 from django.db import models
 import json
 
@@ -102,6 +103,9 @@ class Product(models.Model):
     def set_unavailable(self):
         self.available = False
         self.save()
+    
+    def get_add_to_basket_form(self):
+        return AddToBasketForm({'product_name' : self.name, 'quantity' : self.min})
 
     @classmethod
     def hide_products(product, products):

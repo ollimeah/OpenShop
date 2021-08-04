@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404, render
 from staff.models import Category, Collection, Product
 from django.views import generic
 from django.http import HttpResponse
+from .forms import AddToBasketForm
 
 def home(request):
     return render(request, 'storefront/home.html', {})
@@ -50,5 +51,7 @@ class CollectionDetailView(generic.DetailView):
 
 def add_to_basket(request):
     if request.method == 'POST':
-        print(request.POST)
+        form = AddToBasketForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data)
     return HttpResponse(status=204)
