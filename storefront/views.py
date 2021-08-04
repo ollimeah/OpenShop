@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from staff.models import Category, Collection, Product
 from django.views import generic
+from django.http import HttpResponse
 
 def home(request):
     return render(request, 'storefront/home.html', {})
@@ -46,3 +47,8 @@ class CollectionDetailView(generic.DetailView):
     slug_field = 'name'
     slug_url_kwarg = 'name'
     queryset = Collection.objects.filter(hidden=False)
+
+def add_to_basket(request):
+    if request.method == 'POST':
+        print(request.POST)
+    return HttpResponse(status=204)
