@@ -1,3 +1,4 @@
+from storefront.models import Basket
 from django.shortcuts import get_object_or_404, render
 from staff.models import Category, Collection, Product
 from django.views import generic
@@ -53,5 +54,11 @@ def add_to_basket(request):
     if request.method == 'POST':
         form = AddToBasketForm(request.POST)
         if form.is_valid():
-            print(form.cleaned_data)
-    return HttpResponse(status=204)
+            product = Product.objects.get(name = form.cleaned_data['product_name'])
+            Basket.add_product_to_basket(request.COOKIES['device'], product, form.cleaned_data['quantity'])
+            return HttpResponse(status=204)
+        else:
+            return HttpResponse(status=406)
+    else:
+        return HttpResponse(status=405)
+    
