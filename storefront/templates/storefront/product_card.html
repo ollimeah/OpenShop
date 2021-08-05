@@ -12,7 +12,7 @@
       </a>
 
       {% if product.available %}
-      <form action="{% url 'basket-add' %}" method="post">{% csrf_token %}
+      <form action="{% url 'basket-add-product' %}" method="post">{% csrf_token %}
         {{ product.get_add_to_basket_form.as_p }}
         <button type="submit" class="btn btn-sm btn-primary w-100" onclick="confirmAdd(this)">
           <i class="bi bi-basket"></i> Add to basket

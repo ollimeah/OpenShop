@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, render
 from staff.models import Category, Collection, Product
 from django.views import generic
 from django.http import HttpResponse
-from .forms import AddProductToBasketForm
+from .forms import AddProductToBasketForm, AddCollectionToBasketForm
 
 def home(request):
     return render(request, 'storefront/home.html', {})
@@ -56,6 +56,19 @@ def add_product_to_basket(request):
         if form.is_valid():
             product = Product.objects.get(name = form.cleaned_data['product_name'])
             Basket.add_product_to_basket(request.COOKIES['device'], product, form.cleaned_data['quantity'])
+            return HttpResponse(status=204)
+        else:
+            return HttpResponse(status=406)
+    else:
+        return HttpResponse(status=405)
+
+def add_collection_to_basket(request):
+    if request.method == 'POST':
+        form = AddCollectionToBasketForm(request.POST)
+        if form.is_valid():
+            collection = Collection.objects.get(name = form.cleaned_data['collection_name'])
+            Basket.add_collection_to_basket(request.COOKIES['device'], collection, form.cleaned_data['quantity'])
+            print(collection)
             return HttpResponse(status=204)
         else:
             return HttpResponse(status=406)
