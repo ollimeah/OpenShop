@@ -1,4 +1,4 @@
-from storefront.forms import AddToBasketForm
+from storefront.forms import AddProductToBasketForm
 from django.db import models
 import json
 
@@ -105,7 +105,7 @@ class Product(models.Model):
         self.save()
     
     def get_add_to_basket_form(self):
-        return AddToBasketForm({'product_name' : self.name, 'quantity' : self.min})
+        return AddProductToBasketForm({'product_name' : self.name, 'quantity' : self.min})
 
     @classmethod
     def hide_products(product, products):

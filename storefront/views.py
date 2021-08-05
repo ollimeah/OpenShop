@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, render
 from staff.models import Category, Collection, Product
 from django.views import generic
 from django.http import HttpResponse
-from .forms import AddToBasketForm
+from .forms import AddProductToBasketForm
 
 def home(request):
     return render(request, 'storefront/home.html', {})
@@ -50,9 +50,9 @@ class CollectionDetailView(generic.DetailView):
     slug_url_kwarg = 'name'
     queryset = Collection.objects.filter(hidden=False)
 
-def add_to_basket(request):
+def add_product_to_basket(request):
     if request.method == 'POST':
-        form = AddToBasketForm(request.POST)
+        form = AddProductToBasketForm(request.POST)
         if form.is_valid():
             product = Product.objects.get(name = form.cleaned_data['product_name'])
             Basket.add_product_to_basket(request.COOKIES['device'], product, form.cleaned_data['quantity'])

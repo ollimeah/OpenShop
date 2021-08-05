@@ -7,5 +7,5 @@ urlpatterns = [
     path('shop/<category>/', ProductListView.as_view(), name='shop-category'),
     path('shop/product/<str:name>/', ProductDetailView.as_view(), name='product'),
     path('collections/<str:name>/', CollectionDetailView.as_view(), name='collection'),
-    path('basket/add/', add_to_basket, name='basket-add'),
+    path('basket/add/', add_product_to_basket, name='basket-add'),
 ]
