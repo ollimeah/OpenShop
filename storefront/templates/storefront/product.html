@@ -37,9 +37,10 @@
         <p class="pt-1 text-justify">{{product.description}}</p>
 
         {% if product.available %}
-        <form action="#" method="post">
+        <form action="{% url 'basket-add-product' %}" method="post">
           {% csrf_token %}
           <div class="d-flex mb-2">
+            <input hidden name="product_name" value="{{ product.name }}"></input>
             <label for="quantity" class="form-check-label align-self-center mr-2">Quantity:</label>
             <select class="custom-select" name="quantity" id="quantity">
               {% for i in range %}
