@@ -1,4 +1,4 @@
-from storefront.forms import AddProductToBasketForm
+from storefront.forms import AddCollectionToBasketForm, AddProductToBasketForm
 from django.db import models
 import json
 
@@ -133,6 +133,9 @@ class Collection(models.Model):
     def add_products(self, products):
         for product in products:
             self.products.add(product)
+        
+    def get_add_to_basket_form(self):
+        return AddCollectionToBasketForm({'collection_name' : self.name, 'quantity' : 1})
     
     @classmethod
     def get_visible(collection):
