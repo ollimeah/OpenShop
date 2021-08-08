@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container">
   <div class="d-flex flex-sm-row flex-column justify-content-between pb-1 my-5 border-bottom align-items-center">
-    <h1>{{ collection.name }}</h1>
+    <h1>{{ collection.name }} - £{{ collection.price }}</h1>
     {% if collection.available %}
     <form action="{% url 'basket-add-collection' %}" method="post">{% csrf_token %}
       {{ collection.get_add_to_basket_form.as_p }}

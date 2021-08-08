@@ -106,6 +106,9 @@ class Product(models.Model):
     
     def get_add_to_basket_form(self):
         return AddProductToBasketForm({'product_name' : self.name, 'quantity' : self.min})
+    
+    def get_remove_form(self):
+        return AddProductToBasketForm({'product_name' : self.name, 'quantity' : 0})
 
     @classmethod
     def hide_products(product, products):
@@ -136,6 +139,9 @@ class Collection(models.Model):
         
     def get_add_to_basket_form(self):
         return AddCollectionToBasketForm({'collection_name' : self.name, 'quantity' : 1})
+    
+    def get_remove_form(self):
+        return AddCollectionToBasketForm({'collection_name' : self.name, 'quantity' : 0})
     
     @classmethod
     def get_visible(collection):
