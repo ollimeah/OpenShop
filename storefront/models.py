@@ -1,4 +1,4 @@
-from staff.models import Collection, Product
+from staff.models import Collection, Product, Promotion
 from django.db import models
 import uuid
 
@@ -15,6 +15,7 @@ class Basket(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
     products = models.ManyToManyField(Product, through='BasketProduct')
     collections = models.ManyToManyField(Collection, through='BasketCollection')
+    promotion = models.ForeignKey(Promotion, on_delete=models.SET_NULL, null=True)
 
     @property
     def item_cost(self):
