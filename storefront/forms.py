@@ -8,3 +8,6 @@ class AddProductToBasketForm(forms.Form):
 class AddCollectionToBasketForm(forms.Form):
     collection_name = forms.CharField(widget=HiddenInput)
     quantity = forms.IntegerField(widget=HiddenInput)
+
+class PromotionCodeForm(forms.Form):
+    code = forms.CharField(required=True, strip=True)
