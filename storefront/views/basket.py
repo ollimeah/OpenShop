@@ -1,7 +1,7 @@
 from django.http import HttpResponse, JsonResponse
 from storefront.forms import AddProductToBasketForm, AddCollectionToBasketForm, PromotionCodeForm
 from storefront.models import Basket, BasketProduct, BasketCollection
-from staff.models import Product, Collection
+from staff.models import Product, Collection, Promotion
 from django.shortcuts import redirect, render
 import json
 
@@ -31,13 +31,24 @@ def add_collection_to_basket(request):
         return HttpResponse(status=405)
 
 def basket(request):
+    context = {}
     basket = Basket.get_basket(request.COOKIES['device'])
     unavailable = basket.get_and_remove_unavailable_items()
+    if request.method == 'POST':
+        promo_form = PromotionCodeForm(request.POST)
+        if promo_form.is_valid():
+            code = promo_form.cleaned_data['code']
+            try:
+                promotion = Promotion.objects.get(code=code)
+                if promotion:
+                    basket.add_promotion(promotion)
+            except:
+                context['error'] = True
     if basket.promotion:
         promo_form = PromotionCodeForm({'code' : basket.promotion.code})
     else:
         promo_form = PromotionCodeForm()
-    context = {'unavailable' : unavailable, 'basket' : basket, 'promo_form' : promo_form}
+    context.update({'unavailable' : unavailable, 'basket' : basket, 'promo_form' : promo_form})
     return render(request, 'storefront/basket.html', context)
 
 def update_product_quantity(request):

@@ -30,6 +30,9 @@ class Basket(models.Model):
     def total_cost(self):
         return self.item_cost # + delivery
     
+    def add_promotion(self):
+        print('add promo')
+    
     def update_product_quantity(self, product, quantity):
         bp = BasketProduct.objects.get(basket=self, product=product)
         if quantity <= 0:
