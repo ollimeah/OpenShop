@@ -1,6 +1,7 @@
 from storefront.forms import AddCollectionToBasketForm, AddProductToBasketForm
 from django.db import models
 import json
+from django.utils import timezone
 
 class Settings():
     def __init__(self):
@@ -166,3 +167,17 @@ class Promotion(models.Model):
     active = models.BooleanField(default=True)
     expiry = models.DateTimeField(null=True)
     used = models.IntegerField(default=0)
+
+    def is_eligible(self, total):
+        if self.used >= self.max_uses or self.expiry <= timezone.now():
+            self.active = False
+            self.save()
+        if not self.active:
+            return False
+        elif self.min_spend and total < self.min_spend:
+            return False
+        else:
+            return True
+    
+    def set_used(self):
+        self.used += 1
