@@ -2,6 +2,7 @@ from storefront.forms import AddCollectionToBasketForm, AddProductToBasketForm
 from django.db import models
 import json
 from django.utils import timezone
+from decimal import Decimal
 
 class Settings():
     def __init__(self):
@@ -181,3 +182,14 @@ class Promotion(models.Model):
     
     def set_used(self):
         self.used += 1
+    
+    def get_discount(self, cost):
+        if self.type == Promotion.PERCENTAGE:
+            discount_cost = Decimal(self.amount/100) * cost
+            max_discount_cost = Decimal(self.max_discount/100) * cost
+            if discount_cost > max_discount_cost:
+                return round(max_discount_cost, 2)
+            else:
+                return round(discount_cost, 2)
+        else:
+            return self.amount
