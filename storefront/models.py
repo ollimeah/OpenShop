@@ -10,12 +10,20 @@ class Device(models.Model):
         device = Device.objects.create()
         return device.code
 
+class Address(models.Model):
+    line_1 = models.CharField(max_length=255)
+    line_2 = models.CharField(max_length=255, null=True)
+    city = models.CharField(max_length=35)
+    county = models.CharField(max_length=35, null=True)
+    postcode = models.CharField(max_length=8)
+
 class Basket(models.Model):
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
     date_updated = models.DateTimeField(auto_now=True)
     products = models.ManyToManyField(Product, through='BasketProduct')
     collections = models.ManyToManyField(Collection, through='BasketCollection')
     promotion = models.ForeignKey(Promotion, on_delete=models.SET_NULL, null=True)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True)
 
     @property
     def item_cost(self):
