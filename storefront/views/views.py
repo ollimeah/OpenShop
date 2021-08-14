@@ -46,3 +46,6 @@ class CollectionDetailView(generic.DetailView):
     slug_field = 'name'
     slug_url_kwarg = 'name'
     queryset = Collection.objects.filter(hidden=False)
+
+def shipping(request):
+    pass
