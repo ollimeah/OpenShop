@@ -1,5 +1,5 @@
 from django import forms
-from .models import Category, Collection, FAQ, Product, Promotion
+from .models import Category, Collection, FAQ, Product, Promotion, Address
 
 ACTION_CHOICES = [
     ('delete', 'Delete'),
@@ -38,3 +38,8 @@ class ProductManagementForm(forms.Form):
 
 class CollectionProductForm(forms.Form):
     products = forms.ModelMultipleChoiceField(Product.objects, widget = forms.CheckboxSelectMultiple)
+
+class ShippingForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        fields = '__all__'

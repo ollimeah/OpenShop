@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from staff.models import Category, Collection, Product
 from django.views import generic
+from staff.forms import ShippingForm
 
 def home(request):
     return render(request, 'storefront/home.html', {})
@@ -48,4 +49,5 @@ class CollectionDetailView(generic.DetailView):
     queryset = Collection.objects.filter(hidden=False)
 
 def shipping(request):
-    pass
+    context = {'form' : ShippingForm()}
+    return render(request, 'storefront/shipping.html', context)

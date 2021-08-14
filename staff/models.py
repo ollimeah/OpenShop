@@ -193,3 +193,10 @@ class Promotion(models.Model):
                 return round(discount_cost, 2)
         else:
             return self.amount
+
+class Address(models.Model):
+    line_1 = models.CharField(max_length=255)
+    line_2 = models.CharField(max_length=255, null=True)
+    city = models.CharField(max_length=35)
+    county = models.CharField(max_length=35, null=True)
+    postcode = models.CharField(max_length=8)

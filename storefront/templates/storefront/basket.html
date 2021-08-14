@@ -138,7 +138,7 @@
               <br>
             </ul>
             {% if not basket.is_empty %}
-            <a href="#" style="color:black" class="text-decoration-none">
+            <a href="{% url 'shipping' %}" style="color:black" class="text-decoration-none">
               <div class="d-grid">
                 <button type="button" name="checkout" class="btn btn-primary">Continue to shipping</button>
               </div>

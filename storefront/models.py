@@ -1,4 +1,4 @@
-from staff.models import Collection, Product, Promotion
+from staff.models import Collection, Product, Promotion, Address
 from django.db import models
 import uuid
 
@@ -9,13 +9,6 @@ class Device(models.Model):
     def get_new_device_id(device):
         device = Device.objects.create()
         return device.code
-
-class Address(models.Model):
-    line_1 = models.CharField(max_length=255)
-    line_2 = models.CharField(max_length=255, null=True)
-    city = models.CharField(max_length=35)
-    county = models.CharField(max_length=35, null=True)
-    postcode = models.CharField(max_length=8)
 
 class Basket(models.Model):
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
