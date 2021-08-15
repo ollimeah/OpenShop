@@ -200,3 +200,10 @@ class Address(models.Model):
     city = models.CharField(max_length=35)
     county = models.CharField(max_length=35, null=True)
     postcode = models.CharField(max_length=8)
+
+class Delivery(models.Model):
+    name = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=7, decimal_places=2)
+    available = models.BooleanField(default=True)
+    # per_item = models.BooleanField(default=False)
+    # max_price = models.DecimalField(max_digits=7, decimal_places=2)
