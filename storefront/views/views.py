@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, render
-from staff.models import Category, Collection, Product
+from staff.models import Address, Category, Collection, Product
+from storefront.models import Basket
 from django.views import generic
 from staff.forms import ShippingForm
 
@@ -49,5 +50,17 @@ class CollectionDetailView(generic.DetailView):
     queryset = Collection.objects.filter(hidden=False)
 
 def shipping(request):
-    context = {'form' : ShippingForm()}
+    basket = Basket.get_basket(request.COOKIES['device'])
+    if request.method == 'POST':
+        form = ShippingForm(request.POST)
+        if form.is_valid():
+            address = Address(**form.cleaned_data)
+            address.save()
+            basket.address = address
+            basket.save()
+    elif basket.address:
+        form = ShippingForm(instance=basket.address)
+    else:
+        form = ShippingForm()
+    context = {'form' : form}
     return render(request, 'storefront/shipping.html', context)
