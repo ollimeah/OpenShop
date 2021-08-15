@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from staff.models import Address, Category, Collection, Product
 from storefront.models import Basket
 from django.views import generic
@@ -51,6 +51,7 @@ class CollectionDetailView(generic.DetailView):
 
 def shipping(request):
     basket = Basket.get_basket(request.COOKIES['device'])
+    if basket.is_empty(): return redirect('basket')
     if request.method == 'POST':
         form = ShippingForm(request.POST)
         if form.is_valid():
