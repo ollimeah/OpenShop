@@ -53,9 +53,9 @@ def shipping(request):
     basket = Basket.get_basket(request.COOKIES['device'])
     if basket.is_empty(): return redirect('basket')
     if request.method == 'POST':
-        form = ShippingForm(request.POST)
-        if form.is_valid():
-            address = Address(**form.cleaned_data)
+        address_form = ShippingForm(request.POST)
+        if address_form.is_valid():
+            address = Address(**address_form.cleaned_data)
             address.save()
             basket.address = address
         delivery_form = DeliveryChoiceForm(request.POST)
@@ -63,12 +63,12 @@ def shipping(request):
             basket.delivery = delivery_form.cleaned_data['delivery']
         basket.save()
     elif basket.address:
-        form = ShippingForm(instance=basket.address)
+        address_form = ShippingForm(instance=basket.address)
     else:
-        form = ShippingForm()
+        address_form = ShippingForm()
     if basket.delivery:
         delivery_form = DeliveryChoiceForm({'delivery' : basket.delivery})
     else:
         delivery_form = DeliveryChoiceForm()
-    context = {'form' : form, 'delivery_form' : delivery_form}
+    context = {'form' : address_form, 'delivery_form' : delivery_form}
     return render(request, 'storefront/shipping.html', context)
