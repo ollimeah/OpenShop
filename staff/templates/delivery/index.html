@@ -1,0 +1,30 @@
+{% extends "main.html" %}
+
+{% block title %}Delivery{% endblock title %}
+
+{% block content %}
+
+<div class='container py-5'>
+    <div class="d-flex justify-content-between pb-3">
+        <h2>Delivery</h2>
+        <a href="{% url 'staff-deliveries-new' %}" class="align-self-center"><button type="button" class="btn btn-primary">Create Delivery</button></a>
+    </div>
+
+    <div class="list-group">
+        {% for delivery in deliveries %}
+        <a href="{% url 'staff-delivery' delivery.id %}" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ delivery.name }}</h5>
+                {% if delivery.available %}
+                <small>Available</small>
+                {% else %}
+                <small>Unavailable</small>
+                {% endif %}
+            </div>
+            <p>{{ delivery.price }}</p>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

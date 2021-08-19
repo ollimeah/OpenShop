@@ -1,4 +1,4 @@
-from staff.models import FAQ, Promotion
+from staff.models import FAQ, Promotion, Delivery
 from django.views import generic
 from django.urls import reverse
 
@@ -71,3 +71,35 @@ class PromotionDeleteView(generic.DeleteView):
 
     def get_success_url(self):
         return reverse('staff-promotions')
+
+class DeliveryListView(generic.ListView):
+    model = Delivery
+    context_object_name = 'deliveries'
+    template_name = 'delivery/index.html'
+
+class DeliveryDetailView(generic.DetailView):
+    model = Delivery
+    template_name = 'delivery/detail.html'
+
+class DeliveryCreateView(generic.edit.CreateView):
+    model = Delivery
+    fields = '__all__'
+    template_name = 'delivery/new.html'
+
+    def get_success_url(self):
+        return reverse('staff-delivery', kwargs={'pk' : self.object.id})
+
+class DeliveryUpdateView(generic.UpdateView):
+    model = Delivery
+    fields = '__all__'
+    template_name = 'delivery/update.html'
+
+    def get_success_url(self):
+        return reverse('staff-delivery', kwargs={'pk' : self.object.id})
+
+class DeliveryDeleteView(generic.DeleteView):
+    model = Delivery
+    template_name = 'delivery/delete.html'
+
+    def get_success_url(self):
+        return reverse('staff-deliveries')
