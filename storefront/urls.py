@@ -13,4 +13,5 @@ urlpatterns = [
     path('basket/update-collection/', update_collection_quantity, name='basket-update-collection'),
     path('basket/', basket, name='basket'),
     path('shipping/', shipping, name='shipping'),
+    path('checkout/', checkout, name='checkout'),
 ]

@@ -62,6 +62,7 @@ def shipping(request):
         if delivery_form.is_valid():
             basket.delivery = delivery_form.cleaned_data['delivery']
         basket.save()
+        if address_form.is_valid() and delivery_form.is_valid(): return redirect('checkout')
     elif basket.address:
         address_form = ShippingForm(instance=basket.address)
     else:
@@ -72,3 +73,6 @@ def shipping(request):
         delivery_form = DeliveryChoiceForm()
     context = {'form' : address_form, 'delivery_form' : delivery_form}
     return render(request, 'storefront/shipping.html', context)
+
+def checkout(request):
+    return render(request, 'storefront/checkout.html', {})
