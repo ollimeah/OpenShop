@@ -6,7 +6,8 @@
 
 <form method="post">{% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Save">
+    {{ delivery_form.as_p }}
+    <input type="submit" value="Continue to checkout">
 </form>
 
 {% endblock content %}

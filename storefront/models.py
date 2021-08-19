@@ -1,4 +1,4 @@
-from staff.models import Collection, Product, Promotion, Address
+from staff.models import Collection, Delivery, Product, Promotion, Address
 from django.db import models
 import uuid
 
@@ -16,7 +16,8 @@ class Basket(models.Model):
     products = models.ManyToManyField(Product, through='BasketProduct')
     collections = models.ManyToManyField(Collection, through='BasketCollection')
     promotion = models.ForeignKey(Promotion, on_delete=models.SET_NULL, null=True)
-    address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True)
+    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)
+    delivery = models.ForeignKey(Delivery, on_delete=models.SET_NULL, null=True)
 
     @property
     def item_cost(self):

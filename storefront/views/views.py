@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from staff.models import Address, Category, Collection, Product
 from storefront.models import Basket
 from django.views import generic
-from staff.forms import ShippingForm
+from staff.forms import DeliveryChoiceForm, ShippingForm
 
 def home(request):
     return render(request, 'storefront/home.html', {})
@@ -58,10 +58,17 @@ def shipping(request):
             address = Address(**form.cleaned_data)
             address.save()
             basket.address = address
-            basket.save()
+        delivery_form = DeliveryChoiceForm(request.POST)
+        if delivery_form.is_valid():
+            basket.delivery = delivery_form.cleaned_data['delivery']
+        basket.save()
     elif basket.address:
         form = ShippingForm(instance=basket.address)
     else:
         form = ShippingForm()
-    context = {'form' : form}
+    if basket.delivery:
+        delivery_form = DeliveryChoiceForm({'delivery' : basket.delivery})
+    else:
+        delivery_form = DeliveryChoiceForm()
+    context = {'form' : form, 'delivery_form' : delivery_form}
     return render(request, 'storefront/shipping.html', context)

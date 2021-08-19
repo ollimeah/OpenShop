@@ -1,5 +1,5 @@
 from django import forms
-from .models import Category, Collection, FAQ, Product, Promotion, Address
+from .models import Category, Collection, Delivery, FAQ, Product, Promotion, Address
 
 ACTION_CHOICES = [
     ('delete', 'Delete'),
@@ -43,3 +43,6 @@ class ShippingForm(forms.ModelForm):
     class Meta:
         model = Address
         fields = '__all__'
+
+class DeliveryChoiceForm(forms.Form):
+    delivery = forms.ModelChoiceField(Delivery.objects.filter(available=True), widget=forms.Select)

@@ -207,3 +207,6 @@ class Delivery(models.Model):
     available = models.BooleanField(default=True)
     # per_item = models.BooleanField(default=False)
     # max_price = models.DecimalField(max_digits=7, decimal_places=2)
+
+    def __str__(self):
+        return self.name
