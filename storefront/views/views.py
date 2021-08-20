@@ -75,4 +75,5 @@ def shipping(request):
     return render(request, 'storefront/shipping.html', context)
 
 def checkout(request):
-    return render(request, 'storefront/checkout.html', {})
+    basket = Basket.get_basket(request.COOKIES['device'])
+    return render(request, 'storefront/checkout.html', {'basket' : basket})

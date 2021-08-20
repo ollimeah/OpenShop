@@ -3,7 +3,54 @@
 {% block title %}Checkout{% endblock title %}
 
 {% block content %}
+<div class="container py-5" style="min-height:70vh">
+  <div class="row">
+    <div class="col-md-12 mb-4">
+      <div class="d-flex flex-sm-row flex-column justify-content-between pb-1 mb-5 border-bottom">
+        <h1>Summary <span class="badge badge-secondary badge-pill small">{{ basket.num_items }}</span></h1>
+        <div class="align-self-sm-center">
+          <a href="{% url 'shipping' %}" class="btn btn-outline-secondary"><i class="bi bi-chevron-left"></i> Back to shipping</a>
+        </div>
+      </div>
+      <ul class="list-group mb-3">
+        {% for bp in basket.basketproduct_set.all %}
+          <li class="list-group-item d-flex justify-content-between lh-condensed">
+            <div>
+              <h6 class="my-0">{{ bp.product.name }}</h6>
+              <small class="text-muted">Quantity: {{ bp.quantity }}</small>
+            </div>
+            <span class="text-muted align-self-center">£{{ bp.total_cost }}</span>
+          </li>
+        {% endfor %}
+        {% for bc in basket.basketcollection_set.all %}
+          <li class="list-group-item d-flex justify-content-between lh-condensed">
+            <div>
+              <h6 class="my-0">{{ bc.collection.name }}</h6>
+              <small class="text-muted">Quantity: {{ bc.quantity }}</small>
+            </div>
+            <span class="text-muted align-self-center">£{{ bc.total_cost }}</span>
+          </li>
+        {% endfor %}
+        <li class="list-group-item d-flex justify-content-between lh-condensed">
+          <div>
+            <h6 class="my-0">Delivery Address</h6>
+            {% comment %} <small class="text-muted">{{basket.address.name}}</small><br> {% endcomment %}
+            <small class="text-muted">{{basket.address.line_1}}</small><br>
+            <small class="text-muted">{{basket.address.line_2}}</small><br>
+            <small class="text-muted">{{basket.address.city}}</small>
+            <small class="text-muted">{{basket.address.county}}</small><br>
+            <small class="text-muted">{{basket.address.postcode}}</small>
+          </div>
+          <span class="text-muted">£{{basket.delivery.price}}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <span><strong>Total</strong></span>
+          <strong>£{{basket.total_cost}}</strong>
+        </li>
+      </ul>
+    </div>
+  </div>
 
-Checkout
-
+  <a href="#" class="btn btn-primary">Place Order</a>
+</div>
 {% endblock content %}

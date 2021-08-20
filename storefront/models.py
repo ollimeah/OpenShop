@@ -20,6 +20,15 @@ class Basket(models.Model):
     delivery = models.ForeignKey(Delivery, on_delete=models.SET_NULL, null=True)
 
     @property
+    def num_items(self):
+        items = 0
+        for bp in self.basketproduct_set.all():
+            items += bp.quantity
+        for bc in self.basketcollection_set.all():
+            items += bc.quantity
+        return items
+
+    @property
     def item_cost(self):
         total = 0
         for bp in self.basketproduct_set.all():
