@@ -76,4 +76,6 @@ def shipping(request):
 
 def checkout(request):
     basket = Basket.get_basket(request.COOKIES['device'])
+    if request.method == 'POST':
+        print("placed")
     return render(request, 'storefront/checkout.html', {'basket' : basket})
