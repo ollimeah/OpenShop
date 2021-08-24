@@ -121,8 +121,7 @@ class BasketProduct(models.Model):
         self.save()
 
     def add_quantity(self, quantity):
-        self.quantity = self.quantity + quantity
-        self.save()
+        self.update_quantity(self.quantity + quantity)
 
 class BasketCollection(models.Model):
     basket = models.ForeignKey(Basket, on_delete=models.CASCADE)

@@ -201,7 +201,7 @@ class BasketTest(TestCase):
     def test_add_product(self):
         basket, device = self.create_empty_basket()
         product = Product.objects.get(id=1)
-        quantity = randint(1, 1000)
+        quantity = product.max
         basket.add_product(product, quantity)
         self.assertIn(product, basket.products.all())
         bp = BasketProduct.objects.get(basket=basket, product=product)
@@ -215,3 +215,67 @@ class BasketTest(TestCase):
         self.assertIn(collection, basket.collections.all())
         bc = BasketCollection.objects.get(basket=basket, collection=collection)
         self.assertEqual(bc.quantity, quantity)
+
+class BasketProductTest(TestCase):
+    fixtures = ['categories.json', 'products.json']
+
+    def create_basket_product(self, product, quantity):
+        device = Device.objects.create()
+        basket = Basket.objects.create(device=device)
+        bp = BasketProduct.objects.create(basket=basket, quantity=quantity, product=product)
+        return bp
+
+    def test_total_cost(self):
+        product = Product.objects.get(id=1)
+        quantity = randint(1, 1000)
+        bp = self.create_basket_product(product, quantity)
+        self.assertEqual(product.price * quantity, bp.total_cost)
+    
+    def test_update_quantity_less_than_min(self):
+        product = Product.objects.get(id=1)
+        bp = self.create_basket_product(product, randint(1, 1000))
+        bp.update_quantity(product.min - randint(1, 1000))
+        self.assertEqual(product.min, bp.quantity)
+    
+    def test_update_quantity_equal_min(self):
+        product = Product.objects.get(id=1)
+        bp = self.create_basket_product(product, randint(1, 1000))
+        bp.update_quantity(product.min)
+        self.assertEqual(product.min, bp.quantity)
+    
+    def test_update_quantity_valid(self):
+        product = Product.objects.get(id=1)
+        quantity = product.min + 1
+        bp = self.create_basket_product(product, randint(1, 1000))
+        bp.update_quantity(quantity)
+        self.assertEqual(quantity, bp.quantity)
+    
+    def test_update_quantity_equal_max(self):
+        product = Product.objects.get(id=1)
+        bp = self.create_basket_product(product, randint(1, 1000))
+        bp.update_quantity(product.max)
+        self.assertEqual(product.max, bp.quantity)
+    
+    def test_update_quantity_greater_than_max(self):
+        product = Product.objects.get(id=1)
+        bp = self.create_basket_product(product, randint(1, 1000))
+        bp.update_quantity(product.max + randint(1, 1000))
+        self.assertEqual(product.max, bp.quantity)
+    
+    def test_add_quantity_negative(self):
+        product = Product.objects.get(id=1)
+        bp = self.create_basket_product(product, product.min)
+        bp.add_quantity(-1)
+        self.assertEqual(product.min, bp.quantity)
+    
+    def test_add_quantity_valid(self):
+        product = Product.objects.get(id=1)
+        bp = self.create_basket_product(product, product.min)
+        bp.add_quantity(1)
+        self.assertEqual(product.min + 1, bp.quantity)
+    
+    def test_add_quantity_greater_than_max(self):
+        product = Product.objects.get(id=1)
+        bp = self.create_basket_product(product, product.max)
+        bp.add_quantity(1)
+        self.assertEqual(product.max, bp.quantity)
