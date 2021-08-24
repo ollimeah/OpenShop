@@ -1,0 +1,14 @@
+[{
+    "model": "staff.category", 
+    "pk": 1, 
+    "fields": {
+        "name": "Category 1"
+    }
+}, 
+{
+    "model": "staff.category", 
+    "pk": 2, 
+    "fields": {
+        "name": "Category 2"
+    }
+}]

@@ -1,0 +1,60 @@
+[{
+    "model": "staff.product", 
+    "pk": 1, 
+    "fields": {
+        "name": "Test 1",
+        "description": "Test 1",
+        "price": "4.00",
+        "image": "test1.png",
+        "category": 1,
+        "available": true, 
+        "hidden": false, 
+        "min": 2, 
+        "max": 98
+    }
+},
+{
+    "model": "staff.product", 
+    "pk": 2, 
+    "fields": {
+        "name": "Test 2", 
+        "description": "Test 2", 
+        "price": "20.00", 
+        "image": "test2.png", 
+        "category": 1, 
+        "available": true, 
+        "hidden": true, 
+        "min": 1, 
+        "max": 2
+    }
+}, 
+{
+    "model": "staff.product", 
+    "pk": 3, 
+    "fields": {
+        "name": "Test 3", 
+        "description": "Test 3", 
+        "price": "1.99", 
+        "image": "test3.png", 
+        "category": 2, 
+        "available": false, 
+        "hidden": false, 
+        "min": 1, 
+        "max": 3
+    }
+}, 
+{
+    "model": "staff.product", 
+    "pk": 4, 
+    "fields": {
+        "name": "Test 4", 
+        "description": "Test 4", 
+        "price": "0.50", 
+        "image": "test4.png", 
+        "category": 2, 
+        "available": false, 
+        "hidden": true, 
+        "min": 1, 
+        "max": 2
+    }
+}]

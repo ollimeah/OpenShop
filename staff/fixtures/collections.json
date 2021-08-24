@@ -1,0 +1,22 @@
+[{
+    "model": "staff.collection", 
+    "pk": 1, 
+    "fields": {
+        "name": "Collection 1", 
+        "price": "10.00", 
+        "available": true, 
+        "hidden": false, 
+        "products": [1, 2]
+    }
+},
+{
+    "model": "staff.collection", 
+    "pk": 2, 
+    "fields": {
+        "name": "Collection 2", 
+        "price": "12.00", 
+        "available": false, 
+        "hidden": false, 
+        "products": [1]
+    }
+}]

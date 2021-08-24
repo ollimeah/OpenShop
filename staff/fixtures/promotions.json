@@ -1,0 +1,32 @@
+[{
+    "model": "staff.promotion", 
+    "pk": 1, 
+    "fields": {
+        "code": "perc", 
+        "type": "Percentage", 
+        "max_uses": 10, 
+        "amount": 10, 
+        "max_discount": 10, 
+        "min_spend": 10, 
+        "customer_limit": 1, 
+        "active": true, 
+        "expiry": "2021-12-12T00:00:00Z", 
+        "used": 0
+    }
+}, 
+{
+    "model": "staff.promotion", 
+    "pk": 2, 
+    "fields": {
+        "code": "fix", 
+        "type": "Fixed Price", 
+        "max_uses": 10, 
+        "amount": 11, 
+        "max_discount": 10, 
+        "min_spend": 20, 
+        "customer_limit": 2, 
+        "active": true, 
+        "expiry": "2021-12-12T00:00:00Z", 
+        "used": 0
+    }
+}]

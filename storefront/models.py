@@ -39,7 +39,9 @@ class Basket(models.Model):
     
     @property
     def total_cost(self):
-        return self.item_cost # + delivery
+        if self.delivery:
+            return self.item_cost + self.delivery.price
+        else: return self.item_cost
     
     @property
     def promotion_amount(self):
@@ -92,16 +94,12 @@ class Basket(models.Model):
         basket, created = Basket.objects.get_or_create(device=device)
         return basket
 
-    @classmethod
-    def add_product_to_basket(basket, device_code, product, quantity):
-        basket = Basket.get_basket(device_code)
-        bp, created = BasketProduct.objects.get_or_create(basket=basket, product=product)
+    def add_product(self, product, quantity):
+        bp, created = BasketProduct.objects.get_or_create(basket=self, product=product)
         bp.add_quantity(quantity)
     
-    @classmethod
-    def add_collection_to_basket(basket, device_code, collection, quantity):
-        basket = Basket.get_basket(device_code)
-        bc, created = BasketCollection.objects.get_or_create(basket=basket, collection=collection)
+    def add_collection(self, collection, quantity):
+        bc, created = BasketCollection.objects.get_or_create(basket=self, collection=collection)
         bc.add_quantity(quantity)
 
 class BasketProduct(models.Model):

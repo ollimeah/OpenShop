@@ -10,7 +10,8 @@ def add_product_to_basket(request):
         form = AddProductToBasketForm(request.POST)
         if form.is_valid():
             product = Product.objects.get(name = form.cleaned_data['product_name'])
-            Basket.add_product_to_basket(request.COOKIES['device'], product, form.cleaned_data['quantity'])
+            basket = Basket.get_basket(request.COOKIES['device'])
+            basket.add_product(product, form.cleaned_data['quantity'])
             return HttpResponse(status=204)
         else:
             return HttpResponse(status=406)
@@ -22,8 +23,8 @@ def add_collection_to_basket(request):
         form = AddCollectionToBasketForm(request.POST)
         if form.is_valid():
             collection = Collection.objects.get(name = form.cleaned_data['collection_name'])
-            Basket.add_collection_to_basket(request.COOKIES['device'], collection, form.cleaned_data['quantity'])
-            print(collection)
+            basket = Basket.get_basket(request.COOKIES['device'])
+            basket.add_collection(collection, form.cleaned_data['quantity'])
             return HttpResponse(status=204)
         else:
             return HttpResponse(status=406)
