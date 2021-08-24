@@ -279,3 +279,25 @@ class BasketProductTest(TestCase):
         bp = self.create_basket_product(product, product.max)
         bp.add_quantity(1)
         self.assertEqual(product.max, bp.quantity)
+
+class BasketCollectionTest(TestCase):
+    fixtures = ['categories.json', 'products.json', 'collections.json']
+
+    def create_basket_collection(self, collection, quantity):
+        device = Device.objects.create()
+        basket = Basket.objects.create(device=device)
+        bc = BasketCollection.objects.create(basket=basket, collection=collection, quantity=quantity)
+        return bc
+    
+    def test_total_cost(self):
+        collection = Collection.objects.get(id=1)
+        quantity = randint(1, 1000)
+        bc = self.create_basket_collection(collection, quantity)
+        self.assertEqual(collection.price * quantity, bc.total_cost)
+    
+    def test_add_quantity(self):
+        collection = Collection.objects.get(id=1)
+        quantity = randint(1, 1000)
+        bc = self.create_basket_collection(collection, quantity)
+        bc.add_quantity(3)
+        self.assertEqual(quantity + 3, bc.quantity)
