@@ -1,6 +1,6 @@
 from django.utils import timezone
 from storefront.models import Basket, BasketCollection, BasketProduct, Device
-from staff.models import Collection, Delivery, Product, Promotion
+from staff.models import Category, Collection, Delivery, Product, Promotion
 from django.test import TestCase
 import uuid
 from random import randint
@@ -301,3 +301,47 @@ class BasketCollectionTest(TestCase):
         bc = self.create_basket_collection(collection, quantity)
         bc.add_quantity(3)
         self.assertEqual(quantity + 3, bc.quantity)
+
+class CategoryTest(TestCase):
+    fixtures = ['categories.json', 'products.json']
+
+    def test_string(self):
+        category = Category.objects.create(name='Test')
+        self.assertEqual('Test', str(category))
+    
+    def test_delete(self):
+        category = Category.objects.create(name='Test')
+        for product in Product.objects.all()[:2]:
+            product.category = category
+            product.save()
+        num_products = Product.objects.count()
+        num_categories = Category.objects.count()
+        category.delete()
+        self.assertEqual(num_categories - 1, Category.objects.count())
+        self.assertEqual(num_products - 2, Product.objects.count())
+    
+    def test_items(self):
+        category = Category.objects.create(name='Test')
+        products = []
+        for product in Product.objects.all()[:2]:
+            product.category = category
+            product.save()
+            products.append(product)
+        items = category.items()
+        for product in products:
+            self.assertIn(product, items)
+    
+    def test_item_count(self):
+        category = Category.objects.create(name='Test')
+        self.assertEqual(0, category.item_count)
+        for product in Product.objects.all()[:2]:
+            product.category = category
+            product.save()
+        self.assertEqual(2, category.item_count)
+    
+    def test_add_products(self):
+        category = Category.objects.create(name='Test')
+        category.add_products(Product.objects.all()[:2])
+        for product in Product.objects.all()[:2]:
+            self.assertEqual(category, product.category)
+        self.assertEqual(2, len(Product.objects.filter(category=category)))
