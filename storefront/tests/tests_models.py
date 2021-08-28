@@ -6,6 +6,8 @@ import uuid
 from random import randint
 from decimal import Decimal
 from math import ceil
+from django.core.files.uploadedfile import SimpleUploadedFile
+from os.path import exists as path_exists
 
 class DeviceTest(TestCase):
 
@@ -345,3 +347,80 @@ class CategoryTest(TestCase):
         for product in Product.objects.all()[:2]:
             self.assertEqual(category, product.category)
         self.assertEqual(2, len(Product.objects.filter(category=category)))
+
+class ProductTest(TestCase):
+    fixtures = ['categories.json']
+    test_products = []
+
+    def tearDown(self):
+        for prod in self.test_products: prod.image.delete()
+        return super().tearDown()
+    
+    def create_product(self, name='Test', available=True, hidden=False, file_name='test'):
+        category = Category.objects.get(id=1)
+        prod = Product.objects.create(name=name, description='Test', price=10, category=category,
+        image=SimpleUploadedFile(file_name + '.jpg', b'content'), available=available, hidden=hidden, min=1, max=12)
+        self.test_products.append(prod)
+        return prod
+
+    def test_str(self):
+        product = self.create_product('test')
+        self.assertEqual('test', str(product))
+    
+    def test_hide(self):
+        product = self.create_product()
+        product.hide()
+        self.assertTrue(product.hidden)
+    
+    def test_delete(self):
+        product = self.create_product()
+        img_path = product.image.path
+        product.delete()
+        self.assertFalse(path_exists(img_path))
+    
+    def test_set_available(self):
+        product = self.create_product(available=False, hidden=True)
+        product.set_available()
+        self.assertTrue(product.available)
+        self.assertFalse(product.hidden)
+    
+    def test_set_unavailable(self):
+        product = self.create_product(available=True, hidden=False)
+        product.set_unavailable()
+        self.assertFalse(product.available)
+    
+    def test_hide_products(self):
+        products = Product.objects.all()[:3]
+        for product in products:
+            product.hidden = False
+        Product.hide_products(products)
+        for product in products:
+            self.assertTrue(product.hidden)
+    
+    def test_delete_products(self):
+        paths = []
+        products = []
+        for i in range(1,4):
+            product = self.create_product(name='test' + str(i), file_name='test' + str(i))
+            products.append(product)
+            paths.append(product.image.path)
+        Product.delete_products(products)
+        for path in paths:
+            self.assertFalse(path_exists(path))
+    
+    def test_make_products_available(self):
+        products = Product.objects.all()[:3]
+        for product in products:
+            product.available = False
+        Product.make_products_available(products)
+        for product in products:
+            self.assertTrue(product.available)
+            self.assertFalse(product.hidden)
+    
+    def test_make_products_unavailable(self):
+        products = Product.objects.all()[:3]
+        for product in products:
+            product.available = True
+        Product.make_products_available(products)
+        for product in products:
+            self.assertFalse(product.available)
