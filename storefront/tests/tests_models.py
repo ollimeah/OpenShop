@@ -438,3 +438,95 @@ class CollectionTest(TestCase):
         collections = Collection.get_visible()
         for collection in collections:
             self.assertFalse(collection.hidden)
+
+class PromotionTest(TestCase):
+    fixtures = ['promotions.json']
+
+    def get_active_perc_promotion(self):
+        promo = Promotion.objects.get(id=1)
+        promo.expiry = timezone.now() + timezone.timedelta(days=1)
+        promo.active = True
+        promo.used = 0
+        return promo
+
+    def get_active_fixed_promotion(self):
+        promo = Promotion.objects.get(id=2)
+        promo.expiry = timezone.now() + timezone.timedelta(days=1)
+        promo.active = True
+        promo.used = 0
+        return promo
+
+    def test_is_eligible_max_used(self):
+        promo = self.get_active_perc_promotion()
+        promo.used = promo.max_uses
+        eligible = promo.is_eligible(50)
+        self.assertFalse(promo.active)
+        self.assertFalse(eligible)
+    
+    def test_is_eligible_expired(self):
+        promo = self.get_active_perc_promotion()
+        promo.expiry = timezone.now() - timezone.timedelta(days=1)
+        eligible = promo.is_eligible(50)
+        self.assertFalse(promo.active)
+        self.assertFalse(eligible)
+    
+    def test_is_eligible_inactive(self):
+        promo = self.get_active_perc_promotion()
+        promo.active = False
+        self.assertFalse(promo.is_eligible(50))
+    
+    def test_is_eligible_active(self):
+        promo = self.get_active_perc_promotion()
+        self.assertTrue(promo.is_eligible(promo.min_spend))
+
+    def test_is_eligible_less_than_min(self):
+        promo = self.get_active_perc_promotion()
+        promo.min_spend = 30
+        self.assertFalse(promo.is_eligible(promo.min_spend - 5))
+    
+    def test_is_eligible_equal_to_min(self):
+        promo = self.get_active_perc_promotion()
+        self.assertTrue(promo.is_eligible(promo.min_spend))
+    
+    def test_is_eligible_greater_than_min(self):
+        promo = self.get_active_perc_promotion()
+        promo.min_spend = 30
+        self.assertTrue(promo.is_eligible(promo.min_spend + 5))
+    
+    def test_set_used(self):
+        promo = self.get_active_perc_promotion()
+        used = promo.used
+        promo.set_used()
+        self.assertEqual(used + 1, promo.used)
+    
+    def test_get_discount_fixed(self):
+        promo = self.get_active_fixed_promotion()
+        self.assertEqual(promo.get_discount(promo.min_spend + 5), promo.amount)    
+    
+    def test_get_discount_percentage_less_than_max(self):
+        promo = self.get_active_perc_promotion()
+        total = promo.min_spend + promo.max_discount - 1
+        promo_amount = Decimal(promo.amount/100) * total
+        self.assertEqual(promo.get_discount(total), round(promo_amount, 2))
+    
+    def test_get_discount_percentage_equal_to_max(self):
+        promo = self.get_active_perc_promotion()
+        total = promo.min_spend + promo.max_discount
+        promo_amount = Decimal(promo.amount/100) * total
+        self.assertEqual(promo.get_discount(total), round(promo_amount, 2))
+    
+    def test_get_discount_percentage_greater_than_max(self):
+        promo = self.get_active_perc_promotion()
+        total = promo.min_spend + promo.max_discount + 1
+        promo_amount = Decimal(promo.max_discount/100) * total
+        self.assertEqual(promo.get_discount(total), round(promo_amount, 2))
+
+class DeliveryTest(TestCase):
+
+    def create_delivery(self, name='Test'):
+        delivery = Delivery.objects.create(name=name, price=10)
+        return delivery
+    
+    def test_to_string(self):
+        delivery = self.create_delivery()
+        self.assertEqual('Test', str(delivery))
