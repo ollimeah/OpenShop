@@ -19,4 +19,15 @@
         "hidden": false, 
         "products": [1]
     }
+},
+{
+    "model": "staff.collection", 
+    "pk": 3, 
+    "fields": {
+        "name": "Collection 3", 
+        "price": "12.00", 
+        "available": false, 
+        "hidden": true, 
+        "products": [1]
+    }
 }]

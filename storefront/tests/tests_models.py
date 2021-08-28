@@ -424,3 +424,17 @@ class ProductTest(TestCase):
         Product.make_products_available(products)
         for product in products:
             self.assertFalse(product.available)
+
+class CollectionTest(TestCase):
+    fixtures = ['collections.json', 'categories.json', 'products.json']
+
+    def test_add_products(self):
+        collection = Collection.objects.get(id=1)
+        collection.add_products(Product.objects.all())
+        for product in Product.objects.all():
+            self.assertIn(product, collection.products.all())
+    
+    def test_get_visible(self):
+        collections = Collection.get_visible()
+        for collection in collections:
+            self.assertFalse(collection.hidden)
