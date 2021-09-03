@@ -616,3 +616,16 @@ class OrderTest(TestCase):
             for product in bc.collection.products.all():
                 ocp = OrderCollectionProduct.objects.filter(order_collection=oc, product_name=product.name).count()
                 self.assertEqual(1, ocp)
+    
+    def test_delete_address(self):
+        basket = self.create_full_basket()
+        num_addresses = Address.objects.count()
+        Order.create_order_and_empty_basket(basket)
+        self.assertIsNone(basket.address.id)
+        self.assertEqual(num_addresses - 1, Address.objects.count())
+    
+    def test_delete_basket(self):
+        basket = self.create_full_basket()
+        num_baskets = Basket.objects.count()
+        Order.create_order_and_empty_basket(basket)
+        self.assertEqual(num_baskets - 1, Basket.objects.count())
