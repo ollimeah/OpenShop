@@ -232,6 +232,7 @@ class Order(models.Model):
         order.add_collections(basket.basketcollection_set.all())
         basket.address.delete()
         basket.device.delete()
+        return order
 
     def add_shipping(self, address, delivery):
         address_dict = model_to_dict(address)
@@ -250,7 +251,7 @@ class Order(models.Model):
                 OrderCollectionProduct.objects.create(order_collection=order_collection, product_name=product.name)
 
 class OrderShipping(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.OneToOneField(Order, on_delete=models.CASCADE)
     address_name = models.CharField(max_length=127)
     line_1 = models.CharField(max_length=255)
     line_2 = models.CharField(max_length=255, null=True)
