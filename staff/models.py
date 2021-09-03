@@ -195,6 +195,7 @@ class Promotion(models.Model):
             return self.amount
 
 class Address(models.Model):
+    name = models.CharField(max_length=127)
     line_1 = models.CharField(max_length=255)
     line_2 = models.CharField(max_length=255, null=True)
     city = models.CharField(max_length=35)
