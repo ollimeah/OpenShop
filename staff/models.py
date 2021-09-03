@@ -211,3 +211,39 @@ class Delivery(models.Model):
 
     def __str__(self):
         return self.name
+
+class Order(models.Model):
+    promotion_code = models.CharField(max_length=30, unique=True)
+    discount_amount = models.DecimalField(max_digits=7, decimal_places=2)
+    date_ordered = models.DateTimeField(auto_now=True)
+    shipped = models.BooleanField(default=False)
+    # products = models.ManyToManyField(Product, through='OrderProduct')
+    # collections = models.ManyToManyField(Collection, through='OrderCollection')
+
+class OrderShipping(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    address_name = models.CharField(max_length=127)
+    line_1 = models.CharField(max_length=255)
+    line_2 = models.CharField(max_length=255, null=True)
+    city = models.CharField(max_length=35)
+    county = models.CharField(max_length=35, null=True)
+    postcode = models.CharField(max_length=8)
+    delivery_name = models.CharField(max_length=255)
+    delivery_price = models.DecimalField(max_digits=7, decimal_places=2)
+
+class OrderProduct(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    product_name = models.CharField(max_length=255)
+    quantity = models.IntegerField()
+    price = models.DecimalField(max_digits=7, decimal_places=2)
+
+class OrderCollection(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    collection_name = models.CharField(max_length=255)
+    quantity = models.IntegerField()
+    price = models.DecimalField(max_digits=7, decimal_places=2)
+
+class OrderCollectionProduct(models.Model):
+    order_collection = models.ForeignKey(OrderCollection, on_delete=models.CASCADE)
+    product_name = models.CharField(max_length=255)
+    quantity = models.IntegerField()
