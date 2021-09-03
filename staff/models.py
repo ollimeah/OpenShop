@@ -3,6 +3,7 @@ from django.db import models
 import json
 from django.utils import timezone
 from decimal import Decimal
+from django.forms.models import model_to_dict
 
 class Settings():
     def __init__(self):
@@ -222,14 +223,31 @@ class Order(models.Model):
 
     @classmethod
     def create_order_and_empty_basket(order, basket):
-        order = Order.objects.create(promotion_code=basket.promotion.code, discount_amount=basket.promotion_amount)
+        if basket.promotion:
+            order = Order.objects.create(promotion_code=basket.promotion.code, discount_amount=basket.promotion_amount)
+        else:
+            order = Order.objects.create()
         order.add_shipping(basket.address, basket.delivery)
-    
+        order.add_products(basket.basketproduct_set.all())
+        order.add_collections(basket.basketcollection_set.all())
+        basket.address.delete()
+        basket.device.delete()
+
     def add_shipping(self, address, delivery):
-        address_dict = address.values()[0]
+        address_dict = model_to_dict(address)
         address_dict['address_name'] = address_dict.pop('name')
-        print(address_dict)
-        # OrderShipping.objects.create(order=self, address_name=address.name, line_1=address.line_1)
+        address_dict.pop('id')
+        OrderShipping.objects.create(order=self, delivery_name=delivery.name, delivery_price=delivery.price, **address_dict)
+    
+    def add_products(self, basket_products):
+        for bp in basket_products:
+            OrderProduct.objects.create(order=self, product_name=bp.product.name, price=bp.product.price, quantity=bp.quantity)
+
+    def add_collections(self, basket_collections):
+        for bc in basket_collections:
+            order_collection = OrderCollection.objects.create(order=self, collection_name=bc.collection.name, quantity=bc.quantity, price=bc.collection.price)
+            for product in bc.collection.products.all():
+                OrderCollectionProduct.objects.create(order_collection=order_collection, product_name=product.name)
 
 class OrderShipping(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
@@ -257,4 +275,4 @@ class OrderCollection(models.Model):
 class OrderCollectionProduct(models.Model):
     order_collection = models.ForeignKey(OrderCollection, on_delete=models.CASCADE)
     product_name = models.CharField(max_length=255)
-    quantity = models.IntegerField()
+    # quantity = models.IntegerField()
