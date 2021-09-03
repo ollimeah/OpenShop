@@ -213,12 +213,23 @@ class Delivery(models.Model):
         return self.name
 
 class Order(models.Model):
-    promotion_code = models.CharField(max_length=30, unique=True)
-    discount_amount = models.DecimalField(max_digits=7, decimal_places=2)
+    promotion_code = models.CharField(max_length=30, null=True)
+    discount_amount = models.DecimalField(max_digits=7, decimal_places=2, null=True)
     date_ordered = models.DateTimeField(auto_now=True)
     shipped = models.BooleanField(default=False)
     # products = models.ManyToManyField(Product, through='OrderProduct')
     # collections = models.ManyToManyField(Collection, through='OrderCollection')
+
+    @classmethod
+    def create_order_and_empty_basket(order, basket):
+        order = Order.objects.create(promotion_code=basket.promotion.code, discount_amount=basket.promotion_amount)
+        order.add_shipping(basket.address, basket.delivery)
+    
+    def add_shipping(self, address, delivery):
+        address_dict = address.values()[0]
+        address_dict['address_name'] = address_dict.pop('name')
+        print(address_dict)
+        # OrderShipping.objects.create(order=self, address_name=address.name, line_1=address.line_1)
 
 class OrderShipping(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
