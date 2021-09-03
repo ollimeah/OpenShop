@@ -1,6 +1,6 @@
 from django.utils import timezone
 from storefront.models import Basket, BasketCollection, BasketProduct, Device
-from staff.models import Category, Collection, Delivery, Product, Promotion
+from staff.models import Address, Category, Collection, Delivery, Order, OrderCollection, OrderCollectionProduct, OrderProduct, Product, Promotion
 from django.test import TestCase
 import uuid
 from random import randint
@@ -530,3 +530,89 @@ class DeliveryTest(TestCase):
     def test_to_string(self):
         delivery = self.create_delivery()
         self.assertEqual('Test', str(delivery))
+
+class OrderTest(TestCase):
+    fixtures = ['categories.json', 'products.json', 'collections.json', 'promotions.json']
+
+    def create_empty_basket(self):
+        device = Device.objects.create()
+        return Basket.objects.create(device=device), device
+    
+    def create_address(self, name='Test Name', line_1='Test Line 1', line_2='Test Line 2', city='Test City', county='Test County', postcode='A12 3BC'):
+        address = Address.objects.create(name=name, line_1=line_1, line_2=line_2, city=city, county=county, postcode=postcode)
+        return address
+    
+    def create_delivery(self, name='Test Delivery'):
+        delivery = Delivery.objects.create(name=name, price=10)
+        return delivery
+
+    def add_products(self, basket):
+        prices = []
+        for product in Product.objects.filter(available=True)[:3]:
+            quantity = randint(1, 1000)
+            prices.append(product.price * quantity)
+            BasketProduct.objects.create(basket=basket, product=product, quantity=quantity)
+        return prices
+    
+    def add_collections(self, basket):
+        prices = []
+        for collection in Collection.objects.filter(available=True)[:3]:
+            quantity = randint(1, 1000)
+            prices.append(collection.price * quantity)
+            BasketCollection.objects.create(basket=basket, collection=collection, quantity=quantity)
+        return prices
+    
+    def get_promotion(self):
+        promo = Promotion.objects.get(id=1)
+        promo.expiry = timezone.now() + timezone.timedelta(days=1)
+        promo.active = True
+        promo.used = 0
+        return promo
+
+    def create_full_basket(self):
+        basket, device = self.create_empty_basket()
+        prices = self.add_collections(basket) + self.add_products(basket)
+        basket.address = self.create_address()
+        basket.delivery = self.create_delivery()
+        basket.promotion = self.get_promotion()
+        return basket#, prices
+    
+    def test_create_order(self):
+        basket = self.create_full_basket()
+        num_orders = Order.objects.count()
+        Order.create_order_and_empty_basket(basket)
+        self.assertEqual(num_orders + 1, Order.objects.count())
+
+    def test_create_promotion(self):
+        basket = self.create_full_basket()
+        discount = basket.promotion_amount
+        order = Order.create_order_and_empty_basket(basket)
+        self.assertEqual(basket.promotion.code, order.promotion_code)
+        self.assertEqual(discount, order.discount_amount)
+    
+    def test_create_order_shipping(self):
+        basket = self.create_full_basket()
+        order = Order.create_order_and_empty_basket(basket)
+        self.assertEqual(basket.address.name, order.ordershipping.address_name)
+        self.assertEqual(basket.address.line_1, order.ordershipping.line_1)
+        self.assertEqual(basket.address.line_2, order.ordershipping.line_2)
+        self.assertEqual(basket.address.city, order.ordershipping.city)
+        self.assertEqual(basket.address.county, order.ordershipping.county)
+        self.assertEqual(basket.address.postcode, order.ordershipping.postcode)
+    
+    def test_create_order_products(self):
+        basket = self.create_full_basket()
+        order = Order.create_order_and_empty_basket(basket)
+        for bp in basket.basketproduct_set.all():
+            op = OrderProduct.objects.filter(order=order, product_name=bp.product.name, quantity=bp.quantity, price=bp.product.price).count()
+            self.assertEqual(1, op)
+    
+    def test_create_order_collections(self):
+        basket = self.create_full_basket()
+        order = Order.create_order_and_empty_basket(basket)
+        for bc in basket.basketcollection_set.all():
+            oc = OrderCollection.objects.filter(order=order, collection_name=bc.collection.name, quantity=bc.quantity, price=bc.collection.price).count()
+            self.assertEqual(1, oc)
+            for product in bc.collection.products.all():
+                ocp = OrderCollectionProduct.objects.filter(order_collection=oc, product_name=product.name).count()
+                self.assertEqual(1, ocp)
