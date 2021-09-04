@@ -575,23 +575,23 @@ class OrderTest(TestCase):
         basket.address = self.create_address()
         basket.delivery = self.create_delivery()
         basket.promotion = self.get_promotion()
-        return basket#, prices
+        return basket, prices
     
     def test_create_order(self):
-        basket = self.create_full_basket()
+        basket, prices = self.create_full_basket()
         num_orders = Order.objects.count()
         Order.create_order_and_empty_basket(basket)
         self.assertEqual(num_orders + 1, Order.objects.count())
 
     def test_create_promotion(self):
-        basket = self.create_full_basket()
+        basket, prices = self.create_full_basket()
         discount = basket.promotion_amount
         order = Order.create_order_and_empty_basket(basket)
         self.assertEqual(basket.promotion.code, order.promotion_code)
         self.assertEqual(discount, order.discount_amount)
     
     def test_create_order_shipping(self):
-        basket = self.create_full_basket()
+        basket, prices = self.create_full_basket()
         order = Order.create_order_and_empty_basket(basket)
         self.assertEqual(basket.address.name, order.ordershipping.address_name)
         self.assertEqual(basket.address.line_1, order.ordershipping.line_1)
@@ -601,14 +601,14 @@ class OrderTest(TestCase):
         self.assertEqual(basket.address.postcode, order.ordershipping.postcode)
     
     def test_create_order_products(self):
-        basket = self.create_full_basket()
+        basket, prices = self.create_full_basket()
         order = Order.create_order_and_empty_basket(basket)
         for bp in basket.basketproduct_set.all():
             op = OrderProduct.objects.filter(order=order, product_name=bp.product.name, quantity=bp.quantity, price=bp.product.price).count()
             self.assertEqual(1, op)
     
     def test_create_order_collections(self):
-        basket = self.create_full_basket()
+        basket, prices = self.create_full_basket()
         order = Order.create_order_and_empty_basket(basket)
         for bc in basket.basketcollection_set.all():
             oc = OrderCollection.objects.filter(order=order, collection_name=bc.collection.name, quantity=bc.quantity, price=bc.collection.price).count()
@@ -618,14 +618,14 @@ class OrderTest(TestCase):
                 self.assertEqual(1, ocp)
     
     def test_delete_address(self):
-        basket = self.create_full_basket()
+        basket, prices = self.create_full_basket()
         num_addresses = Address.objects.count()
         Order.create_order_and_empty_basket(basket)
         self.assertIsNone(basket.address.id)
         self.assertEqual(num_addresses - 1, Address.objects.count())
     
     def test_delete_basket(self):
-        basket = self.create_full_basket()
+        basket, prices = self.create_full_basket()
         num_baskets = Basket.objects.count()
         Order.create_order_and_empty_basket(basket)
         self.assertEqual(num_baskets - 1, Basket.objects.count())
@@ -633,6 +633,44 @@ class OrderTest(TestCase):
     def test_num_orders_today(self):
         num_orders = randint(1, 20)
         for i in range(num_orders):
-            basket = self.create_full_basket()
+            basket, prices = self.create_full_basket()
             Order.create_order_and_empty_basket(basket)
         self.assertEqual(num_orders, Order.num_orders_today())
+    
+    def test_item_total_cost(self):
+        basket, prices = self.create_full_basket()
+        order = Order.create_order_and_empty_basket(basket)
+        self.assertEqual(order.item_total_cost, sum(prices))
+    
+    def test_item_total_with_discount(self):
+        basket, prices = self.create_full_basket()
+        total = sum(prices) - basket.promotion_amount
+        order = Order.create_order_and_empty_basket(basket)
+        self.assertEqual(order.item_total_with_discount, total)
+    
+    def test_sales_today(self):
+        num_orders = randint(1, 20)
+        total = 0
+        for i in range(num_orders):
+            basket, prices = self.create_full_basket()
+            total += sum(prices) - basket.promotion_amount
+            Order.create_order_and_empty_basket(basket)
+        self.assertEqual(total, Order.sales_today())
+
+class OrderProductTest(TestCase):
+
+    def test_total_cost(self):
+        order = Order.objects.create()
+        quantity = randint(1, 1000)
+        price = randint(1, 10000) / 100
+        op = OrderProduct.objects.create(order=order, product_name='Test', quantity=quantity, price=price)
+        self.assertEqual(quantity * price, op.total_cost)
+
+class OrderCollectionTest(TestCase):
+
+    def test_total_cost(self):
+        order = Order.objects.create()
+        quantity = randint(1, 1000)
+        price = randint(1, 10000) / 100
+        oc = OrderCollection.objects.create(order=order, collection_name='Test', quantity=quantity, price=price)
+        self.assertEqual(quantity * price, oc.total_cost)

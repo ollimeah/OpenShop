@@ -222,6 +222,28 @@ class Order(models.Model):
     # products = models.ManyToManyField(Product, through='OrderProduct')
     # collections = models.ManyToManyField(Collection, through='OrderCollection')
 
+    @property
+    def item_total_cost(self):
+        total = 0
+        for op in self.orderproduct_set.all():
+            total += op.total_cost
+        for oc in self.ordercollection_set.all():
+            total += oc.total_cost
+        return total
+
+    @property
+    def item_total_with_discount(self):
+        if self.discount_amount:
+            return self.item_total_cost - self.discount_amount
+        else: return self.item_total_cost
+    
+    @classmethod
+    def sales_today(order):
+        total = 0
+        for order in Order.objects.filter(date_ordered__date=date.today()):
+            total += order.item_total_with_discount
+        return total
+
     @classmethod
     def num_orders_today(order):
         return Order.objects.filter(date_ordered__date=date.today()).count()
@@ -272,11 +294,19 @@ class OrderProduct(models.Model):
     quantity = models.IntegerField()
     price = models.DecimalField(max_digits=7, decimal_places=2)
 
+    @property
+    def total_cost(self):
+        return self.price * self.quantity
+
 class OrderCollection(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     collection_name = models.CharField(max_length=255)
     quantity = models.IntegerField()
     price = models.DecimalField(max_digits=7, decimal_places=2)
+
+    @property
+    def total_cost(self):
+        return self.price * self.quantity
 
 class OrderCollectionProduct(models.Model):
     order_collection = models.ForeignKey(OrderCollection, on_delete=models.CASCADE)
