@@ -441,6 +441,15 @@ class ProductTest(TestCase):
             num_sold += quantity
             OrderProduct.objects.create(order=order, product_name=product.name, quantity=quantity, price=product.price)
         self.assertEqual(num_sold, product.num_sold)
+    
+    def test_best_sellers(self):
+        products = []
+        for i in range(1,6):
+            product = self.create_product(name='Test'+str(i))
+            order = Order.objects.create()
+            OrderProduct.objects.create(order=order, product_name=product.name, quantity=6-i, price=product.price)
+            products.append(product)
+        self.assertEqual(products, Product.best_sellers(5))
 
 class CollectionTest(TestCase):
     fixtures = ['collections.json', 'categories.json', 'products.json']

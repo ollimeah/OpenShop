@@ -113,6 +113,10 @@ class Product(models.Model):
         order_products = OrderProduct.objects.filter(product_name=self.name).values_list('quantity', flat=True)
         return sum(order_products)
     
+    @staticmethod
+    def best_sellers(limit):
+        return sorted(Product.objects.all(), key=lambda x: -(x.num_sold))[:limit]
+    
     @classmethod
     def num_available(product):
         return Product.objects.filter(available=True, hidden=False).count()
