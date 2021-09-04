@@ -1,8 +1,11 @@
 from django.urls import path
 from staff import views
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('', views.dashboard, name='staff-dashboard'),
+    path('', auth_views.LoginView.as_view(template_name='staff/login.html'), name='staff-login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='staff/login.html', extra_context={'logout':True}), name='staff-logout'),
+    path('dashboard/', views.dashboard, name='staff-dashboard'),
 
     path('products/', views.ProductListView.as_view(), name='staff-products'),
     path('products/new/', views.ProductCreateView.as_view(), name='staff-products-new'),

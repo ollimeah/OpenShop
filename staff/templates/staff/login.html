@@ -1,0 +1,38 @@
+{% extends "staff/main_no_nav.html" %}
+{% block title %} Staff Login {% endblock %}
+{% block content %}
+{% if form.errors %}
+<div class="alert alert-danger alert-dismissible fade show mb-0" role="alert">
+  Incorrect details. Please try again.
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{% endif %}
+{% if logout %}
+<div class="alert alert-success alert-dismissible fade show mb-0" role="alert">
+  You have been logged out.
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{% endif %}
+<div class="d-flex justify-content-center align-items-center bg-light" style="min-height:100vh">
+  <div class="p-5 border rounded shadow bg-white">
+    <h2 class="mb-3 text-center">Login</h2>
+    <form action="{% url 'staff-login' %}" method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        {% comment %} <input type="text" name="username" id="id_username" placeholder="Enter username" class="form-control form-control-lg mb-3" required autocapitalize="none"> {% endcomment %}
+        {{ form.username.label_tag }}
+        {{ form.username }}
+        {{ form.password.label_tag }}
+        {{ form.password }}
+        {% comment %} <input type="password" name="password" id="id_password" placeholder="Enter password" class="form-control form-control-lg" required> {% endcomment %}
+      </div>
+      <input type="hidden" name="next" value="{% url 'staff-dashboard' %}">
+      <button type="submit" class="btn btn-dark btn-lg btn-block">Log in</button>
+    </form>
+  </div>
+</div>
+{% endblock content %}
