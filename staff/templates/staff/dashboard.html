@@ -1,0 +1,51 @@
+{% extends "main.html" %}
+
+{% block title %}Dashboard{% endblock title %}
+
+{% block content %}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-3 col-6">
+            <div class="card py-2 mb-4">
+                <div class="card-body">
+                    <p class="font-weight-bold text-primary text-uppercase mb-0">Sales</p>
+                    <p class="text-uppercase text-secondary small mb-0">Today</p>
+                    <p class="h3 mb-0 text-right">£{{ sales_today }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-6">
+            <div class="card py-2 mb-4">
+                <div class="card-body">
+                    <p class="font-weight-bold text-primary text-uppercase mb-0">Orders</p>
+                    <p class="text-uppercase text-secondary small mb-0">Today</p>
+                    <p class="h3 mb-0 text-right">{{ orders_today }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-6">
+            <div class="card py-2 mb-4">
+                <div class="card-body">
+                    <p class="font-weight-bold text-success text-uppercase mb-0">Products</p>
+                    <p class="text-uppercase text-secondary small mb-0">Available</p>
+                    <p class="h3 mb-0 text-right">{{ available_products }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-6">
+            <div class="card py-2 mb-4">
+                <div class="card-body">
+                    <p class="font-weight-bold text-warning text-uppercase mb-0">Visits</p>
+                    <p class="text-uppercase text-secondary small mb-0">Today</p>
+                    <p class="h3 mb-0 text-right">10</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

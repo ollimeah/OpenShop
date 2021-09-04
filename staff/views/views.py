@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from staff.forms import SettingsForm
-from staff.models import Settings
+from staff.models import Order, Product, Settings
 
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    context = {'orders_today' : Order.num_orders_today(), 'sales_today' : Order.sales_today(), 
+                'available_products' : Product.num_available()}
+    return render(request, 'staff/dashboard.html', context)
 
 def settings(request):
     settings = Settings()
