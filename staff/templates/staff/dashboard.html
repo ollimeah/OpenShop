@@ -3,6 +3,7 @@
 {% block title %}Dashboard{% endblock title %}
 
 {% block content %}
+{% load humanize %}
 
 <div class="container py-5">
     <div class="row justify-content-center">
@@ -42,6 +43,50 @@
                     <p class="font-weight-bold text-warning text-uppercase mb-0">Visits</p>
                     <p class="text-uppercase text-secondary small mb-0">Today</p>
                     <p class="h3 mb-0 text-right">10</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush pt-2">
+                        <h5 class="list-group-item text-center mb-0">Best Products</h5>
+                        {% for product in best_sellers %}
+                        <a href="#" class="list-group-item list-group-item-action">
+                        <div class="row justify-content-between">
+                            <div class="col-10 d-flex">
+                                <img class="img-fluid rounded float-left" src="{{product.image.url}}">
+                                <h6 class="mb-0 align-self-center font-weight-normal px-3">{{product.name}}</h6>
+                            </div>
+                            <p class="mb-0 col-2 align-self-center text-success font-weight-bold">{{product.num_sold}} sold</p>
+                        </div>
+                        </a>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush pt-2">
+                        <h5 class="list-group-item text-center mb-0">Recent Orders</h5>
+                        {% for order in recent_orders %}
+                        <a href="#" class="list-group-item list-group-item-action">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                            <p class="mb-0">Order #{{ order.id }} <span class="badge badge-info">{{ order.num_items }} items</span></p>
+                            <p class="text-muted small mb-0" data-toggle="tooltip" data-placement="bottom" title="{{order.date_ordered}}">{{order.date_ordered|naturaltime}}</p>
+                            </div>
+                            <i class="bi bi-chevron-right align-self-center"></i>
+                        </div>
+                        </a>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
         </div>

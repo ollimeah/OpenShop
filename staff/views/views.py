@@ -4,7 +4,8 @@ from staff.models import Order, Product, Settings
 
 def dashboard(request):
     context = {'orders_today' : Order.num_orders_today(), 'sales_today' : Order.sales_today(), 
-                'available_products' : Product.num_available()}
+                'available_products' : Product.num_available(), 'best_sellers' : Product.best_sellers(5), 
+                'recent_orders' : Order.recent_orders(10)}
     return render(request, 'staff/dashboard.html', context)
 
 def settings(request):
