@@ -235,6 +235,19 @@ class Order(models.Model):
     # products = models.ManyToManyField(Product, through='OrderProduct')
     # collections = models.ManyToManyField(Collection, through='OrderCollection')
 
+    @staticmethod
+    def recent_orders(limit):
+        return Order.objects.all().order_by('-date_ordered')[:limit]
+    
+    @property
+    def num_items(self):
+        items = 0
+        for op in self.orderproduct_set.all():
+            items += op.quantity
+        for oc in self.ordercollection_set.all():
+            items += oc.quantity
+        return items
+
     @property
     def item_total_cost(self):
         total = 0

@@ -682,6 +682,24 @@ class OrderTest(TestCase):
             total += sum(prices) - basket.promotion_amount
             Order.create_order_and_empty_basket(basket)
         self.assertEqual(total, Order.sales_today())
+    
+    def test_recent_orders(self):
+        num_orders = randint(1, 20)
+        orders = []
+        for i in range(num_orders):
+            basket, prices = self.create_full_basket()
+            order = Order.create_order_and_empty_basket(basket)
+            orders.append(order)
+        orders.reverse()
+        self.assertEqual(orders, list(Order.recent_orders(num_orders)))
+
+    def test_num_items(self):
+        basket, prices = self.create_full_basket()
+        order = Order.create_order_and_empty_basket(basket)
+        items = 0
+        for op in OrderProduct.objects.filter(order=order): items += op.quantity
+        for oc in OrderCollection.objects.filter(order=order): items += oc.quantity
+        self.assertEqual(items, order.num_items)
 
 class OrderProductTest(TestCase):
 
