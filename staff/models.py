@@ -108,6 +108,10 @@ class Product(models.Model):
         self.available = False
         self.save()
     
+    @classmethod
+    def num_available(product):
+        return Product.objects.filter(available=True, hidden=False).count()
+    
     def get_add_to_basket_form(self):
         return AddProductToBasketForm({'product_name' : self.name, 'quantity' : self.min})
     

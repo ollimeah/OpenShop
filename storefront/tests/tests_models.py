@@ -424,6 +424,13 @@ class ProductTest(TestCase):
         Product.make_products_available(products)
         for product in products:
             self.assertFalse(product.available)
+    
+    def test_num_available(self):
+        num_products = randint(1, 20)
+        num_available = Product.objects.filter(available=True, hidden=False).count()
+        for i in range(num_products):
+            self.create_product(name='Test'+str(i))
+        self.assertEqual(Product.num_available(), num_available + num_products)
 
 class CollectionTest(TestCase):
     fixtures = ['collections.json', 'categories.json', 'products.json']
