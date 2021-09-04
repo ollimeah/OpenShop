@@ -108,6 +108,11 @@ class Product(models.Model):
         self.available = False
         self.save()
     
+    @property
+    def num_sold(self):
+        order_products = OrderProduct.objects.filter(product_name=self.name).values_list('quantity', flat=True)
+        return sum(order_products)
+    
     @classmethod
     def num_available(product):
         return Product.objects.filter(available=True, hidden=False).count()

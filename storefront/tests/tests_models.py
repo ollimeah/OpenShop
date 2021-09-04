@@ -431,6 +431,16 @@ class ProductTest(TestCase):
         for i in range(num_products):
             self.create_product(name='Test'+str(i))
         self.assertEqual(Product.num_available(), num_available + num_products)
+    
+    def test_num_sold(self):
+        product = self.create_product()
+        num_sold = 0
+        for i in range(randint(3, 20)):
+            order = Order.objects.create()
+            quantity = randint(1, 1000)
+            num_sold += quantity
+            OrderProduct.objects.create(order=order, product_name=product.name, quantity=quantity, price=product.price)
+        self.assertEqual(num_sold, product.num_sold)
 
 class CollectionTest(TestCase):
     fixtures = ['collections.json', 'categories.json', 'products.json']
