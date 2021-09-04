@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from staff.models import Address, Category, Collection, Product
+from staff.models import Address, Category, Collection, Order, Product
 from storefront.models import Basket
 from django.views import generic
 from staff.forms import DeliveryChoiceForm, ShippingForm
@@ -77,5 +77,9 @@ def shipping(request):
 def checkout(request):
     basket = Basket.get_basket(request.COOKIES['device'])
     if request.method == 'POST':
-        print("placed")
+        Order.create_order_and_empty_basket(basket)
+        return redirect('order-success')
     return render(request, 'storefront/checkout.html', {'basket' : basket})
+
+def order_success(request):
+    return render(request, 'storefront/order_success.html')

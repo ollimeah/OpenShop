@@ -14,4 +14,5 @@ urlpatterns = [
     path('basket/', basket, name='basket'),
     path('shipping/', shipping, name='shipping'),
     path('checkout/', checkout, name='checkout'),
+    path('success/', order_success, name='order-success'),
 ]
