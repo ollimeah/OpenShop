@@ -4,6 +4,7 @@ import json
 from django.utils import timezone
 from decimal import Decimal
 from django.forms.models import model_to_dict
+from datetime import date
 
 class Settings():
     def __init__(self):
@@ -220,6 +221,10 @@ class Order(models.Model):
     shipped = models.BooleanField(default=False)
     # products = models.ManyToManyField(Product, through='OrderProduct')
     # collections = models.ManyToManyField(Collection, through='OrderCollection')
+
+    @classmethod
+    def num_orders_today(order):
+        return Order.objects.filter(date_ordered__date=date.today()).count()
 
     @classmethod
     def create_order_and_empty_basket(order, basket):

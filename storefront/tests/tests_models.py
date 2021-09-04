@@ -629,3 +629,10 @@ class OrderTest(TestCase):
         num_baskets = Basket.objects.count()
         Order.create_order_and_empty_basket(basket)
         self.assertEqual(num_baskets - 1, Basket.objects.count())
+    
+    def test_num_orders_today(self):
+        num_orders = randint(1, 20)
+        for i in range(num_orders):
+            basket = self.create_full_basket()
+            Order.create_order_and_empty_basket(basket)
+        self.assertEqual(num_orders, Order.num_orders_today())
