@@ -1,0 +1,23 @@
+{% extends "main.html" %}
+
+{% block title %}Carousel Images{% endblock title %}
+
+{% block content %}
+
+<div class='container py-5'>
+    <div class="d-flex justify-content-between pb-3">
+        <h2>Images</h2>
+        <a href="{% url 'staff-carousel-new' %}" class="align-self-center"><button type="button" class="btn btn-primary">Add Image</button></a>
+    </div>
+
+    <div class="list-group">
+        {% for image in images %}
+        <a href="{% url 'staff-carousel' image.id %}" class="list-group-item list-group-item-action">
+            <img class="mb-1" src="{{ image.image.url }}" style="max-width:1000px"/>
+            <p>{{ image.label }}</p>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

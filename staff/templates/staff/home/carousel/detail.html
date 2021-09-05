@@ -1,0 +1,20 @@
+{% extends "main.html" %}
+
+{% block title %}Carousel Image{% endblock title %}
+
+{% block content %}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between mb-5 pb-2 border-bottom">
+        <h2>Image</h2>
+        <div>
+            <a href="{% url 'staff-carousel-index' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Carousel Index</button></a>
+            <a href="{% url 'staff-carousel-update' object.id %}"><button type="button" class="btn btn-primary"><i class="bi bi-pencil-fill"></i> Edit</button></a>
+            <a href="{% url 'staff-carousel-delete' object.id %}"><button type="button" class="btn btn-primary"><i class="bi bi-trash-fill"></i> Delete</button></a>
+        </div>
+    </div>
+
+    <img src={{ object.image.url }}/>
+    <h5>{{ object.label }}</h5>
+</div>
+{% endblock content %}

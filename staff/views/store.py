@@ -1,4 +1,4 @@
-from staff.models import FAQ, Promotion, Delivery
+from staff.models import FAQ, Promotion, Delivery, CarouselImage
 from django.views import generic
 from django.urls import reverse
 
@@ -103,3 +103,35 @@ class DeliveryDeleteView(generic.DeleteView):
 
     def get_success_url(self):
         return reverse('staff-deliveries')
+
+class CarouselImageListView(generic.ListView):
+    model = CarouselImage
+    context_object_name = 'images'
+    template_name = 'staff/home/carousel/index.html'
+
+class CarouselImageDetailView(generic.DetailView):
+    model = CarouselImage
+    template_name = 'staff/home/carousel/detail.html'
+
+class CarouselImageCreateView(generic.edit.CreateView):
+    model = CarouselImage
+    fields = '__all__'
+    template_name = 'staff/home/carousel/new.html'
+
+    def get_success_url(self):
+        return reverse('staff-carousel', kwargs={'pk' : self.object.id})
+
+class CarouselImageUpdateView(generic.UpdateView):
+    model = CarouselImage
+    fields = '__all__'
+    template_name = 'staff/home/carousel/update.html'
+
+    def get_success_url(self):
+        return reverse('staff-carousel', kwargs={'pk' : self.object.id})
+
+class CarouselImageDeleteView(generic.DeleteView):
+    model = CarouselImage
+    template_name = 'staff/home/carousel/delete.html'
+
+    def get_success_url(self):
+        return reverse('staff-carousel-index')

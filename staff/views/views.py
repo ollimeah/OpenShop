@@ -14,6 +14,10 @@ def dashboard(request):
     return render(request, 'staff/dashboard.html', context)
 
 @user_passes_test(staff_check, login_url='staff-login')
+def home(request):
+    return render(request, 'staff/home/home.html', {})
+
+@user_passes_test(staff_check, login_url='staff-login')
 def settings(request):
     settings = Settings()
     if request.method == 'POST':

@@ -46,5 +46,13 @@ urlpatterns = [
     path('delivery/<int:pk>/update/', views.DeliveryUpdateView.as_view(), name='staff-delivery-update'),
     path('delivery/<int:pk>/delete/', views.DeliveryDeleteView.as_view(), name='staff-delivery-delete'),
 
+    path('home/', views.home, name='staff-home'),
+
+    path('carousel-images/', views.CarouselImageListView.as_view(), name='staff-carousel-index'),
+    path('carousel/new/', views.CarouselImageCreateView.as_view(), name='staff-carousel-new'),
+    path('carousel/<int:pk>/', views.CarouselImageDetailView.as_view(), name='staff-carousel'),
+    path('carousel/<int:pk>/update/', views.CarouselImageUpdateView.as_view(), name='staff-carousel-update'),
+    path('carousel/<int:pk>/delete/', views.CarouselImageDeleteView.as_view(), name='staff-carousel-delete'),
+
     path('settings/', views.settings, name='staff-settings'),
 ]
