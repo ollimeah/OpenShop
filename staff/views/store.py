@@ -7,10 +7,6 @@ class FAQListView(generic.ListView):
     context_object_name = 'faqs'
     template_name = 'faqs/index.html'
 
-class FAQDetailView(generic.DetailView):
-    model = FAQ
-    template_name = 'faqs/detail.html'
-
 class FAQCreateView(generic.edit.CreateView):
     model = FAQ
     fields = '__all__'

@@ -30,7 +30,6 @@ urlpatterns = [
 
     path('faqs/', views.FAQListView.as_view(), name='staff-faqs'),
     path('faqs/new/', views.FAQCreateView.as_view(), name='staff-faqs-new'),
-    path('faq/<int:pk>/', views.FAQDetailView.as_view(), name='staff-faq'),
     path('faq/<int:pk>/update/', views.FAQUpdateView.as_view(), name='staff-faq-update'),
     path('faq/<int:pk>/delete/', views.FAQDeleteView.as_view(), name='staff-faq-delete'),
 
