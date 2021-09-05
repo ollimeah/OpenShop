@@ -14,10 +14,12 @@ class Settings():
                 self.shop_name = settings['shop_name']
                 self.primary_colour = settings['primary_colour']
                 self.secondary_colour = settings['secondary_colour']
+                self.logo = settings['logo']
         except:
             self.shop_name = "No Name"
             self.primary_colour = "#c1c1c1"
             self.secondary_colour = "#c1c1c1"
+            self.logo = False
 
     def update(self, new_settings):
         try:
