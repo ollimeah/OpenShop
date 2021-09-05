@@ -1,11 +1,11 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from staff.models import Address, Category, Collection, Order, Product
+from staff.models import Address, CarouselImage, Category, Collection, Order, Product
 from storefront.models import Basket
 from django.views import generic
 from staff.forms import DeliveryChoiceForm, ShippingForm
 
 def home(request):
-    return render(request, 'storefront/home.html', {})
+    return render(request, 'storefront/home.html', {"carousel" : CarouselImage.objects.all()})
 
 class ProductListView(generic.ListView):
     model = Product

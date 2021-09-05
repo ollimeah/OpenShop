@@ -55,6 +55,10 @@ class Settings():
         r, g, b = Settings.to_rgb(self.secondary_colour[1:])
         return "#000000" if (((r * 0.299) + (g * 0.587) + (b * 0.114)) > 186) else "#FFFFFF"
 
+class CarouselImage(models.Model):
+    image = models.ImageField()
+    label = models.CharField(max_length=30, null=True)
+
 class Category(models.Model):
     name = models.CharField(max_length=30, unique=True)
 
