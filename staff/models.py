@@ -292,7 +292,7 @@ class Order(models.Model):
         order.add_products(basket.basketproduct_set.all())
         order.add_collections(basket.basketcollection_set.all())
         basket.address.delete()
-        basket.device.delete()
+        basket.delete()
         return order
 
     def add_shipping(self, address, delivery):
