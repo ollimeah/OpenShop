@@ -33,7 +33,11 @@
 
               <input type="hidden" name="next" value="{% url 'staff-dashboard' %}">
               <div class="d-grid">
+                {% if logout %}
+                <a href="{% url 'staff-login' %}" class="btn btn-primary btn-lg btn-block">Login</a>
+                {% else %}
                 <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
+                {% endif %}
               </div>
             </form>
           </div>
