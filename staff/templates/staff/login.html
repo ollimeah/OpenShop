@@ -2,27 +2,23 @@
 {% load widget_tweaks %}
 {% block title %} Staff Login {% endblock %}
 {% block content %}
-{% if form.errors %}
-<div class="alert alert-danger alert-dismissible fade show mb-0" role="alert">
-  Incorrect details. Please try again.
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-{% endif %}
-{% if logout %}
-<div class="alert alert-success alert-dismissible fade show mb-0" role="alert">
-  You have been logged out.
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-{% endif %}
 <section class="vh-100 primary-colour">
   <div class="container py-5 h-100">
+    {% if form.errors %}
+    <div class="alert alert-danger alert-dismissible fade show my-0 rounded-pill col-10 mx-auto shadow" role="alert">
+      Incorrect details. Please try again.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    {% if logout %}
+    <div class="alert alert-success alert-dismissible fade show my-0 rounded-pill col-10 mx-auto shadow" role="alert">
+      You have been logged out.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-10 col-md-8 col-lg-6 col-xl-5">
-        <div class="card shadow-2-strong rounded">
+        <div class="card shadow rounded">
           <div class="card-body p-5 text-center">
             <form action="{% url 'staff-login' %}" method="post">{% csrf_token %}
               <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
