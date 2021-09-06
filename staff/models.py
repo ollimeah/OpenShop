@@ -183,13 +183,13 @@ class Promotion(models.Model):
 
     code = models.CharField(max_length=30, unique=True)
     type = models.CharField(max_length=30, choices=TYPE_CHOICES)
-    max_uses = models.IntegerField(null=True)
+    max_uses = models.IntegerField(null=True, blank=True)
     amount = models.IntegerField()
-    max_discount = models.IntegerField(null=True)
-    min_spend = models.IntegerField(null=True)
-    customer_limit = models.IntegerField(null=True)
+    max_discount = models.IntegerField(null=True, blank=True)
+    min_spend = models.IntegerField(null=True, blank=True)
+    customer_limit = models.IntegerField(null=True, blank=True)
     active = models.BooleanField(default=True)
-    expiry = models.DateTimeField(null=True)
+    expiry = models.DateTimeField(null=True, blank=True)
     used = models.IntegerField(default=0)
 
     def is_eligible(self, total):
