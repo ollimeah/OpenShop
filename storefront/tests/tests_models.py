@@ -561,6 +561,7 @@ class OrderTest(TestCase):
     fixtures = ['categories.json', 'products.json', 'collections.json', 'promotions.json']
 
     def create_empty_basket(self):
+        Device.objects.all().delete()
         device = Device.objects.create()
         return Basket.objects.create(device=device), device
     
