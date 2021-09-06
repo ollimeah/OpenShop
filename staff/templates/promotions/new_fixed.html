@@ -1,0 +1,53 @@
+{% extends "main.html" %}
+{% load widget_tweaks %}
+{% block title %}New Fixed Promotion{% endblock title %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between pb-3">
+        <h2>New Fixed Promotion</h2>
+        <a href="{% url 'staff-promotions' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Promotions</button></a>
+    </div>
+
+    <form method="post">{% csrf_token %}
+        <div class="row mb-3">
+            <div class="col">
+                <label class="form-label">{{ form.code.label }}*</label>
+                {% render_field form.code class="form-control" placeholder="Code" %}
+            </div>
+            <div class="col">
+                <label class="form-label">{{ form.expiry.label }}</label>
+                {% render_field form.expiry class="form-control" placeholder="Expiry" type="datetime-local"%}
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <label class="form-label">{{ form.amount.label }}*</label>
+                {% render_field form.amount class="form-control" placeholder="Amount" type="number" %}
+            </div>
+            <div class="col">
+                <label class="form-label">Minimum spend</label>
+                {% render_field form.min_spend class="form-control" placeholder="Minimum Spend" type="number" %}
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <label class="form-label">Maximum uses</label>
+                {% render_field form.max_uses class="form-control" placeholder="Maximum uses" type="number" %}
+            </div>
+            <div class="col">
+                <label class="form-label">{{ form.customer_limit.label }}</label>
+                {% render_field form.customer_limit class="form-control" placeholder="Customer limit" type="number" %}
+            </div>
+        </div>
+        <div class="form-check form-switch mb-3">
+            {% render_field form.active class="form-check-input" type="checkbox" %}
+            <label class="form-check-label" for="id_active">{{ form.active.label }}</label>
+        </div>
+        <div class="d-grid col-4 mx-auto">
+            <button type="submit" class="btn btn-primary btn-block" value="Save">Create</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

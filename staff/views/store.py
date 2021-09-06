@@ -50,6 +50,18 @@ class PromotionCreateView(generic.edit.CreateView):
 
     def get_success_url(self):
         return reverse('staff-promotion', kwargs={'code' : self.object.code})
+    
+class FixedPromotionCreateView(generic.edit.CreateView):
+    model = Promotion
+    fields = ['code', 'max_uses', 'amount', 'min_spend', 'customer_limit', 'expiry', 'active']
+    template_name = 'promotions/new_fixed.html'
+
+    def get_success_url(self):
+        return reverse('staff-promotion', kwargs={'code' : self.object.code})
+    
+    def form_valid(self, form):
+        form.instance.type = Promotion.FIXED_PRICE
+        return super().form_valid(form)
 
 class PromotionUpdateView(generic.UpdateView):
     model = Promotion

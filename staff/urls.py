@@ -35,6 +35,7 @@ urlpatterns = [
 
     path('promotions/', views.PromotionListView.as_view(), name='staff-promotions'),
     path('promotions/new/', views.PromotionCreateView.as_view(), name='staff-promotions-new'),
+    path('promotions/fixed/new/', views.FixedPromotionCreateView.as_view(), name='staff-promotions-fixed-new'),
     path('promotion/<str:code>/', views.PromotionDetailView.as_view(), name='staff-promotion'),
     path('promotion/<str:code>/update/', views.PromotionUpdateView.as_view(), name='staff-promotion-update'),
     path('promotion/<str:code>/delete/', views.PromotionDeleteView.as_view(), name='staff-promotion-delete'),
