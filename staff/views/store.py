@@ -3,6 +3,8 @@ from django.views import generic
 from django.urls import reverse
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import redirect
+from .views import staff_check
+from django.contrib.auth.decorators import user_passes_test
 
 class StaffTestMixin(UserPassesTestMixin):
     def test_func(self):
@@ -32,42 +34,40 @@ class FAQDeleteView(FAQView, generic.DeleteView):
     def get(self, request, pk):
         return redirect('staff-faqs')
 
-class PromotionListView(generic.ListView):
+class PromotionListView(StaffTestMixin, generic.ListView):
     model = Promotion
     context_object_name = 'promotions'
     template_name = 'promotions/index.html'
 
-class PromotionDetailView(generic.DetailView):
+class PromotionDetailView(StaffTestMixin, generic.DetailView):
     model = Promotion
     template_name = 'promotions/detail.html'
     slug_field = 'code'
     slug_url_kwarg = 'code'
 
-class PercentagePromotionCreateView(generic.edit.CreateView):
+class PromotionCreateView(StaffTestMixin, generic.edit.CreateView):
     model = Promotion
-    fields = ['code', 'max_uses', 'amount', 'min_spend', 'customer_limit', 'expiry', 'active', 'max_discount']
-    template_name = 'promotions/new_percentage.html'
+    fields = ['code', 'max_uses', 'amount', 'min_spend', 'customer_limit', 'expiry', 'active']
 
     def get_success_url(self):
         return reverse('staff-promotion', kwargs={'code' : self.object.code})
+
+class PercentagePromotionCreateView(PromotionCreateView):
+    fields = ['code', 'max_uses', 'amount', 'min_spend', 'customer_limit', 'expiry', 'active', 'max_discount']
+    template_name = 'promotions/new_percentage.html'
     
     def form_valid(self, form):
         form.instance.type = Promotion.PERCENTAGE
         return super().form_valid(form)
     
-class FixedPromotionCreateView(generic.edit.CreateView):
-    model = Promotion
-    fields = ['code', 'max_uses', 'amount', 'min_spend', 'customer_limit', 'expiry', 'active']
+class FixedPromotionCreateView(PromotionCreateView):
     template_name = 'promotions/new_fixed.html'
-
-    def get_success_url(self):
-        return reverse('staff-promotion', kwargs={'code' : self.object.code})
     
     def form_valid(self, form):
         form.instance.type = Promotion.FIXED_PRICE
         return super().form_valid(form)
 
-class PromotionUpdateView(generic.UpdateView):
+class PromotionUpdateView(StaffTestMixin, generic.UpdateView):
     model = Promotion
     fields = '__all__'
     slug_field = 'code'
@@ -77,7 +77,7 @@ class PromotionUpdateView(generic.UpdateView):
     def get_success_url(self):
         return reverse('staff-promotion', kwargs={'code' : self.object.code})
 
-class PromotionDeleteView(generic.DeleteView):
+class PromotionDeleteView(StaffTestMixin, generic.DeleteView):
     model = Promotion
     template_name = 'promotions/delete.html'
     slug_field = 'code'
@@ -86,6 +86,7 @@ class PromotionDeleteView(generic.DeleteView):
     def get_success_url(self):
         return reverse('staff-promotions')
 
+@user_passes_test(staff_check, login_url='staff-login')
 def disable_promotions(request):
     Promotion.disable_all()
     return redirect('staff-promotions')
