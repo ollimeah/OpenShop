@@ -1,12 +1,28 @@
 {% extends "main.html" %}
-
+{% load widget_tweaks %}
 {% block title %}{% if faq == None %}New{% else %}Edit{% endif %} FAQ{% endblock title %}
 
 {% block content %}
+<div class="container py-5">
 
-<form method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Save">
-</form>
+    <div class="d-flex justify-content-between pb-3">
+        <h2>{% if faq == None %}New{% else %}Edit{% endif %} FAQ</h2>
+        <a href="{% url 'staff-faqs' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> FAQs</button></a>
+    </div>
+    
+    <form method="post">{% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">{{ form.question.label }}</label>
+            {% render_field form.question class="form-control" rows="1" placeholder="Question" %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">{{ form.answer.label }}</label>
+            {% render_field form.answer class="form-control" rows="3" placeholder="Answer" %}
+        </div>
+        <div class="d-grid col-4 mx-auto">
+            <button type="submit" class="btn btn-primary btn-block" value="Save">{% if faq == None %}Create{% else %}Save{% endif %}</button>
+        </div>
+    </form>
 
+</div>
 {% endblock content %}
