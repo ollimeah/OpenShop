@@ -216,6 +216,10 @@ class Promotion(models.Model):
                 return round(discount_cost, 2)
         else:
             return self.amount
+    
+    @classmethod
+    def disable_all(cls):
+        Promotion.objects.all().update(active=False)
 
 class Address(models.Model):
     name = models.CharField(max_length=127)

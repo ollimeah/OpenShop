@@ -8,27 +8,45 @@
     <div class="d-flex justify-content-between pb-3">
         <h2>Promotions</h2>
         <div>
-            <a href="{% url 'staff-promotions-new' %}" class="align-self-center"><button type="button" class="btn btn-primary">Create promotion</button></a>
-            <a href="#" class="align-self-center"><button type="button" class="btn btn-primary">Disable all</button></a>
+            <a href="{% url 'staff-promotions-new' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Create promotion</a>
+            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#disableModal"><i class="bi bi-x-lg"></i> Disable all</button>
         </div>
     </div>
 
     <div class="list-group">
         {% for promotion in promotions %}
-        <a href="{% url 'staff-promotion' promotion.code %}" class="list-group-item list-group-item-action">
+        <a href="{% url 'staff-promotion' promotion.code %}" class="list-group-item list-group-item-action py-3">
             <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ promotion.code }}</h5>
-                <small>{{ promotion.used }}/{{ promotion.max_uses }}</small>
+                <h5 class="mb-1">Code: {{ promotion.code }}</h5>
+                {% if promotion.active %}
+                <small class="text-success fw-bold">Active</small>
+                {% else %}
+                <small class="text-danger fw-bold">Inactive</small>
+                {% endif %}
             </div>
-            <p class="mb-1">{{ promotion.type }}</p>
-            {% if promotion.active %}
-            <small>Active</small>
-            {% else %}
-            <small>Inactive</small>
-            {% endif %}
+            <div class="d-flex w-100 justify-content-between">
+                <p class="mb-1">{{ promotion.type }} promotion</p>
+                <small>{{ promotion.used }}/{{ promotion.max_uses }} used</small>
+            </div>
+            <p class="mb-0">Expires: {{ promotion.expiry }}</p>
         </a>
         {% endfor %}
     </div>
+</div>
+<div class="modal fade" id="disableModal" tabindex="-1" aria-labelledby="disableModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="disableModalLabel">Disable Promotions</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModal"></button>
+      </div>
+      <div class="modal-body">Are you sure you want to disable all promotions?</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+        <a href="{% url 'staff-disable-promotions' %}" class="btn btn-danger">Confirm</button></a>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock content %}

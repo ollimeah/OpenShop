@@ -70,6 +70,10 @@ class PromotionDeleteView(generic.DeleteView):
     def get_success_url(self):
         return reverse('staff-promotions')
 
+def disable_promotions(request):
+    Promotion.disable_all()
+    return redirect('staff-promotions')
+
 class DeliveryListView(generic.ListView):
     model = Delivery
     context_object_name = 'deliveries'

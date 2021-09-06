@@ -546,6 +546,12 @@ class PromotionTest(TestCase):
         total = promo.min_spend + promo.max_discount + 1
         promo_amount = Decimal(promo.max_discount/100) * total
         self.assertEqual(promo.get_discount(total), round(promo_amount, 2))
+    
+    def test_disable_all(self):
+        Promotion.objects.all().update(active=True)
+        Promotion.disable_all()
+        for promo in Promotion.objects.all():
+            self.assertFalse(promo.active)
 
 class DeliveryTest(TestCase):
 
