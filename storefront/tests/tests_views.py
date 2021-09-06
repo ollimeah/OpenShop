@@ -32,8 +32,8 @@ class LoginTest(TestCase):
         self.assertTemplateUsed(response, 'staff/login.html')
 
 class DashboardTest(TestCase):
-
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         username = 'staff'
         password = 'test_password'
         staff = User.objects.create_user(username=username, password=password)
