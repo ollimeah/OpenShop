@@ -43,13 +43,17 @@ class PromotionDetailView(generic.DetailView):
     slug_field = 'code'
     slug_url_kwarg = 'code'
 
-class PromotionCreateView(generic.edit.CreateView):
+class PercentagePromotionCreateView(generic.edit.CreateView):
     model = Promotion
-    fields = '__all__'
-    template_name = 'promotions/new.html'
+    fields = ['code', 'max_uses', 'amount', 'min_spend', 'customer_limit', 'expiry', 'active', 'max_discount']
+    template_name = 'promotions/new_percentage.html'
 
     def get_success_url(self):
         return reverse('staff-promotion', kwargs={'code' : self.object.code})
+    
+    def form_valid(self, form):
+        form.instance.type = Promotion.PERCENTAGE
+        return super().form_valid(form)
     
 class FixedPromotionCreateView(generic.edit.CreateView):
     model = Promotion

@@ -34,7 +34,7 @@ urlpatterns = [
     path('faq/<int:pk>/delete/', views.FAQDeleteView.as_view(), name='staff-faq-delete'),
 
     path('promotions/', views.PromotionListView.as_view(), name='staff-promotions'),
-    path('promotions/new/', views.PromotionCreateView.as_view(), name='staff-promotions-new'),
+    path('promotions/percentage/new/', views.PercentagePromotionCreateView.as_view(), name='staff-promotions-percentage-new'),
     path('promotions/fixed/new/', views.FixedPromotionCreateView.as_view(), name='staff-promotions-fixed-new'),
     path('promotion/<str:code>/', views.PromotionDetailView.as_view(), name='staff-promotion'),
     path('promotion/<str:code>/update/', views.PromotionUpdateView.as_view(), name='staff-promotion-update'),
