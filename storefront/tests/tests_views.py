@@ -20,6 +20,11 @@ class URLTestCase(TestCase):
         response = self.client.get(get_url)
         self.assertRedirects(response, redirect_url)
     
+    def redirect_test_with_login(self, get_url, redirect_url):
+        self.login_staff()
+        response = self.client.get(get_url)
+        self.assertRedirects(response, redirect_url)
+    
     def url_ok_test_with_login(self, get_url):
         self.login_staff()
         response = self.client.get(get_url)
@@ -101,7 +106,7 @@ class FAQTest(URLTestCase):
         self.url_ok_test_with_login(reverse('staff-faqs-new'))
 
     def test_new_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-faqs-new'), 'faqs/new.html')
+        self.template_test_with_login(reverse('staff-faqs-new'), 'faqs/view.html')
     
     def test_update_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-faq-update', kwargs={'pk':1}), '/staff/?next=/staff/faq/1/update/')
@@ -113,16 +118,13 @@ class FAQTest(URLTestCase):
         self.url_ok_test_with_login(reverse('staff-faq-update', kwargs={'pk':1}))
 
     def test_update_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-faq-update', kwargs={'pk':1}), 'faqs/update.html')
+        self.template_test_with_login(reverse('staff-faq-update', kwargs={'pk':1}), 'faqs/view.html')
     
     def test_delete_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-faq-delete', kwargs={'pk':1}), '/staff/?next=/staff/faq/1/delete/')
     
     def test_delete_url_exists_at_desired_location(self):
-        self.url_ok_test_with_login('/staff/faq/1/delete/')
+        self.redirect_test_with_login('/staff/faq/1/delete/', '/staff/faqs/')
 
     def test_delete_url_accessible_by_name(self):
-        self.url_ok_test_with_login(reverse('staff-faq-delete', kwargs={'pk':1}))
-
-    def test_delete_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-faq-delete', kwargs={'pk':1}), 'faqs/index.html')
+        self.redirect_test_with_login(reverse('staff-faq-delete', kwargs={'pk':1}), '/staff/faqs/')

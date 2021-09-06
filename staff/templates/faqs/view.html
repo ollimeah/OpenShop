@@ -1,6 +1,6 @@
 {% extends "main.html" %}
 
-{% block title %}New FAQ{% endblock title %}
+{% block title %}{% if faq == None %}New{% else %}Edit{% endif %} FAQ{% endblock title %}
 
 {% block content %}
 

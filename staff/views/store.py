@@ -2,6 +2,7 @@ from staff.models import FAQ, Promotion, Delivery, CarouselImage
 from django.views import generic
 from django.urls import reverse
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.shortcuts import redirect
 
 class StaffTestMixin(UserPassesTestMixin):
     def test_func(self):
@@ -15,28 +16,21 @@ class FAQListView(StaffTestMixin, generic.ListView):
     context_object_name = 'faqs'
     template_name = 'faqs/index.html'
 
-class FAQCreateView(StaffTestMixin, generic.edit.CreateView):
+class FAQView(StaffTestMixin):
     model = FAQ
     fields = '__all__'
-    template_name = 'faqs/new.html'
+    template_name = 'faqs/view.html'
 
     def get_success_url(self):
         return reverse('staff-faqs')
 
-class FAQUpdateView(StaffTestMixin, generic.UpdateView):
-    model = FAQ
-    fields = '__all__'
-    template_name = 'faqs/update.html'
+class FAQCreateView(FAQView, generic.edit.CreateView): pass
 
-    def get_success_url(self):
-        return reverse('staff-faqs')
+class FAQUpdateView(FAQView, generic.UpdateView): pass
 
-class FAQDeleteView(StaffTestMixin, generic.DeleteView):
-    model = FAQ
-    template_name = 'faqs/index.html'
-
-    def get_success_url(self):
-        return reverse('staff-faqs')
+class FAQDeleteView(FAQView, generic.DeleteView):
+    def get(self, request, pk):
+        return redirect('staff-faqs')
 
 class PromotionListView(generic.ListView):
     model = Promotion
