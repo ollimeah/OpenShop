@@ -44,3 +44,4 @@ class OrderListView(StaffTestMixin, generic.ListView):
     model = Order
     template_name = 'staff/orders/index.html'
     context_object_name = 'orders'
+    ordering = ['-date_ordered']
