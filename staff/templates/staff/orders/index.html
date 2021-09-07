@@ -1,0 +1,24 @@
+{% extends "main.html" %}
+{% load humanize %}
+{% block title %}Orders{% endblock title %}
+
+{% block content %}
+
+<div class='container py-5'>
+    <div class="d-flex justify-content-between pb-3">
+        <h2>Orders</h2>
+    </div>
+
+    <div class="list-group">
+        {% for order in orders %}
+        <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">Order #{{ order.id }}<span class="badge badge-info">{{ order.num_items }} items</span></h5>
+                <p class="text-muted small mb-0" data-toggle="tooltip" data-placement="bottom" title="{{order.date_ordered}}">{{order.date_ordered|naturaltime}}</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

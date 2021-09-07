@@ -4,6 +4,7 @@ from staff.models import Order, Product, Settings
 from django.contrib.auth.decorators import user_passes_test
 from django.urls import reverse
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.views import generic
 
 def staff_check(user):
     return user.groups.filter(name='Staff').exists()
@@ -38,3 +39,8 @@ def settings(request):
         
     context = {'form': form}
     return render(request, 'settings.html', context)
+
+class OrderListView(StaffTestMixin, generic.ListView):
+    model = Order
+    template_name = 'staff/orders/index.html'
+    context_object_name = 'orders'
