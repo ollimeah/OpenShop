@@ -16,6 +16,7 @@
                 <div>
                     <h5>Order #{{ order.id }} <span class="badge bg-info text-dark">{{ order.num_items }} items</span></h5>
                     <h6>Total: £{{ order.final_price }}</h6>
+                    <p class="mb-0">For {{ order.ordershipping.address_name }}</p>
                 </div>
                 <div>
                     <h5 class="text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="{{order.date_ordered}}">{{order.date_ordered|naturaltime}}</h5>
