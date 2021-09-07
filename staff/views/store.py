@@ -77,7 +77,8 @@ class PromotionUpdateView(PromotionView, generic.UpdateView):
         return super().get(request, *args, **kwargs)
 
 class PromotionDeleteView(PromotionView, generic.DeleteView):
-    template_name = 'promotions/delete.html'
+    def get(self, request, code):
+        return redirect('staff-promotions')
 
     def get_success_url(self):
         return reverse('staff-promotions')
