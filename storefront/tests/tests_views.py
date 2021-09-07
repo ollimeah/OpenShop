@@ -2,7 +2,7 @@ from django.http import response
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User, Group
-from staff.models import FAQ, Promotion
+from staff.models import FAQ, Delivery, Promotion
 
 class URLTestCase(TestCase):
     @classmethod
@@ -270,3 +270,72 @@ class PromotionTest(URLTestCase):
         self.client.get(reverse('staff-disable-promotions'))
         for promotion in Promotion.objects.all():
             self.assertFalse(promotion.active)
+
+class DeliveryTest(URLTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        Delivery.objects.create(name="Test", price="10")
+    
+    def test_index_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-deliveries'), '/staff/?next=/staff/deliveries/')
+    
+    def test_index_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/deliveries/')
+
+    def test_index_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-deliveries'))
+
+    def test_index_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-deliveries'), 'delivery/index.html')
+    
+    def test_new_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-deliveries-new'), '/staff/?next=/staff/deliveries/new/')
+    
+    def test_post_new_redirect_if_not_logged_in(self):
+        response = self.client.post(reverse('staff-deliveries-new'), {'name':'Test', 'price':'10'}, follow=True)
+        self.assertRedirects(response, '/staff/?next=/staff/deliveries/new/')
+    
+    def test_new_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/deliveries/new/')
+
+    def test_new_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-deliveries-new'))
+
+    def test_new_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-deliveries-new'), 'delivery/view.html')
+    
+    def test_post_new(self):
+        self.login_staff()
+        response = self.client.post(reverse('staff-deliveries-new'), {'name':'Test2', 'price':'10'}, follow=True)
+        self.assertRedirects(response, reverse('staff-deliveries'))
+    
+    def test_update_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-delivery-update', kwargs={'pk':1}), '/staff/?next=/staff/delivery/1/update/')
+    
+    def test_post_update_redirect_if_not_logged_in(self):
+        response = self.client.post(reverse('staff-delivery-update', kwargs={'pk':1}), {'name':'Test2', 'price':'10'}, follow=True)
+        self.assertRedirects(response, '/staff/?next=/staff/delivery/1/update/')
+    
+    def test_update_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/delivery/1/update/')
+
+    def test_update_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-delivery-update', kwargs={'pk':1}))
+
+    def test_update_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-delivery-update', kwargs={'pk':1}), 'delivery/view.html')
+    
+    def test_post_update(self):
+        self.login_staff()
+        response = self.client.post(reverse('staff-delivery-update', kwargs={'pk':1}), {'name':'Test2', 'price':'10'}, follow=True)
+        self.assertRedirects(response, reverse('staff-deliveries'))
+    
+    def test_delete_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-delivery-delete', kwargs={'pk':1}), '/staff/?next=/staff/delivery/1/delete/')
+    
+    def test_delete_url_exists_at_desired_location(self):
+        self.redirect_test_with_login('/staff/delivery/1/delete/', '/staff/deliveries/')
+
+    def test_delete_url_accessible_by_name(self):
+        self.redirect_test_with_login(reverse('staff-delivery-delete', kwargs={'pk':1}), '/staff/deliveries/')
