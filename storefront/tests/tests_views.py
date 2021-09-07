@@ -2,7 +2,7 @@ from django.http import response
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User, Group
-from staff.models import FAQ
+from staff.models import FAQ, Promotion
 
 class URLTestCase(TestCase):
     @classmethod
@@ -147,3 +147,126 @@ class FAQTest(URLTestCase):
 
     def test_delete_url_accessible_by_name(self):
         self.redirect_test_with_login(reverse('staff-faq-delete', kwargs={'pk':1}), '/staff/faqs/')
+
+class PromotionTest(URLTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        Promotion.objects.create(code="Test", type=Promotion.FIXED_PRICE, amount=10)
+        Promotion.objects.create(code="TestP", type=Promotion.PERCENTAGE, amount=10)
+
+    def test_index_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-promotions'), '/staff/?next=/staff/promotions/')
+    
+    def test_index_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/promotions/')
+
+    def test_index_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-promotions'))
+
+    def test_index_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-promotions'), 'promotions/index.html')
+    
+    def test_detail_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-promotion', kwargs={'code':'Test'}), '/staff/?next=/staff/promotion/Test/')
+    
+    def test_detail_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/promotion/Test/')
+
+    def test_detail_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-promotion', kwargs={'code':'Test'}))
+
+    def test_detail_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-promotion', kwargs={'code':'Test'}), 'promotions/detail.html')
+    
+    def test_new_fixed_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-promotions-fixed-new'), '/staff/?next=/staff/promotions/fixed/new/')
+    
+    def test_post_new_fixed_redirect_if_not_logged_in(self):
+        response = self.client.post(reverse('staff-promotions-fixed-new'), {'code':"Test2", 'amount':'10'}, follow=True)
+        self.assertRedirects(response, '/staff/?next=/staff/promotions/fixed/new/')
+    
+    def test_new_fixed_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/promotions/fixed/new/')
+
+    def test_new_fixed_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-promotions-fixed-new'))
+
+    def test_new_fixed_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-promotions-fixed-new'), 'promotions/fixed.html')
+    
+    def test_post_new_fixed(self):
+        self.login_staff()
+        response = self.client.post(reverse('staff-promotions-fixed-new'), {'code':"Test2", 'amount':'10'}, follow=True)
+        self.assertEqual(Promotion.FIXED_PRICE, Promotion.objects.get(code='Test2').type)
+        self.assertRedirects(response, reverse('staff-promotion', kwargs={'code':'Test2'}))
+    
+    def test_new_percentage_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-promotions-percentage-new'), '/staff/?next=/staff/promotions/percentage/new/')
+    
+    def test_post_new_percentage_redirect_if_not_logged_in(self):
+        response = self.client.post(reverse('staff-promotions-percentage-new'), {'code':"Test2", 'amount':'10'}, follow=True)
+        self.assertRedirects(response, '/staff/?next=/staff/promotions/percentage/new/')
+    
+    def test_new_percentage_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/promotions/percentage/new/')
+
+    def test_new_percentage_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-promotions-percentage-new'))
+
+    def test_new_percentage_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-promotions-percentage-new'), 'promotions/percentage.html')
+    
+    def test_post_new_percentage(self):
+        self.login_staff()
+        response = self.client.post(reverse('staff-promotions-percentage-new'), {'code':"Test2", 'amount':'10'}, follow=True)
+        self.assertEqual(Promotion.PERCENTAGE, Promotion.objects.get(code='Test2').type)
+        self.assertRedirects(response, reverse('staff-promotion', kwargs={'code':'Test2'}))
+    
+    def test_update_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-promotion-update', kwargs={'code':'Test'}), '/staff/?next=/staff/promotion/Test/update/')
+    
+    def test_post_update_redirect_if_not_logged_in(self):
+        response = self.client.post(reverse('staff-promotion-update', kwargs={'code':'Test'}), {'amount':'10'}, follow=True)
+        self.assertRedirects(response, '/staff/?next=/staff/promotion/Test/update/')
+    
+    def test_update_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/promotion/Test/update/')
+
+    def test_update_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-promotion-update', kwargs={'code':'Test'}))
+
+    def test_update_fixed_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-promotion-update', kwargs={'code':'Test'}), 'promotions/fixed.html')
+    
+    def test_update_fixed_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-promotion-update', kwargs={'code':'TestP'}), 'promotions/percentage.html')
+    
+    def test_post_update(self):
+        self.login_staff()
+        response = self.client.post(reverse('staff-promotion-update', kwargs={'code':'Test'}), {'code':'Test', 'amount':'100'}, follow=True)
+        self.assertRedirects(response, reverse('staff-promotion', kwargs={'code':'Test'}))
+    
+    def test_delete_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-promotion-delete', kwargs={'code':'Test'}), '/staff/?next=/staff/promotion/Test/delete/')
+    
+    def test_delete_url_exists_at_desired_location(self):
+        self.redirect_test_with_login('/staff/promotion/Test/delete/', '/staff/promotions/')
+
+    def test_delete_url_accessible_by_name(self):
+        self.redirect_test_with_login(reverse('staff-promotion-delete', kwargs={'code':'Test'}), '/staff/promotions/')
+    
+    def test_disable_all_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-disable-promotions'), '/staff/?next=/staff/promotions/disable-all/')
+    
+    def test_disable_all_url_exists_at_desired_location(self):
+        self.redirect_test_with_login('/staff/promotions/disable-all/', '/staff/promotions/')
+
+    def test_disable_all_url_accessible_by_name(self):
+        self.redirect_test_with_login(reverse('staff-disable-promotions'), '/staff/promotions/')
+    
+    def test_disable_all(self):
+        self.login_staff()
+        self.client.get(reverse('staff-disable-promotions'))
+        for promotion in Promotion.objects.all():
+            self.assertFalse(promotion.active)

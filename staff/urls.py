@@ -39,7 +39,7 @@ urlpatterns = [
     path('promotion/<str:code>/', views.PromotionDetailView.as_view(), name='staff-promotion'),
     path('promotion/<str:code>/update/', views.PromotionUpdateView.as_view(), name='staff-promotion-update'),
     path('promotion/<str:code>/delete/', views.PromotionDeleteView.as_view(), name='staff-promotion-delete'),
-    path('promotions/disable-all', views.disable_promotions, name='staff-disable-promotions'),
+    path('promotions/disable-all/', views.disable_promotions, name='staff-disable-promotions'),
 
     path('deliveries/', views.DeliveryListView.as_view(), name='staff-deliveries'),
     path('deliveries/new/', views.DeliveryCreateView.as_view(), name='staff-deliveries-new'),
