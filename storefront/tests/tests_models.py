@@ -1,6 +1,6 @@
 from django.utils import timezone
 from storefront.models import Basket, BasketCollection, BasketProduct, Device
-from staff.models import Address, Category, Collection, Delivery, Order, OrderCollection, OrderCollectionProduct, OrderProduct, Product, Promotion
+from staff.models import Address, Category, Collection, Delivery, Order, OrderCollection, OrderCollectionProduct, OrderProduct, OrderShipping, Product, Promotion
 from django.test import TestCase
 import uuid
 from random import randint
@@ -571,6 +571,14 @@ class DeliveryTest(TestCase):
     def test_to_string(self):
         delivery = self.create_delivery()
         self.assertEqual('Test', str(delivery))
+    
+    def test_num_used(self):
+        orders = randint(1, 10)
+        delivery = self.create_delivery()
+        for i in range(orders):
+            OrderShipping.objects.create(order=Order.objects.create(), address_name='Test Name', line_1='Test Line 1', 
+                city='Test City', postcode='A12 3BC', delivery_name=delivery.name, delivery_price=delivery.price)
+        self.assertEqual(orders, delivery.num_used)
 
 class OrderTest(TestCase):
     fixtures = ['categories.json', 'products.json', 'collections.json', 'promotions.json']

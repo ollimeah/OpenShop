@@ -242,6 +242,10 @@ class Delivery(models.Model):
 
     def __str__(self):
         return self.name
+    
+    @property
+    def num_used(self):
+        return OrderShipping.objects.filter(delivery_name=self.name).count()
 
 class Order(models.Model):
     promotion_code = models.CharField(max_length=30, null=True)
