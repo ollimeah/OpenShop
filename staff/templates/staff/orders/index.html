@@ -13,8 +13,8 @@
         {% for order in orders %}
         <a href="#" class="list-group-item list-group-item-action">
             <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">Order #{{ order.id }}<span class="badge badge-info">{{ order.num_items }} items</span></h5>
-                <p class="text-muted small mb-0" data-toggle="tooltip" data-placement="bottom" title="{{order.date_ordered}}">{{order.date_ordered|naturaltime}}</p>
+                <h5>Order #{{ order.id }} <span class="badge bg-info text-dark">{{ order.num_items }} items</span></h5>
+                <p data-toggle="tooltip" data-placement="bottom" title="{{order.date_ordered}}">{{order.date_ordered|naturaltime}}</p>
             </div>
         </a>
         {% endfor %}
