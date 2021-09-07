@@ -1,3 +1,4 @@
+from django.http import response
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User, Group
@@ -99,6 +100,10 @@ class FAQTest(URLTestCase):
     def test_new_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-faqs-new'), '/staff/?next=/staff/faqs/new/')
     
+    def test_post_new_redirect_if_not_logged_in(self):
+        response = self.client.post(reverse('staff-faqs-new'), {'question':'Test', 'answer':'Test'}, follow=True)
+        self.assertRedirects(response, '/staff/?next=/staff/faqs/new/')
+    
     def test_new_url_exists_at_desired_location(self):
         self.url_ok_test_with_login('/staff/faqs/new/')
 
@@ -108,8 +113,17 @@ class FAQTest(URLTestCase):
     def test_new_uses_correct_template(self):
         self.template_test_with_login(reverse('staff-faqs-new'), 'faqs/view.html')
     
+    def test_post_new(self):
+        self.login_staff()
+        response = self.client.post(reverse('staff-faqs-new'), {'question':'Test', 'answer':'Test'}, follow=True)
+        self.assertRedirects(response, reverse('staff-faqs'))
+    
     def test_update_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-faq-update', kwargs={'pk':1}), '/staff/?next=/staff/faq/1/update/')
+    
+    def test_post_update_redirect_if_not_logged_in(self):
+        response = self.client.post(reverse('staff-faq-update', kwargs={'pk':1}), {'question':'Test', 'answer':'Test'}, follow=True)
+        self.assertRedirects(response, '/staff/?next=/staff/faq/1/update/')
     
     def test_update_url_exists_at_desired_location(self):
         self.url_ok_test_with_login('/staff/faq/1/update/')
@@ -119,6 +133,11 @@ class FAQTest(URLTestCase):
 
     def test_update_uses_correct_template(self):
         self.template_test_with_login(reverse('staff-faq-update', kwargs={'pk':1}), 'faqs/view.html')
+    
+    def test_post_update(self):
+        self.login_staff()
+        response = self.client.post(reverse('staff-faq-update', kwargs={'pk':1}), {'question':'Test', 'answer':'Test'}, follow=True)
+        self.assertRedirects(response, reverse('staff-faqs'))
     
     def test_delete_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-faq-delete', kwargs={'pk':1}), '/staff/?next=/staff/faq/1/delete/')
