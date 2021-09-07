@@ -698,6 +698,13 @@ class OrderTest(TestCase):
         order = Order.create_order_and_empty_basket(basket)
         self.assertEqual(order.item_total_with_discount, total)
     
+    def test_final_price(self):
+        basket, prices = self.create_full_basket()
+        total = sum(prices) - basket.promotion_amount
+        total += Delivery.objects.get(name='Test Delivery').price
+        order = Order.create_order_and_empty_basket(basket)
+        self.assertEqual(order.final_price, total)
+    
     def test_sales_today(self):
         num_orders = randint(1, 20)
         total = 0

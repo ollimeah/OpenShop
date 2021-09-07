@@ -283,6 +283,10 @@ class Order(models.Model):
             return self.item_total_cost - self.discount_amount
         else: return self.item_total_cost
     
+    @property
+    def final_price(self):
+        return self.item_total_with_discount + self.ordershipping.delivery_price
+    
     @classmethod
     def sales_today(order):
         total = 0

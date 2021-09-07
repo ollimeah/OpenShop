@@ -13,8 +13,18 @@
         {% for order in orders %}
         <a href="#" class="list-group-item list-group-item-action">
             <div class="d-flex w-100 justify-content-between">
-                <h5>Order #{{ order.id }} <span class="badge bg-info text-dark">{{ order.num_items }} items</span></h5>
-                <p data-toggle="tooltip" data-placement="bottom" title="{{order.date_ordered}}">{{order.date_ordered|naturaltime}}</p>
+                <div>
+                    <h5>Order #{{ order.id }} <span class="badge bg-info text-dark">{{ order.num_items }} items</span></h5>
+                    <h6>Total: £{{ order.final_price }}</h6>
+                </div>
+                <div>
+                    <h5 class="text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="{{order.date_ordered}}">{{order.date_ordered|naturaltime}}</h5>
+                    {% if order.shipped %}
+                    <p class="text-success fw-bold mb-0">Shipped</p>
+                    {% else %}
+                    <p class="text-danger fw-bold mb-0">Not Shipped</p>
+                    {% endif %}
+                </div>
             </div>
         </a>
         {% endfor %}
