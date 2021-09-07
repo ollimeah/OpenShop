@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="container py-5">
-    <div class="d-flex justify-content-between mb-5 pb-2 border-bottom">
+    <div class="d-flex justify-content-between mb-2 pb-2 border-bottom">
         <h2>{{object.code}}</h2>
         <div>
             <a href="{% url 'staff-promotions' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Promotions</button></a>
@@ -13,14 +13,21 @@
             <a href="{% url 'staff-promotion-delete' object.code %}" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="bi bi-trash-fill"></i> Delete</button></a>
         </div>
     </div>
+    <div class="d-flex justify-content-between mb-4">
+        <h4>{{object.type}} promotion</h4>
+        {% if promotion.active %}
+        <h4 class="text-success fw-bold">Active</h4>
+        {% else %}
+        <h4 class="text-danger fw-bold">Inactive</h4>
+        {% endif %}
+    </div>
 
     <div class="row justify-content-center">
         <div class="col-lg-3 col-6">
             <div class="card py-2 mb-4">
                 <div class="card-body">
-                    <p class="font-weight-bold text-primary text-uppercase mb-0">Sold</p>
-                    <p class="text-uppercase text-secondary small mb-0">All time</p>
-                    <p class="h3 mb-0 text-right">-1</p>
+                    <p class="font-weight-bold text-success text-uppercase mb-0">Amount</p>
+                    <p class="h3 mb-0 text-right">{% if promotion.type == 'Percentage' %}{{ promotion.amount }}%{% else %}£{{ promotion.amount }}{% endif %}</p>
                 </div>
             </div>
         </div>
@@ -28,9 +35,8 @@
         <div class="col-lg-3 col-6">
             <div class="card py-2 mb-4">
                 <div class="card-body">
-                    <p class="font-weight-bold text-primary text-uppercase mb-0">Sold</p>
-                    <p class="text-uppercase text-secondary small mb-0">Today</p>
-                    <p class="h3 mb-0 text-right">-1</p>
+                    <p class="font-weight-bold text-primary text-uppercase mb-0">Used</p>
+                    <p class="h3 mb-0 text-right">{{ promotion.used }}/{% if promotion.max_uses %}{{ promotion.max_uses }}{% else %}Unlimited{% endif %}</p>
                 </div>
             </div>
         </div>
@@ -38,9 +44,8 @@
         <div class="col-lg-3 col-6">
             <div class="card py-2 mb-4">
                 <div class="card-body">
-                    <p class="font-weight-bold text-success text-uppercase mb-0">In Basket</p>
-                    <p class="text-uppercase text-secondary small mb-0">Not sold yet</p>
-                    <p class="h3 mb-0 text-right">-1</p>
+                    <p class="font-weight-bold text-warning text-uppercase mb-0">Min Spend</p>
+                    <p class="h3 mb-0 text-right">{% if promotion.min_spend %}£{% endif %}{{ promotion.min_spend }}</p>
                 </div>
             </div>
         </div>
@@ -48,68 +53,19 @@
         <div class="col-lg-3 col-6">
             <div class="card py-2 mb-4">
                 <div class="card-body">
-                    <p class="font-weight-bold text-warning text-uppercase mb-0">Views</p>
-                    <p class="text-uppercase text-secondary small mb-0">Today</p>
-                    <p class="h3 mb-0 text-right">-1</p>
+                    <p class="font-weight-bold text-primary text-uppercase mb-0">Max Discount</p>
+                    <p class="h3 mb-0 text-right">{% if promotion.max_discount %}£{% endif %}{{ promotion.max_discount }}</p>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="card mb-5 shadow">
-        <div class="card-header bg-white">
-            <h5 class="mb-0">Basic Information</h5>
-        </div>
-        <div class="card-body">
-            <h6>{{ object.name }}</h6>
-            <p>{{ object.description }}</p>
-        </div>
-    </div>
-
-    <div class="card mb-5 shadow">
-        <div class="card-header bg-white">
-            <h5 class="mb-0">Pricing and Availability</h5>
-        </div>
-        <div class="card-body">
-            <div class="row mb-3">
-                <div class="col">
-                    <p>£{{ object.price }}</p>
-                </div>
-                <div class="col">
-                    <p>Min: {{ object.min }}</p>
-                </div>
-                <div class="col">
-                    <p>Max: {{ object.max }}</p>
-                </div>
-            </div>
-            <div class="mb-3">
-                <p>{{ object.category }}</p>
-            </div>
-            <div class="row mb-3">
-                <div class="col">
-                    <p>Available: {{ object.available }}</p>
-                </div>
-                <div class="col">
-                    <p>Hidden: {{ object.hidden }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card mb-5 shadow">
-      <div class="card-header bg-white d-flex justify-content-between">
-        <h5 class="mb-0 align-self-center">Main Image</h5>
-        <fieldset class="form-group mb-0">
-          <a onclick="$('#main_file').click()" class="btn btn-dark">CHANGE IMAGE</a>
-          <input id="main_file" type="file" class="d-none" name="main_file"/>
-        </fieldset>
-      </div>
-      <div class="card-body">
-        <div class="col-lg-2 col-md-4 col-6">
-          <img src="{{object.imageURL}}" id="preview" class="w-100">
-        </div>
-      </div>
-    </div>
+    {% if promotion.expiry %}
+    <h5>This promotion is active until {{ promotion.expiry }}</h5>
+    {% else %}
+    <h5>This promotion has no expiry date</h5>
+    {% endif %}
+    <br>
+    <h5>So far customers have saved £{{ promotion.total_saved }} with this code<h5>
 </div>
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog">
