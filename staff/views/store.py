@@ -39,49 +39,45 @@ class PromotionListView(StaffTestMixin, generic.ListView):
     context_object_name = 'promotions'
     template_name = 'promotions/index.html'
 
-class PromotionDetailView(StaffTestMixin, generic.DetailView):
+class PromotionView(StaffTestMixin):
     model = Promotion
-    template_name = 'promotions/detail.html'
     slug_field = 'code'
     slug_url_kwarg = 'code'
-
-class PromotionCreateView(StaffTestMixin, generic.edit.CreateView):
-    model = Promotion
     fields = ['code', 'max_uses', 'amount', 'min_spend', 'customer_limit', 'expiry', 'active']
 
     def get_success_url(self):
         return reverse('staff-promotion', kwargs={'code' : self.object.code})
 
-class PercentagePromotionCreateView(PromotionCreateView):
+class PromotionDetailView(PromotionView, generic.DetailView):
+    template_name = 'promotions/detail.html'
+
+class PercentagePromotionCreateView(PromotionView, generic.edit.CreateView):
     fields = ['code', 'max_uses', 'amount', 'min_spend', 'customer_limit', 'expiry', 'active', 'max_discount']
-    template_name = 'promotions/new_percentage.html'
-    
+    template_name = 'promotions/percentage.html'
+
     def form_valid(self, form):
         form.instance.type = Promotion.PERCENTAGE
         return super().form_valid(form)
     
-class FixedPromotionCreateView(PromotionCreateView):
-    template_name = 'promotions/new_fixed.html'
+class FixedPromotionCreateView(PromotionView, generic.edit.CreateView):
+    template_name = 'promotions/fixed.html'
     
     def form_valid(self, form):
         form.instance.type = Promotion.FIXED_PRICE
         return super().form_valid(form)
 
-class PromotionUpdateView(StaffTestMixin, generic.UpdateView):
-    model = Promotion
-    fields = '__all__'
-    slug_field = 'code'
-    slug_url_kwarg = 'code'
-    template_name = 'promotions/update.html'
+class PromotionUpdateView(PromotionView, generic.UpdateView):
+    template_name = 'promotions/fixed.html'
 
-    def get_success_url(self):
-        return reverse('staff-promotion', kwargs={'code' : self.object.code})
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.type == Promotion.PERCENTAGE:
+            self.fields += ['max_discount']
+            self.template_name = 'promotions/percentage.html'
+        return super().get(request, *args, **kwargs)
 
-class PromotionDeleteView(StaffTestMixin, generic.DeleteView):
-    model = Promotion
+class PromotionDeleteView(PromotionView, generic.DeleteView):
     template_name = 'promotions/delete.html'
-    slug_field = 'code'
-    slug_url_kwarg = 'code'
 
     def get_success_url(self):
         return reverse('staff-promotions')

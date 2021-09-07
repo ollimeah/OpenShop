@@ -1,13 +1,18 @@
 {% extends "main.html" %}
 {% load widget_tweaks %}
-{% block title %}New Percentage Promotion{% endblock title %}
+{% block title %}{% if promotion == None %}New Percentage Promotion{% else %}Edit {{ promotion.code }}{% endif %}{% endblock title %}
 
 {% block content %}
 <div class="container py-5">
 
     <div class="d-flex justify-content-between pb-3">
+        {% if promotion == None %}
         <h2>New Percentage Promotion</h2>
         <a href="{% url 'staff-promotions' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Promotions</button></a>
+        {% else %}
+        <h2>Edit {{ promotion.code }}</h2>
+        <a href="{% url 'staff-promotion' promotion.code %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Back</button></a>
+        {% endif %}
     </div>
 
     <form method="post">{% csrf_token %}
@@ -50,7 +55,7 @@
             <label class="form-check-label" for="id_active">{{ form.active.label }}</label>
         </div>
         <div class="d-grid col-4 mx-auto">
-            <button type="submit" class="btn btn-primary btn-block" value="Save">Create</button>
+            <button type="submit" class="btn btn-primary btn-block" value="Save">{% if promotion == None %}Create{% else %}Save{% endif %}</button>
         </div>
     </form>
 </div>
