@@ -43,7 +43,7 @@ class PromotionView(StaffTestMixin):
     model = Promotion
     slug_field = 'code'
     slug_url_kwarg = 'code'
-    fields = ['code', 'max_uses', 'amount', 'min_spend', 'customer_limit', 'expiry', 'active']
+    fields = ['code', 'max_uses', 'amount', 'min_spend', 'expiry', 'active']
 
     def get_success_url(self):
         return reverse('staff-promotion', kwargs={'code' : self.object.code})
@@ -52,7 +52,7 @@ class PromotionDetailView(PromotionView, generic.DetailView):
     template_name = 'promotions/detail.html'
 
 class PercentagePromotionCreateView(PromotionView, generic.edit.CreateView):
-    fields = ['code', 'max_uses', 'amount', 'min_spend', 'customer_limit', 'expiry', 'active', 'max_discount']
+    fields = ['code', 'max_uses', 'amount', 'min_spend', 'expiry', 'active', 'max_discount']
     template_name = 'promotions/percentage.html'
 
     def form_valid(self, form):

@@ -187,7 +187,7 @@ class Promotion(models.Model):
     amount = models.IntegerField()
     max_discount = models.IntegerField(null=True, blank=True)
     min_spend = models.IntegerField(null=True, blank=True)
-    customer_limit = models.IntegerField(null=True, blank=True)
+    # customer_limit = models.IntegerField(null=True, blank=True)
     active = models.BooleanField(default=True)
     expiry = models.DateTimeField(null=True, blank=True)
     used = models.IntegerField(default=0)

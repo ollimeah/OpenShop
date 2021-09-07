@@ -41,10 +41,6 @@
                 <label class="form-label">Maximum uses</label>
                 {% render_field form.max_uses class="form-control" placeholder="Maximum uses" type="number" %}
             </div>
-            <div class="col">
-                <label class="form-label">{{ form.customer_limit.label }}</label>
-                {% render_field form.customer_limit class="form-control" placeholder="Customer limit" type="number" %}
-            </div>
         </div>
         <div class="form-check form-switch mb-3">
             {% render_field form.active class="form-check-input" type="checkbox" %}
