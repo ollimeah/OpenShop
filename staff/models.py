@@ -217,6 +217,10 @@ class Promotion(models.Model):
         else:
             return self.amount
     
+    @property
+    def total_saved(self):
+        return sum(Order.objects.filter(promotion_code=self.code).values_list('discount_amount', flat=True))
+    
     @classmethod
     def disable_all(cls):
         Promotion.objects.all().update(active=False)

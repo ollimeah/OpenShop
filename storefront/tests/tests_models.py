@@ -552,6 +552,15 @@ class PromotionTest(TestCase):
         Promotion.disable_all()
         for promo in Promotion.objects.all():
             self.assertFalse(promo.active)
+    
+    def test_total_saved(self):
+        total = 0
+        promo = self.get_active_perc_promotion()
+        for i in range(randint(1, 10)):
+            amount = randint(1, 1000)
+            total += amount
+            Order.objects.create(promotion_code=promo.code, discount_amount=amount)
+        self.assertEqual(total, promo.total_saved)
 
 class DeliveryTest(TestCase):
 
