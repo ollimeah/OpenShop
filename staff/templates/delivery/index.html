@@ -12,7 +12,7 @@
 
     <div class="list-group">
         {% for delivery in deliveries %}
-        <div class="list-group-item list-group-item-action">
+        <div class="list-group-item">
             <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">{{ delivery.name }}</h5>
                 {% if delivery.available %}
@@ -22,7 +22,10 @@
                 {% endif %}
             </div>
             <div class="d-flex justify-content-between">
-                <p>£{{ delivery.price }}</p>
+                <div>
+                  <p class="mb-0">£{{ delivery.price }}</p>
+                  <p class="mb-0">Used {{ delivery.num_used }} times</p>
+                </div>
                 <div class="align-self-center">
                     <a href="{% url 'staff-delivery-update' delivery.id %}" class="btn btn-primary"><i class="bi bi-pencil-fill"></i> Edit</button></a>
                     <a href="{% url 'staff-delivery-delete' delivery.id %}" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="bi bi-trash-fill"></i> Delete</button></a>
