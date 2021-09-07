@@ -1,0 +1,33 @@
+{% extends "main.html" %}
+{% load widget_tweaks %}
+{% block title %}{% if delivery == None %}New Delivery{% else %}{{ delivery.name }}{% endif %}{% endblock title %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between pb-1 border-bottom mb-3">
+        <h2>{% if delivery == None %}New Delivery{% else %}{{ delivery.name }}{% endif %}</h2>
+        <a href="{% url 'staff-deliveries' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Deliveries</button></a>
+    </div>
+
+    <form method="post">{% csrf_token %}
+        <div class="row mb-3">
+            <div class="col">
+                <label class="form-label">{{ form.name.label }}</label>
+                {% render_field form.name class="form-control" placeholder="Name" %}
+            </div>
+            <div class="col">
+                <label class="form-label">{{ form.price.label }}</label>
+                {% render_field form.price class="form-control" placeholder="Price"%}
+            </div>
+        </div>
+        <div class="form-check form-switch mb-3">
+            {% render_field form.available class="form-check-input" type="checkbox" %}
+            <label class="form-check-label" for="id_active">{{ form.available.label }}</label>
+        </div>
+        <div class="d-grid col-4 mx-auto">
+            <button type="submit" class="btn btn-primary btn-block" value="Save">{% if delivery == None %}Create{% else %}Save{% endif %}</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

@@ -88,37 +88,26 @@ def disable_promotions(request):
     Promotion.disable_all()
     return redirect('staff-promotions')
 
-class DeliveryListView(generic.ListView):
+class DeliveryView(StaffTestMixin):
+    model = Delivery
+    fields = '__all__'
+    template_name = 'delivery/view.html'
+
+    def get_success_url(self):
+        return reverse('staff-deliveries')
+
+class DeliveryListView(StaffTestMixin, generic.ListView):
     model = Delivery
     context_object_name = 'deliveries'
     template_name = 'delivery/index.html'
 
-class DeliveryDetailView(generic.DetailView):
-    model = Delivery
-    template_name = 'delivery/detail.html'
+class DeliveryCreateView(DeliveryView, generic.edit.CreateView): pass
 
-class DeliveryCreateView(generic.edit.CreateView):
-    model = Delivery
-    fields = '__all__'
-    template_name = 'delivery/new.html'
+class DeliveryUpdateView(DeliveryView, generic.UpdateView): pass
 
-    def get_success_url(self):
-        return reverse('staff-delivery', kwargs={'pk' : self.object.id})
-
-class DeliveryUpdateView(generic.UpdateView):
-    model = Delivery
-    fields = '__all__'
-    template_name = 'delivery/update.html'
-
-    def get_success_url(self):
-        return reverse('staff-delivery', kwargs={'pk' : self.object.id})
-
-class DeliveryDeleteView(generic.DeleteView):
-    model = Delivery
-    template_name = 'delivery/delete.html'
-
-    def get_success_url(self):
-        return reverse('staff-deliveries')
+class DeliveryDeleteView(DeliveryView, generic.DeleteView):
+    def get(self, request, pk):
+        return redirect('staff-deliveries')
 
 class CarouselImageListView(generic.ListView):
     model = CarouselImage
