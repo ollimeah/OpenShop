@@ -2,9 +2,18 @@ from django.shortcuts import render
 from staff.forms import SettingsForm
 from staff.models import Order, Product, Settings
 from django.contrib.auth.decorators import user_passes_test
+from django.urls import reverse
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 def staff_check(user):
     return user.groups.filter(name='Staff').exists()
+
+class StaffTestMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.groups.filter(name='Staff').exists()
+    
+    def get_login_url(self):
+        return reverse('staff-login')
 
 @user_passes_test(staff_check, login_url='staff-login')
 def dashboard(request):

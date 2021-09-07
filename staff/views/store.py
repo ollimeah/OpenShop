@@ -1,17 +1,9 @@
 from staff.models import FAQ, Promotion, Delivery, CarouselImage
 from django.views import generic
 from django.urls import reverse
-from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import redirect
-from .views import staff_check
+from .views import staff_check, StaffTestMixin
 from django.contrib.auth.decorators import user_passes_test
-
-class StaffTestMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.groups.filter(name='Staff').exists()
-    
-    def get_login_url(self):
-        return reverse('staff-login')
 
 class FAQListView(StaffTestMixin, generic.ListView):
     model = FAQ
