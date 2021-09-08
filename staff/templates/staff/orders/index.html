@@ -21,9 +21,9 @@
                 <div>
                     <h5 class="text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="{{order.date_ordered}}">{{order.date_ordered|naturaltime}}</h5>
                     {% if order.shipped %}
-                    <p class="text-success fw-bold mb-0">Shipped</p>
+                    <p class="text-success fw-bold mb-0 text-end">Shipped</p>
                     {% else %}
-                    <p class="text-danger fw-bold mb-0">Not Shipped</p>
+                    <p class="text-danger fw-bold mb-0 text-end">Not Shipped</p>
                     {% endif %}
                 </div>
             </div>
