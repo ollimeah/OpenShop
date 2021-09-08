@@ -4,6 +4,7 @@ from django.views import generic
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from .views import StaffTestMixin, staff_check
+from django.contrib.auth.decorators import user_passes_test
 
 class CategoryView(StaffTestMixin):
     model = Category
@@ -34,6 +35,7 @@ class CategoryDeleteView(CategoryView, generic.DeleteView):
     def get_success_url(self):
         return reverse('staff-categories')
 
+@user_passes_test(staff_check, login_url='staff-login')
 def category_add_products(request, name):
     category = get_object_or_404(Category, name=name)
     products = {'products' : category.items().values_list(flat=True)}
