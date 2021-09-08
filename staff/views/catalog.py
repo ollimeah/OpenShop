@@ -3,40 +3,31 @@ from staff.models import Category, Collection, Product
 from django.views import generic
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
+from .views import StaffTestMixin, staff_check
 
-class CategoryListView(generic.ListView):
+class CategoryView(StaffTestMixin):
+    model = Category
+    slug_field = 'name'
+    slug_url_kwarg = 'name'
+    fields = '__all__'
+    template_name = 'categories/view.html'
+
+    def get_success_url(self):
+        return reverse('staff-category', kwargs={'name' : self.object.name})
+
+class CategoryListView(StaffTestMixin, generic.ListView):
     model = Category
     context_object_name = 'categories'
     template_name = 'categories/index.html'
 
-class CategoryDetailView(generic.DetailView):
-    model = Category
+class CategoryDetailView(CategoryView, generic.DetailView):
     template_name = 'categories/detail.html'
-    slug_field = 'name'
-    slug_url_kwarg = 'name'
 
-class CategoryCreateView(generic.edit.CreateView):
-    model = Category
-    fields = '__all__'
-    template_name = 'categories/new.html'
+class CategoryCreateView(CategoryView, generic.edit.CreateView): pass
 
-    def get_success_url(self):
-        return reverse('staff-category', kwargs={'name' : self.object.name})
+class CategoryUpdateView(CategoryView, generic.UpdateView): pass
 
-class CategoryUpdateView(generic.UpdateView):
-    model = Category
-    slug_field = 'name'
-    slug_url_kwarg = 'name'
-    fields = '__all__'
-    template_name = 'categories/update.html'
-
-    def get_success_url(self):
-        return reverse('staff-category', kwargs={'name' : self.object.name})
-
-class CategoryDeleteView(generic.DeleteView):
-    model = Category
-    slug_field = 'name'
-    slug_url_kwarg = 'name'
+class CategoryDeleteView(CategoryView, generic.DeleteView):
     template_name = 'categories/delete.html'
 
     def get_success_url(self):

@@ -1,0 +1,23 @@
+{% extends "main.html" %}
+{% load widget_tweaks %}
+{% block title %}{% if category %}Edit{% else %}New{% endif %} Category{% endblock title %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between pb-3">
+        <h2>{% if category %}Edit {{ category.name }}{% else %}New{% endif %} Category</h2>
+        <a href="{% url 'staff-categories' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Categories</button></a>
+    </div>
+
+    <form method="post">{% csrf_token %}
+        <div class="col-md-6 mb-3 mx-md-auto">
+            <label class="form-label">{{ form.name.label }}</label>
+            {% render_field form.name class="form-control" placeholder="Name" %}
+        </div>
+        <div class="d-grid col-md-6 mx-md-auto">
+            <button type="submit" class="btn btn-primary" value="Save">{% if category %}Save{% else %}Create{% endif %}</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}
