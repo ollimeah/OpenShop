@@ -2,7 +2,7 @@ from django.http import response
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User, Group
-from staff.models import FAQ, Delivery, Promotion
+from staff.models import FAQ, Delivery, Order, Promotion
 
 class URLTestCase(TestCase):
     @classmethod
@@ -339,3 +339,47 @@ class DeliveryTest(URLTestCase):
 
     def test_delete_url_accessible_by_name(self):
         self.redirect_test_with_login(reverse('staff-delivery-delete', kwargs={'pk':1}), '/staff/deliveries/')
+
+class OrderTest(URLTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        Order.objects.create()
+    
+    def test_index_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-orders'), '/staff/?next=/staff/orders/')
+    
+    def test_index_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/orders/')
+
+    def test_index_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-orders'))
+
+    def test_index_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-orders'), 'staff/orders/index.html')
+    
+    def test_detail_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-order', kwargs={'pk':'1'}), '/staff/?next=/staff/order/1/')
+    
+    def test_detail_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/order/1/')
+
+    def test_detail_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-order', kwargs={'pk':'1'}))
+
+    def test_detail_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-order', kwargs={'pk':'1'}), 'staff/orders/detail.html')
+    
+    def test_toggle_shipped_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-order-toggle', kwargs={'pk':'1'}), '/staff/?next=/staff/order/1/toggle-shipped/')
+    
+    def test_toggle_shipped_url_exists_at_desired_location(self):
+        self.redirect_test_with_login('/staff/order/1/toggle-shipped/', '/staff/order/1/')
+
+    def test_toggle_shipped_url_accessible_by_name(self):
+        self.redirect_test_with_login(reverse('staff-order-toggle', kwargs={'pk':'1'}), '/staff/order/1/')
+    
+    def test_toggle_shipped(self):
+        self.login_staff()
+        self.client.get(reverse('staff-order-toggle', kwargs={'pk':'1'}))
+        self.assertTrue(Order.objects.get(id=1).shipped)
