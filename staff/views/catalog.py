@@ -28,7 +28,8 @@ class CategoryCreateView(CategoryView, generic.edit.CreateView): pass
 class CategoryUpdateView(CategoryView, generic.UpdateView): pass
 
 class CategoryDeleteView(CategoryView, generic.DeleteView):
-    template_name = 'categories/delete.html'
+    def get(self, request, name):
+        return redirect('staff-categories')
 
     def get_success_url(self):
         return reverse('staff-categories')
