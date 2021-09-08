@@ -7,7 +7,11 @@
 
     <div class="d-flex justify-content-between pb-3">
         <h2>{% if category %}Edit {{ category.name }}{% else %}New{% endif %} Category</h2>
+        {% if category %}
+        <a href="{% url 'staff-category' category.name %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Back</button></a>
+        {% else %}
         <a href="{% url 'staff-categories' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Categories</button></a>
+        {% endif %}   
     </div>
 
     <form method="post">{% csrf_token %}
