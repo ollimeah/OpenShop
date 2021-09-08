@@ -76,7 +76,7 @@
                     <ul class="list-group list-group-flush pt-2">
                         <h5 class="list-group-item text-center mb-0">Recent Orders</h5>
                         {% for order in recent_orders %}
-                        <a href="#" class="list-group-item list-group-item-action">
+                        <a href="{% url 'staff-order' order.id %}" class="list-group-item list-group-item-action">
                         <div class="d-flex justify-content-between">
                             <div>
                             <p class="mb-0">Order #{{ order.id }} <span class="badge bg-info text-dark">{{ order.num_items }} items</span></p>

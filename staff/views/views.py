@@ -45,3 +45,7 @@ class OrderListView(StaffTestMixin, generic.ListView):
     template_name = 'staff/orders/index.html'
     context_object_name = 'orders'
     ordering = ['-date_ordered']
+
+class OrderDetailView(generic.DetailView):
+    model = Order
+    template_name = 'staff/orders/detail.html'
