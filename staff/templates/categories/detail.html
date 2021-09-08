@@ -9,32 +9,34 @@
         <h2>{{object.name}}</h2>
         <div>
             <a href="{% url 'staff-categories' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Categories</button></a>
-            <a href="{% url 'staff-category-products' object.name %}"><button type="button" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i> Add Products</button></a>
+            <a href="{% url 'staff-category-products' object.name %}"><button type="button" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Products</button></a>
             <a href="{% url 'staff-category-update' object.name %}"><button type="button" class="btn btn-primary"><i class="bi bi-pencil-fill"></i> Edit</button></a>
             <a href="{% url 'staff-category-delete' object.name %}" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="bi bi-trash-fill"></i> Delete</button></a>
         </div>
     </div>
 
-    <div class="card mb-5 shadow">
+    <div class="card mb-5">
         <div class="card-header bg-white">
+            <div class="d-flex justify-content-between">
             <h5 class="mb-0">Products</h5>
+            <h5 class="mb-0">{{ category.item_count }} Items</h5>
+            </div>
         </div>
-        <div class="card-body">
+        <div class="card-body px-0">
             <div class="list-group list-group-flush">
               {% for product in category.items %}
               <a href="{% url 'staff-product' product.name %}" class="list-group-item list-group-item-action">
-                  <div class="d-flex w-100 justify-content-between">
+                  <div class="d-flex justify-content-between">
                       <h5 class="mb-1">{{ product.name }}</h5>
                       {% if product.hidden %}
-                      <small>Hidden</small>
+                      <small class="text-danger fw-bold">Hidden</small>
                       {% elif not product.available %}
-                      <small>Unavailable</small>
+                      <small class="text-danger fw-bold">Unavailable</small>
                       {% else %}
-                      <small>Available</small>
+                      <small class="text-success fw-bold">Available</small>
                       {% endif %}
                   </div>
-                  <p class="mb-1">Category: {{ product.category }}</p>
-                  <small>£{{ product.price }}</small>
+                  <p class="mb-0">£{{ product.price }}</p>
               </a>
               {% endfor %}
           </div>
