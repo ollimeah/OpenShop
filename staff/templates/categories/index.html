@@ -7,13 +7,13 @@
 <div class='container py-5'>
     <div class="d-flex justify-content-between pb-3">
         <h2>Categories</h2>
-        <a href="{% url 'staff-categories-new' %}" class="align-self-center"><button type="button" class="btn btn-primary">Create category</button></a>
+        <a href="{% url 'staff-categories-new' %}" class="align-self-center"><button type="button" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Create category</button></a>
     </div>
 
     <div class="list-group">
         {% for category in categories %}
         <a href="{% url 'staff-category' category.name %}" class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 justify-content-between">
+            <div class="d-flex justify-content-between">
                 <h5 class="mb-1">{{ category.name }}</h5>
                 <h5 class="mb-1">Product count: {{ category.item_count }}</h5>
             </div>
