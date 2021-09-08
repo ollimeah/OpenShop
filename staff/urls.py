@@ -56,6 +56,7 @@ urlpatterns = [
 
     path('orders/', views.OrderListView.as_view(), name='staff-orders'),
     path('order/<int:pk>/', views.OrderDetailView.as_view(), name='staff-order'),
+    path('order/<int:pk>/toggle-shipped', views.toggle_shipped, name='staff-order-toggle'),
 
     path('settings/', views.settings, name='staff-settings'),
 ]

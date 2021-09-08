@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
 from staff.forms import SettingsForm
 from staff.models import Order, Product, Settings
 from django.contrib.auth.decorators import user_passes_test
@@ -49,3 +49,8 @@ class OrderListView(StaffTestMixin, generic.ListView):
 class OrderDetailView(generic.DetailView):
     model = Order
     template_name = 'staff/orders/detail.html'
+
+@user_passes_test(staff_check, login_url='staff-login')
+def toggle_shipped(request, pk):
+    get_object_or_404(Order, id=pk).toggle_shipped()
+    return redirect('staff-order', pk=pk)

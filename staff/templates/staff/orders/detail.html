@@ -10,9 +10,9 @@
         <div>
             <a href="{% url 'staff-orders' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Orders</button></a>
             {% if order.shipped %}
-            <a href="#"><button type="button" class="btn btn-danger"><i class="bi bi-x-lg"></i> Mark as not shipped</button></a>
+            <a href="{% url 'staff-order-toggle' order.id %}"><button type="button" class="btn btn-danger"><i class="bi bi-x-lg"></i> Mark as not shipped</button></a>
             {% else %}
-            <a href="#"><button type="button" class="btn btn-success"><i class="bi bi-check-lg"></i> Mark as shipped</button></a>
+            <a href="{% url 'staff-order-toggle' order.id %}"><button type="button" class="btn btn-success"><i class="bi bi-check-lg"></i> Mark as shipped</button></a>
             {% endif %}
             <a href="#"><button type="button" class="btn btn-primary"><i class="bi bi-pencil-fill"></i> Edit</button></a>
             <a href="#"><button type="button" class="btn btn-danger"><i class="bi bi-trash-fill"></i> Delete</button></a>
