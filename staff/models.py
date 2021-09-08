@@ -326,6 +326,10 @@ class Order(models.Model):
             order_collection = OrderCollection.objects.create(order=self, collection_name=bc.collection.name, quantity=bc.quantity, price=bc.collection.price)
             for product in bc.collection.products.all():
                 OrderCollectionProduct.objects.create(order_collection=order_collection, product_name=product.name)
+    
+    def toggle_shipped(self):
+        self.shipped = not self.shipped
+        self.save()
 
 class OrderShipping(models.Model):
     order = models.OneToOneField(Order, on_delete=models.CASCADE)

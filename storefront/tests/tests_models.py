@@ -731,6 +731,14 @@ class OrderTest(TestCase):
         for op in OrderProduct.objects.filter(order=order): items += op.quantity
         for oc in OrderCollection.objects.filter(order=order): items += oc.quantity
         self.assertEqual(items, order.num_items)
+    
+    def test_toggle_shipped(self):
+        order = Order.objects.create()
+        self.assertFalse(order.shipped)
+        order.toggle_shipped()
+        self.assertTrue(order.shipped)
+        order.toggle_shipped()
+        self.assertFalse(order.shipped)
 
 class OrderProductTest(TestCase):
 
