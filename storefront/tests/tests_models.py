@@ -450,7 +450,20 @@ class ProductTest(TestCase):
             quantity = randint(1, 1000)
             num_sold += quantity
             OrderProduct.objects.create(order=order, product_name=product.name, quantity=quantity, price=product.price)
-        self.assertEqual(num_sold, product.num_sold)
+        self.assertEqual(num_sold, product.num_sold_today)
+
+    # def test_num_in_basket(self):
+    #     pass
+    
+    def test_total_sales(self):
+        product = self.create_product()
+        total = 0
+        for i in range(randint(3, 20)):
+            order = Order.objects.create()
+            quantity = randint(1, 1000)
+            total += quantity * product.price
+            OrderProduct.objects.create(order=order, product_name=product.name, quantity=quantity, price=product.price)
+        self.assertEqual(total, product.total_sales)
     
     def test_best_sellers(self):
         products = []

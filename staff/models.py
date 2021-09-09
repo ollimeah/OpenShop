@@ -1,3 +1,4 @@
+# from storefront.models import BasketProduct
 from storefront.forms import AddCollectionToBasketForm, AddProductToBasketForm
 from django.db import models
 import json
@@ -127,7 +128,20 @@ class Product(models.Model):
         total = 0
         for order in orders:
             op = OrderProduct.objects.filter(order=order, product_name=self.name)
-            if op: total += op.quantity
+            if op: total += op[0].quantity
+        return total
+    
+    # @property
+    # def num_in_basket(self):
+    #     basket_products = BasketProduct.objects.filter(product=self).values_list('quantity', flat=True)
+    #     return sum(basket_products)
+
+    @property
+    def total_sales(self):
+        order_products = OrderProduct.objects.filter(product_name=self.name).values_list('price', 'quantity')
+        total = 0
+        for cost, quantity in order_products: 
+            total += cost*quantity
         return total
     
     @staticmethod
