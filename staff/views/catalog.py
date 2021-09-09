@@ -132,7 +132,8 @@ class CollectionCreateView(CollectionView, generic.edit.CreateView): pass
 class CollectionUpdateView(CollectionView, generic.UpdateView): pass
 
 class CollectionDeleteView(CollectionView, generic.DeleteView):
-    template_name = 'collections/delete.html'
+    def get(self, request, name):
+        return redirect('staff-collections')
 
     def get_success_url(self):
         return reverse('staff-collections')
