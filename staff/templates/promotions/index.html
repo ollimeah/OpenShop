@@ -29,7 +29,7 @@
                 <p class="mb-1">{{ promotion.type }} promotion</p>
                 <small>{{ promotion.used }}{% if promotion.max_uses %}/{{ promotion.max_uses }}{% endif %} used</small>
             </div>
-            <p class="mb-0">Expires: {{ promotion.expiry }}</p>
+            <p class="mb-0">Expires: {% if promotion.expiry %} {{ promotion.expiry }} {% else %} Never {% endif %}</p>
         </a>
         {% endfor %}
     </div>
