@@ -121,6 +121,15 @@ class Product(models.Model):
         order_products = OrderProduct.objects.filter(product_name=self.name).values_list('quantity', flat=True)
         return sum(order_products)
     
+    @property
+    def num_sold_today(self):
+        orders = Order.objects.filter(date_ordered__date=date.today())
+        total = 0
+        for order in orders:
+            op = OrderProduct.objects.filter(order=order, product_name=self.name)
+            if op: total += op.quantity
+        return total
+    
     @staticmethod
     def best_sellers(limit):
         return sorted(Product.objects.all(), key=lambda x: -(x.num_sold))[:limit]
