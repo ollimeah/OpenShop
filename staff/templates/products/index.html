@@ -8,26 +8,26 @@
     <div class="d-flex justify-content-between pb-3">
         <h2>Products</h2>
         <div>
-            <a href="{% url 'staff-products-new' %}" class="align-self-center"><button type="button" class="btn btn-primary">Create product</button></a>
-            <a href="{% url 'staff-products-manage' %}" class="align-self-center"><button type="button" class="btn btn-primary">Manage</button></a>
+            <a href="{% url 'staff-products-new' %}" class="align-self-center"><button type="button" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Create product</button></a>
+            <a href="{% url 'staff-products-manage' %}" class="align-self-center"><button type="button" class="btn btn-primary"><i class="bi bi-tools"></i> Manage</button></a>
         </div>
     </div>
 
     <div class="list-group">
         {% for product in products %}
         <a href="{% url 'staff-product' product.name %}" class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 justify-content-between">
+            <div class="d-flex justify-content-between">
                 <h5 class="mb-1">{{ product.name }}</h5>
                 {% if product.hidden %}
-                <small>Hidden</small>
+                <small class="text-danger fw-bold">Hidden</small>
                 {% elif not product.available %}
-                <small>Unavailable</small>
+                <small class="text-danger fw-bold">Unavailable</small>
                 {% else %}
-                <small>Available</small>
+                <small class="text-success fw-bold">Available</small>
                 {% endif %}
             </div>
             <p class="mb-1">Category: {{ product.category }}</p>
-            <small>£{{ product.price }}</small>
+            <p class="mb-0">£{{ product.price }}</p>
         </a>
         {% endfor %}
     </div>
