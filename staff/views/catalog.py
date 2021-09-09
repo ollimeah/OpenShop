@@ -54,40 +54,31 @@ def category_add_products(request, name):
     context={'category' : category, 'form' : CategoryProductForm(initial = products)}
     return render(request, 'categories/products.html', context)
 
-class ProductListView(generic.ListView):
+class ProductListView(StaffTestMixin, generic.ListView):
     model = Product
     context_object_name = 'products'
     template_name = 'products/index.html'
 
-class ProductDetailView(generic.DetailView):
+class ProductView(StaffTestMixin):
     model = Product
+    slug_field = 'name'
+    slug_url_kwarg = 'name'
+    fields = '__all__'
+    template_name = 'products/view.html'
+
+    def get_success_url(self):
+        return reverse('staff-product', kwargs={'name' : self.object.name})
+
+class ProductDetailView(ProductView, generic.DetailView):
     template_name = 'products/detail.html'
-    slug_field = 'name'
-    slug_url_kwarg = 'name'
 
-class ProductCreateView(generic.edit.CreateView):
-    model = Product
-    fields = '__all__'
-    template_name = 'products/new.html'
+class ProductCreateView(ProductView, generic.edit.CreateView): pass
 
-    def get_success_url(self):
-        return reverse('staff-product', kwargs={'name' : self.object.name})
+class ProductUpdateView(ProductView, generic.UpdateView): pass
 
-class ProductUpdateView(generic.UpdateView):
-    model = Product
-    slug_field = 'name'
-    slug_url_kwarg = 'name'
-    fields = '__all__'
-    template_name = 'products/update.html'
-
-    def get_success_url(self):
-        return reverse('staff-product', kwargs={'name' : self.object.name})
-
-class ProductDeleteView(generic.DeleteView):
-    model = Product
-    slug_field = 'name'
-    slug_url_kwarg = 'name'
-    template_name = 'products/delete.html'
+class ProductDeleteView(ProductView, generic.DeleteView):
+    def get(self, request, name):
+        return redirect('staff-products')
 
     def get_success_url(self):
         return reverse('staff-products')
