@@ -1,8 +1,9 @@
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import response
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User, Group
-from staff.models import FAQ, Delivery, Order, Promotion
+from staff.models import FAQ, Category, Delivery, Order, Product, Promotion
 
 class URLTestCase(TestCase):
     @classmethod
@@ -239,7 +240,7 @@ class PromotionTest(URLTestCase):
     def test_update_fixed_uses_correct_template(self):
         self.template_test_with_login(reverse('staff-promotion-update', kwargs={'code':'Test'}), 'promotions/fixed.html')
     
-    def test_update_fixed_uses_correct_template(self):
+    def test_update_percentage_uses_correct_template(self):
         self.template_test_with_login(reverse('staff-promotion-update', kwargs={'code':'TestP'}), 'promotions/percentage.html')
     
     def test_post_update(self):
@@ -383,3 +384,115 @@ class OrderTest(URLTestCase):
         self.login_staff()
         self.client.get(reverse('staff-order-toggle', kwargs={'pk':'1'}))
         self.assertTrue(Order.objects.get(id=1).shipped)
+
+class CategoryTest(URLTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        Category.objects.create(name="Test")
+    
+    def tearDown(self):
+        for prod in Product.objects.all(): prod.image.delete()
+        return super().tearDown()
+    
+    def create_product(self, name='Test', available=True, hidden=False, file_name='test'):
+        category = Category.objects.get(id=1)
+        prod = Product.objects.create(name=name, description='Test', price=10, category=category,
+        image=SimpleUploadedFile(file_name + '.jpg', b'content'), available=available, hidden=hidden, min=1, max=12)
+        return prod
+
+    def test_index_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-categories'), '/staff/?next=/staff/categories/')
+    
+    def test_index_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/categories/')
+
+    def test_index_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-categories'))
+
+    def test_index_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-categories'), 'categories/index.html')
+    
+    def test_detail_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-category', kwargs={'name':'Test'}), '/staff/?next=/staff/category/Test/')
+    
+    def test_detail_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/category/Test/')
+
+    def test_detail_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-category', kwargs={'name':'Test'}))
+
+    def test_detail_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-category', kwargs={'name':'Test'}), 'categories/detail.html')
+    
+    def test_new_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-categories-new'), '/staff/?next=/staff/categories/new/')
+    
+    def test_post_new_redirect_if_not_logged_in(self):
+        response = self.client.post(reverse('staff-categories-new'), {'name':"Test2"}, follow=True)
+        self.assertRedirects(response, '/staff/?next=/staff/categories/new/')
+    
+    def test_new_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/categories/new/')
+
+    def test_new_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-categories-new'))
+
+    def test_new_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-categories-new'), 'categories/view.html')
+    
+    def test_post_new(self):
+        self.login_staff()
+        response = self.client.post(reverse('staff-categories-new'), {'name':"Test2"}, follow=True)
+        self.assertRedirects(response, reverse('staff-category', kwargs={'name':'Test2'}))
+    
+    def test_update_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-category-update', kwargs={'name':'Test'}), '/staff/?next=/staff/category/Test/update/')
+    
+    def test_post_update_redirect_if_not_logged_in(self):
+        response = self.client.post(reverse('staff-category-update', kwargs={'name':'Test'}), {'name':'Test'}, follow=True)
+        self.assertRedirects(response, '/staff/?next=/staff/category/Test/update/')
+    
+    def test_update_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/category/Test/update/')
+
+    def test_update_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-category-update', kwargs={'name':'Test'}))
+
+    def test_update_fixed_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-category-update', kwargs={'name':'Test'}), 'categories/view.html')
+    
+    def test_post_update(self):
+        self.login_staff()
+        response = self.client.post(reverse('staff-category-update', kwargs={'name':'Test'}), {'name':'Test'}, follow=True)
+        self.assertRedirects(response, reverse('staff-category', kwargs={'name':'Test'}))
+    
+    def test_delete_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-category-delete', kwargs={'name':'Test'}), '/staff/?next=/staff/category/Test/delete/')
+    
+    def test_delete_url_exists_at_desired_location(self):
+        self.redirect_test_with_login('/staff/category/Test/delete/', '/staff/categories/')
+
+    def test_delete_url_accessible_by_name(self):
+        self.redirect_test_with_login(reverse('staff-category-delete', kwargs={'name':'Test'}), '/staff/categories/')
+    
+    def test_add_products_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-category-products', kwargs={'name':'Test'}), '/staff/?next=/staff/category/Test/products/')
+    
+    def test_add_products_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/category/Test/products/')
+
+    def test_add_products_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-category-products', kwargs={'name':'Test'}))
+    
+    def test_add_products(self):
+        self.login_staff()
+        category = Category.objects.create(name="Test2")
+        for i in range(1, 4):
+            self.create_product(name="Test"+str(i), file_name="Test"+str(i))
+        self.client.post(reverse('staff-category-products', kwargs={'name':'Test2'}), {"products":[1,2]})
+        self.client.post(reverse('staff-category-products', kwargs={'name':'Test2'}), {"products":[1]})
+        self.assertEqual(Product.objects.filter(category=category).count(), 2)
+        self.assertEqual(Product.objects.filter(category=Category.objects.get(name="Test")).count(), 1)
+        self.assertFalse(Product.objects.get(id=2).available)
+        self.assertTrue(Product.objects.get(id=2).hidden)
