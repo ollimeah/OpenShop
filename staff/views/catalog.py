@@ -138,6 +138,7 @@ class CollectionDeleteView(CollectionView, generic.DeleteView):
     def get_success_url(self):
         return reverse('staff-collections')
 
+@user_passes_test(staff_check, login_url='staff-login')
 def collection_add_products(request, name):
     collection = get_object_or_404(Collection, name=name)
     products = {'products' : collection.products.all()}
