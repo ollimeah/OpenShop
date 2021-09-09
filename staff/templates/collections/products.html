@@ -1,12 +1,28 @@
 {% extends "main.html" %}
-
-{% block title %}{{ collection.name }} products{% endblock title %}
+{% load widget_tweaks %}
+{% block title %}{{ collection.name }}'s products{% endblock title %}
 
 {% block content %}
 
-<form method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Save">
-</form>
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between pb-3">
+        <h2>{{ collection.name }}'s products</h2>
+        <a href="{% url 'staff-collection' collection.name %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Back</button></a>
+    </div>
+
+    <form method="post">{% csrf_token %}
+        {% for product in form.products %}
+        <div class="form-check">
+            {% render_field product.tag %}
+            <label class="form-check-label" for="{{ product.id_for_label }}">{{ product.choice_label }}</label>
+        </div>
+        {% endfor %}
+        <div class="d-grid col-md-2 mt-3">
+            <button type="submit" class="btn btn-primary" value="Save">Save</button>
+        </div>
+    </form>
+
+</div>
 
 {% endblock content %}
