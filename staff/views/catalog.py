@@ -109,39 +109,29 @@ def manage_products(request):
         return redirect('staff-products')
     return render(request, 'products/manage.html', {'form' : ProductManagementForm()})
 
-class CollectionListView(generic.ListView):
+class CollectionListView(StaffTestMixin, generic.ListView):
     model = Collection
     context_object_name = 'collections'
     template_name = 'collections/index.html'
 
-class CollectionDetailView(generic.DetailView):
+class CollectionView(StaffTestMixin):
     model = Collection
+    slug_field = 'name'
+    slug_url_kwarg = 'name'
+    fields = '__all__'
+    template_name = 'collections/view.html'
+
+    def get_success_url(self):
+        return reverse('staff-collection', kwargs={'name' : self.object.name})
+
+class CollectionDetailView(CollectionView, generic.DetailView):
     template_name = 'collections/detail.html'
-    slug_field = 'name'
-    slug_url_kwarg = 'name'
 
-class CollectionCreateView(generic.edit.CreateView):
-    model = Collection
-    fields = '__all__'
-    template_name = 'collections/new.html'
+class CollectionCreateView(CollectionView, generic.edit.CreateView): pass
 
-    def get_success_url(self):
-        return reverse('staff-collection', kwargs={'name' : self.object.name})
+class CollectionUpdateView(CollectionView, generic.UpdateView): pass
 
-class CollectionUpdateView(generic.UpdateView):
-    model = Collection
-    slug_field = 'name'
-    slug_url_kwarg = 'name'
-    fields = '__all__'
-    template_name = 'collections/update.html'
-
-    def get_success_url(self):
-        return reverse('staff-collection', kwargs={'name' : self.object.name})
-
-class CollectionDeleteView(generic.DeleteView):
-    model = Collection
-    slug_field = 'name'
-    slug_url_kwarg = 'name'
+class CollectionDeleteView(CollectionView, generic.DeleteView):
     template_name = 'collections/delete.html'
 
     def get_success_url(self):

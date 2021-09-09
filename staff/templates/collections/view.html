@@ -1,0 +1,48 @@
+{% extends "main.html" %}
+{% load widget_tweaks %}
+{% block title %}{% if category %}Edit{% else %}New{% endif %} Collection{% endblock title %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between pb-3">
+        <h2>{% if collection %}Edit {{ collection.name }}{% else %}New{% endif %} Collection</h2>
+        {% if collection %}
+        <a href="{% url 'staff-collection' collection.name %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Back</button></a>
+        {% else %}
+        <a href="{% url 'staff-collections' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Collections</button></a>
+        {% endif %}   
+    </div>
+
+    <form method="post">{% csrf_token %}
+        <div class="row mb-3">
+            <div class="col">
+                <label class="form-label">{{ form.name.label }}</label>
+                {% render_field form.name class="form-control" placeholder="Name" %}
+            </div>
+            <div class="col">
+                <label class="form-label">{{ form.price.label }}</label>
+                {% render_field form.price class="form-control" placeholder="Price"%}
+            </div>
+        </div>
+        <div class="form-check form-switch mb-3">
+            {% render_field form.available class="form-check-input" type="checkbox" %}
+            <label class="form-check-label" for="{{ form.available.id_for_label }}">{{ form.available.label }}</label>
+        </div>
+        <div class="form-check form-switch mb-3">
+            {% render_field form.hidden class="form-check-input" type="checkbox" %}
+            <label class="form-check-label" for="{{ form.hidden.id_for_label }}">{{ form.hidden.label }}</label>
+        </div>
+        <div class="mb-4 col-md-4">
+            <label class="form-check-label" for="{{ form.products.id_for_label }}">{{ form.products.label }}</label>
+            {% render_field form.products class="form-select" size="5" %}
+        </div>
+        <div class="d-grid col-md-4">
+            <button type="submit" class="btn btn-primary btn-block" value="Save">{% if collection %}Save{% else %}Create{% endif %}</button>
+        </div>
+    </form>
+
+</div>
+
+{% endblock content %}
