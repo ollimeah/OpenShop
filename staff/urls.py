@@ -61,5 +61,8 @@ urlpatterns = [
     path('baskets/', views.BasketListView.as_view(), name='staff-baskets'),
     path('basket/<int:pk>/', views.BasketDetailView.as_view(), name='staff-basket'),
 
+    path('messages/', views.MessageListView.as_view(), name='staff-messages'),
+    path('message/<int:pk>/delete/', views.MessageDeleteView.as_view(), name='staff-message-delete'),
+
     path('settings/', views.settings, name='staff-settings'),
 ]

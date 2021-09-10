@@ -1,4 +1,4 @@
-from staff.models import FAQ, Promotion, Delivery, CarouselImage
+from staff.models import FAQ, Message, Promotion, Delivery, CarouselImage
 from django.views import generic
 from django.urls import reverse
 from django.shortcuts import redirect
@@ -132,3 +132,17 @@ class CarouselImageDeleteView(generic.DeleteView):
 
     def get_success_url(self):
         return reverse('staff-carousel-index')
+
+class MessageListView(StaffTestMixin, generic.ListView):
+    model = Message
+    context_object_name = 'messages'
+    template_name = 'staff/messages/index.html'
+    
+class MessageDeleteView(StaffTestMixin, generic.DeleteView):
+    model = FAQ
+
+    def get(self, request, pk):
+        return redirect('staff-messages')
+
+    def get_success_url(self):
+        return reverse('staff-messages')
