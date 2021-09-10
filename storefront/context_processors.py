@@ -1,5 +1,4 @@
-from staff.models import Category, Collection
-from storefront.models import Device
+from staff.models import Category, Collection, Device
 from django.urls import reverse
 
 def categories(request):

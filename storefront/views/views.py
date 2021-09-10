@@ -1,6 +1,5 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from staff.models import Address, CarouselImage, Category, Collection, Order, Product
-from storefront.models import Basket
+from staff.models import Address, CarouselImage, Category, Collection, Order, Product, Basket
 from django.views import generic
 from staff.forms import DeliveryChoiceForm, ShippingForm
 

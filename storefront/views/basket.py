@@ -1,7 +1,6 @@
 from django.http import HttpResponse, JsonResponse
 from storefront.forms import AddProductToBasketForm, AddCollectionToBasketForm, PromotionCodeForm
-from storefront.models import Basket, BasketProduct, BasketCollection
-from staff.models import Product, Collection, Promotion
+from staff.models import Product, Collection, Promotion, Basket, BasketProduct, BasketCollection
 from django.shortcuts import redirect, render
 import json
 

@@ -1,6 +1,5 @@
 from django.utils import timezone
-from storefront.models import Basket, BasketCollection, BasketProduct, Device
-from staff.models import Address, Category, Collection, Delivery, Order, OrderCollection, OrderCollectionProduct, OrderProduct, OrderShipping, Product, Promotion
+from staff.models import *
 from django.test import TestCase
 import uuid
 from random import randint
