@@ -475,8 +475,16 @@ class ProductTest(TestCase):
             OrderProduct.objects.create(order=order, product_name=product.name, quantity=quantity, price=product.price)
         self.assertEqual(num_sold, product.num_sold_today)
 
-    # def test_num_in_basket(self):
-    #     pass
+    def test_num_in_basket(self):
+        product = self.create_product()
+        device = Device.objects.create()
+        basket = Basket.objects.create(device=device) 
+        num = 0
+        for i in range(randint(2, 10)):
+            quantity = randint(1, 100)
+            num += quantity
+            BasketProduct.objects.create(basket=basket, product=product, quantity=quantity)
+        self.assertEqual(num, product.num_in_basket)
     
     def test_total_sales(self):
         product = self.create_product()

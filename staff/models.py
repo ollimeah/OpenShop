@@ -131,10 +131,10 @@ class Product(models.Model):
             if op: total += op[0].quantity
         return total
     
-    # @property
-    # def num_in_basket(self):
-    #     basket_products = BasketProduct.objects.filter(product=self).values_list('quantity', flat=True)
-    #     return sum(basket_products)
+    @property
+    def num_in_basket(self):
+        basket_products = BasketProduct.objects.filter(product=self).values_list('quantity', flat=True)
+        return sum(basket_products)
 
     @property
     def total_sales(self):
