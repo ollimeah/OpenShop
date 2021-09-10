@@ -139,7 +139,7 @@ class MessageListView(StaffTestMixin, generic.ListView):
     template_name = 'staff/messages/index.html'
     
 class MessageDeleteView(StaffTestMixin, generic.DeleteView):
-    model = FAQ
+    model = Message
 
     def get(self, request, pk):
         return redirect('staff-messages')
