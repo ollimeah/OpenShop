@@ -538,3 +538,9 @@ class BasketCollection(models.Model):
     def add_quantity(self, quantity):
         self.quantity = self.quantity + quantity
         self.save()
+
+class Message(models.Model):
+    name = models.CharField(max_length=200)
+    email = models.EmailField(max_length=254)
+    subject = models.CharField(max_length=200)
+    message = models.TextField()
