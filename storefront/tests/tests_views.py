@@ -3,7 +3,7 @@ from io import BytesIO
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User, Group
-from staff.models import FAQ, Category, Collection, Delivery, Order, Product, Promotion
+from staff.models import FAQ, Category, Collection, Delivery, Order, Product, Promotion, Settings
 
 class URLTestCase(TestCase):
     @classmethod
@@ -768,3 +768,36 @@ class ProductTest(URLTestCase):
         for i in range(1,4):
             self.assertFalse(Product.objects.get(id=i).available)
         self.assertRedirects(response, reverse('staff-products'))
+    
+class SettingsTest(URLTestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.settings_init = Settings().as_dict()
+        return super().setUpTestData()
+    
+    @classmethod
+    def tearDownClass(cls):
+        Settings().update(cls.settings_init)
+        return super().tearDownClass()
+
+    def test_settings_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-settings'), '/staff/?next=/staff/settings/')
+    
+    def test_settings_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/settings/')
+
+    def test_settings_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-settings'))
+
+    def test_settings_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-settings'), 'staff/settings.html')
+    
+    def test_post_settings_redirect_if_not_logged_in(self):
+        response = self.client.post(reverse('staff-settings'), {"shop_name": "Test Shop", "primary_colour": "#01254b", "secondary_colour": "#fee331", "logo": False, "carousel": True}, follow=True)
+        self.assertRedirects(response, '/staff/?next=/staff/settings/')
+    
+    def test_post_settings(self):
+        self.login_staff()
+        response = self.client.post(reverse('staff-settings'), {"shop_name": "Test Shop", "primary_colour": "#01254b", "secondary_colour": "#fee331", "logo": False, "carousel": True}, follow=True)
+        self.assertTemplateUsed(response, 'staff/settings.html')
