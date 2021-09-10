@@ -101,16 +101,16 @@ class DeliveryDeleteView(DeliveryView, generic.DeleteView):
     def get(self, request, pk):
         return redirect('staff-deliveries')
 
-class CarouselImageListView(generic.ListView):
+class CarouselImageListView(StaffTestMixin, generic.ListView):
     model = CarouselImage
     context_object_name = 'images'
     template_name = 'staff/home/carousel/index.html'
 
-class CarouselImageDetailView(generic.DetailView):
+class CarouselImageDetailView(StaffTestMixin, generic.DetailView):
     model = CarouselImage
     template_name = 'staff/home/carousel/detail.html'
 
-class CarouselImageCreateView(generic.edit.CreateView):
+class CarouselImageCreateView(StaffTestMixin, generic.edit.CreateView):
     model = CarouselImage
     fields = '__all__'
     template_name = 'staff/home/carousel/new.html'
@@ -118,7 +118,7 @@ class CarouselImageCreateView(generic.edit.CreateView):
     def get_success_url(self):
         return reverse('staff-carousel', kwargs={'pk' : self.object.id})
 
-class CarouselImageUpdateView(generic.UpdateView):
+class CarouselImageUpdateView(StaffTestMixin, generic.UpdateView):
     model = CarouselImage
     fields = '__all__'
     template_name = 'staff/home/carousel/update.html'
@@ -126,7 +126,7 @@ class CarouselImageUpdateView(generic.UpdateView):
     def get_success_url(self):
         return reverse('staff-carousel', kwargs={'pk' : self.object.id})
 
-class CarouselImageDeleteView(generic.DeleteView):
+class CarouselImageDeleteView(StaffTestMixin, generic.DeleteView):
     model = CarouselImage
     template_name = 'staff/home/carousel/delete.html'
 
