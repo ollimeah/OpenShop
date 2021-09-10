@@ -2,7 +2,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User, Group
-from staff.models import FAQ, Category, Collection, Delivery, Order, Product, Promotion, Settings
+from staff.models import FAQ, Basket, Category, Collection, Delivery, Device, Order, Product, Promotion, Settings
 
 class URLTestCase(TestCase):
     @classmethod
@@ -768,6 +768,37 @@ class ProductTest(URLTestCase):
             self.assertFalse(Product.objects.get(id=i).available)
         self.assertRedirects(response, reverse('staff-products'))
     
+class BasketTest(URLTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        device = Device.objects.create()
+        Basket.objects.create(device=device)
+    
+    def test_index_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-baskets'), '/staff/?next=/staff/baskets/')
+    
+    def test_index_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/baskets/')
+
+    def test_index_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-baskets'))
+
+    def test_index_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-baskets'), 'staff/baskets/index.html')
+    
+    def test_detail_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-basket', kwargs={'pk':'1'}), '/staff/?next=/staff/basket/1/')
+    
+    def test_detail_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/basket/1/')
+
+    def test_detail_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-basket', kwargs={'pk':'1'}))
+
+    def test_detail_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-basket', kwargs={'pk':'1'}), 'staff/baskets/detail.html')
+
 class SettingsTest(URLTestCase):
 
     @classmethod
