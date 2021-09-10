@@ -1,0 +1,35 @@
+{% extends "main.html" %}
+{% load humanize %}
+{% block title %}Baskets{% endblock title %}
+
+{% block content %}
+
+<div class='container py-5'>
+    <div class="d-flex justify-content-between pb-3">
+        <h2>Baskets</h2>
+    </div>
+
+    <div class="list-group">
+        {% for basket in baskets %}
+        <a href="{% url 'staff-basket' basket.id %}" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <div>
+                    <h5>Basket #{{ basket.id }} <span class="badge bg-info text-dark">{{ basket.num_items }} items</span></h5>
+                    <h6>Total: £{{ basket.total_cost }}</h6>
+                    {% if basket.address %}
+                    <p class="mb-0">For {{ basket.address.name }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <h5 class="text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="{{basket.date_updated}}">Updated {{basket.date_updated|naturaltime}}</h5>
+                    {% if basket.delivery %}
+                    <p class="fw-bold mb-0 text-end">Delivery: {{ basket.delivery.name }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from staff.forms import SettingsForm
-from staff.models import Order, Product, Settings
+from staff.models import Basket, Order, Product, Settings
 from django.contrib.auth.decorators import user_passes_test
 from django.urls import reverse
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -52,3 +52,13 @@ class OrderDetailView(StaffTestMixin, generic.DetailView):
 def toggle_shipped(request, pk):
     get_object_or_404(Order, id=pk).toggle_shipped()
     return redirect('staff-order', pk=pk)
+
+class BasketListView(StaffTestMixin, generic.ListView):
+    model = Basket
+    template_name = 'staff/baskets/index.html'
+    context_object_name = 'baskets'
+    ordering = ['-date_updated']
+
+class BasketDetailView(StaffTestMixin, generic.DetailView):
+    model = Basket
+    template_name = 'staff/baskets/detail.html'

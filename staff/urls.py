@@ -58,5 +58,8 @@ urlpatterns = [
     path('order/<int:pk>/', views.OrderDetailView.as_view(), name='staff-order'),
     path('order/<int:pk>/toggle-shipped/', views.toggle_shipped, name='staff-order-toggle'),
 
+    path('baskets/', views.BasketListView.as_view(), name='staff-baskets'),
+    path('basket/<int:pk>/', views.BasketDetailView.as_view(), name='staff-basket'),
+
     path('settings/', views.settings, name='staff-settings'),
 ]

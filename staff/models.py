@@ -439,6 +439,12 @@ class Basket(models.Model):
     def promotion_cost(self):
         return self.item_cost - self.promotion.get_discount(self.item_cost)
     
+    @property
+    def final_price(self):
+        if self.promotion:
+            return self.total_cost - self.promotion.get_discount(self.item_cost)
+        else: return self.total_cost
+    
     def add_promotion(self, promotion):
         if promotion.is_eligible(self.item_cost):
             self.promotion = promotion

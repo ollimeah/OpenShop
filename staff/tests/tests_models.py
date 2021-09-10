@@ -128,6 +128,30 @@ class BasketTest(TestCase):
         basket.save()
         prices.append(delivery.price)
         self.assertEqual(basket.total_cost, sum(prices))
+    
+    def test_final_price_no_promotion(self):
+        basket, prices = self.create_full_basket()
+        delivery = Delivery.objects.create(name='New Delivery', price=Decimal(3.99), available=True)
+        basket.delivery = delivery
+        basket.save()
+        prices.append(delivery.price)
+        self.assertEqual(basket.final_price, sum(prices))
+    
+    def test_final_price_with_promotion(self):
+        basket, promotion = self.create_perc_promo_basket()
+        delivery = Delivery.objects.create(name='New Delivery', price=Decimal(3.99), available=True)
+        basket.delivery = delivery
+        basket.save()
+        basket.promotion = promotion
+        total = 0
+        for bp in basket.basketproduct_set.all():
+            total += bp.quantity * bp.product.price
+        for bc in basket.basketcollection_set.all():
+            total += bc.quantity * bp.collection.price
+        promo_amount = Decimal(promotion.amount/100) * total
+        total += delivery.price
+        promo_amount = min(promotion.max_discount, round(promo_amount, 2))
+        self.assertEqual(basket.final_price, total - promo_amount) 
 
     def test_add_valid_promotion(self):
         basket, promotion = self.create_perc_promo_basket()

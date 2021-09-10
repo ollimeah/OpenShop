@@ -1,0 +1,125 @@
+{% extends "main.html" %}
+{% load humanize %}
+{% block title %}Basket #{{ basket.id }}{% endblock title %}
+
+{% block content %}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between mb-3 pb-2 border-bottom">
+        <h2>Basket #{{ basket.id }}</h2>
+        <div>
+            <a href="{% url 'staff-baskets' %}"><button type="button" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Baskets</button></a>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between pb-2">
+        <h4>This basket was updated {{ basket.date_updated|naturaltime }}, <span class="text-muted fs-6">{{ basket.date_updated }}</span></h4>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-5 shadow">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Items <span class="badge bg-info text-dark">{{ basket.num_items }} items</span></h5>
+                </div>
+                <div class="card-body px-0">
+                    <table class="table table-hover table-striped table-responsive">
+                        <thead>
+                          <tr>
+                            <th class="text-left" scope="col">Item Name</th>
+                            <th class="text-center" scope="col">Quantity</th>
+                            <th class="text-center" scope="col">Price</th>
+                            <th class="text-center" scope="col">Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for bp in basket.basketproduct_set.all %}
+                         <tr>
+                            <td class="text-left"><a href="{% url 'staff-product' bp.product.name %}" class="text-dark">{{ bp.product.name }}</a></td>
+                            <td class="text-center">{{ bp.quantity }}</td>
+                            <td class="text-center">£{{ bp.product.price }}</td>
+                            <td class="text-center">£{{ bp.total_cost }}</td>
+                          </tr>
+                          {% endfor %}
+                          {% for bc in basket.basketcollection_set.all %}
+                         <tr>
+                            <td class="text-left">
+                                <a href="{% url 'staff-collection' bc.collection.name %}" class="text-dark">{{ bc.collection.name }}</a>
+                                <div class="ms-3">
+                                  <p class="mb-0">Contains:</p>
+                                  <ul class="mb-0">
+                                  {% for product in bc.collection.products.all %}
+                                  <li><a href="{% url 'staff-product' product.name %}" class="text-dark">{{ product.name }}</a></li>
+                                  {% endfor %}
+                                  </ul>
+                                </div>
+                            </td>
+                            <td class="text-center">{{ bc.quantity }}</td>
+                            <td class="text-center">£{{ bc.collection.price }}</td>
+                            <td class="text-center">£{{ bc.total_cost }}</td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                </div>
+            </div>
+        </div>
+
+        {% if basket.address %}
+        <div class="col-lg-4">
+            <div class="card mb-5 shadow">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Shipping Information</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">{{ basket.address.name }}</p>
+                    <p class="mb-0">{{ basket.address.line_1 }}</p>
+                    {% if basket.address.line_2 %}<p class="mb-0">{{ basket.address.line_2 }}</p>{% endif %}
+                    <p class="mb-0">{{ basket.address.city }}</p>
+                    {% if basket.address.county %}<p class="mb-0">{{ basket.address.county }}</p>{% endif %}
+                    <p>{{ basket.address.postcode }}</p>
+                    <div class="d-flex justify-content-between">
+                        <p class="mb-0">{{ basket.delivery.name }}</p>
+                        <p class="mb-0">£{{ basket.delivery.price }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card mb-5 shadow">
+          <div class="card-header bg-white">
+              <h5 class="mb-0">Summary</h5>
+          </div>
+          <div class="card-body">
+              <div class="d-flex justify-content-between">
+                  <p>Subtotal</p>
+                  <p>{{ basket.num_items }} items</p>
+                  <p>£{{ basket.item_cost }}
+              </div>
+              {% if basket.promotion %}
+              <div class="d-flex justify-content-between">
+                  <p>Promotion</p>
+                  <p>{{ basket.promotion.code }}</p>
+                  <p>-£{{ basket.promotion_amount }}</p>
+              </div>
+              {% endif %}
+              {% if basket.delivery %}
+              <div class="d-flex justify-content-between">
+                  <p>Shipping</p>
+                  <p>{{ basket.delivery.name }}</p>
+                  <p>£{{ basket.delivery.price }}</p>
+              </div>
+              {% endif %}
+              <div class="d-flex justify-content-between">
+                  <p class="fw-bold">Total</p>
+                  <p class="fw-bold">£{{ basket.final_price }}</p>
+              </div>
+              <p class="fw-bold text-danger text-end">NOT PAID</p>
+          </div>
+      </div>
+    </div>
+</div>
+{% endblock content %}
