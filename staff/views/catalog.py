@@ -83,6 +83,7 @@ class ProductDeleteView(ProductView, generic.DeleteView):
     def get_success_url(self):
         return reverse('staff-products')
 
+@user_passes_test(staff_check, login_url='staff-login')
 def manage_products(request):
     if request.POST:
         form = ProductManagementForm(request.POST)

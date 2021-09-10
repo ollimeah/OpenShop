@@ -1,4 +1,5 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
+from io import BytesIO
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User, Group
@@ -615,3 +616,155 @@ class CollectionTest(URLTestCase):
         self.client.post(reverse('staff-collection-products', kwargs={'name':'Test2'}), {"products":[1]})
         self.assertIn(Product.objects.get(id=1), collection.products.all())
         self.assertNotIn(Product.objects.get(id=2), collection.products.all())
+    
+class ProductTest(URLTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        category = Category.objects.create(name="Test")
+        Product.objects.create(name="Test", description='Test', price=10, category=category,
+        image=SimpleUploadedFile("test" + '.jpg', b'content'), available=True, hidden=False, min=1, max=12)
+    
+    def tearDown(self):
+        for prod in Product.objects.all(): prod.image.delete()
+        return super().tearDown()
+    
+    def create_product(self, name='Prod', available=True, hidden=False, file_name='prod'):
+        category = Category.objects.get(id=1)
+        prod = Product.objects.create(name=name, description='Test', price=10, category=category,
+        image=SimpleUploadedFile(file_name + '.jpg', b'content'), available=available, hidden=hidden, min=1, max=12)
+        return prod
+
+    def test_index_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-products'), '/staff/?next=/staff/products/')
+    
+    def test_index_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/products/')
+
+    def test_index_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-products'))
+
+    def test_index_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-products'), 'products/index.html')
+    
+    def test_detail_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-product', kwargs={'name':'Test'}), '/staff/?next=/staff/product/Test/')
+    
+    def test_detail_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/product/Test/')
+
+    def test_detail_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-product', kwargs={'name':'Test'}))
+
+    def test_detail_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-product', kwargs={'name':'Test'}), 'products/detail.html')
+    
+    def test_new_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-products-new'), '/staff/?next=/staff/products/new/')
+    
+    def test_post_new_redirect_if_not_logged_in(self):
+        data = {'name':"Test2", 'price':'10', 'description':'Test2', 'category':'1', 'image':'',
+                'available':'True', 'hidden':'False', 'min':1, 'max':4}
+        response = self.client.post(reverse('staff-products-new'), data, follow=True)
+        self.assertRedirects(response, '/staff/?next=/staff/products/new/')
+    
+    def test_new_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/products/new/')
+
+    def test_new_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-products-new'))
+
+    def test_new_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-products-new'), 'products/view.html')
+    
+    # def test_post_new(self):
+    #     self.login_staff()
+    #     p = self.create_product(name='Prod3')
+    #     with open(Product.objects.get(name='Prod3').image.url) as img:
+    #         data = {'name':"Test", 'price':'13', 'description':'Test2', 'category':'1', 'image':img,
+    #                 'available':'True', 'hidden':'False', 'min':1, 'max':4}
+    #         print(data)
+    #         response = self.client.post(reverse('staff-products-new'), data, follow=True)
+    #         self.assertRedirects(response, reverse('staff-product', kwargs={'name':'Test2'}))
+    
+    def test_update_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-product-update', kwargs={'name':'Test'}), '/staff/?next=/staff/product/Test/update/')
+    
+    def test_post_update_redirect_if_not_logged_in(self):
+        data = {'name':"Test", 'price':'13', 'description':'Test2', 'category':'1', 'image':'',
+                'available':'True', 'hidden':'False', 'min':1, 'max':4}
+        response = self.client.post(reverse('staff-product-update', kwargs={'name':'Test'}), data, follow=True)
+        self.assertRedirects(response, '/staff/?next=/staff/product/Test/update/')
+    
+    def test_update_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/product/Test/update/')
+
+    def test_update_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-product-update', kwargs={'name':'Test'}))
+
+    def test_update_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-product-update', kwargs={'name':'Test'}), 'products/view.html')
+    
+    def test_post_update(self):
+        self.login_staff()
+        data = {'name':"Test", 'price':'13', 'description':'Test2', 'category':'1', 'image':'',
+                'available':'True', 'hidden':'False', 'min':1, 'max':4}
+        response = self.client.post(reverse('staff-product-update', kwargs={'name':'Test'}), data, follow=True)
+        self.assertRedirects(response, reverse('staff-product', kwargs={'name':'Test'}))
+    
+    def test_delete_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-product-delete', kwargs={'name':'Test'}), '/staff/?next=/staff/product/Test/delete/')
+    
+    def test_delete_url_exists_at_desired_location(self):
+        self.redirect_test_with_login('/staff/product/Test/delete/', '/staff/products/')
+
+    def test_delete_url_accessible_by_name(self):
+        self.redirect_test_with_login(reverse('staff-product-delete', kwargs={'name':'Test'}), '/staff/products/')
+    
+    def test_manage_products_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-products-manage'), '/staff/?next=/staff/products/manage/')
+    
+    def test_manage_products_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/products/manage/')
+
+    def test_manage_products_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-products-manage'))
+    
+    def test_manage_products_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-products-manage'), 'products/manage.html')
+    
+    def test_manage_products_hide(self):
+        for i in range(1, 4):
+            self.create_product(name="Test"+str(i), file_name="Test"+str(i))
+        self.login_staff()
+        response = self.client.post(reverse('staff-products-manage'), {'action':'hide', 'products':['1','2','3']})
+        for i in range(1,4):
+            self.assertTrue(Product.objects.get(id=i).hidden)
+        self.assertRedirects(response, reverse('staff-products'))
+
+    def test_manage_products_delete(self):
+        for i in range(1, 4):
+            self.create_product(name="Test"+str(i), file_name="Test"+str(i))
+        self.login_staff()
+        response = self.client.post(reverse('staff-products-manage'), {'action':'delete', 'products':['1','2','3']})
+        for i in range(1,4):
+            self.assertEqual(0, Product.objects.filter(id=i).count())
+        self.assertRedirects(response, reverse('staff-products'))
+
+    def test_manage_products_available(self):
+        for i in range(1, 4):
+            self.create_product(name="Test"+str(i), file_name="Test"+str(i))
+        self.login_staff()
+        response = self.client.post(reverse('staff-products-manage'), {'action':'available', 'products':['1','2','3']})
+        for i in range(1,4):
+            self.assertTrue(Product.objects.get(id=i).available)
+        self.assertRedirects(response, reverse('staff-products'))
+
+    def test_manage_products_unavailable(self):
+        for i in range(1, 4):
+            self.create_product(name="Test"+str(i), file_name="Test"+str(i))
+        self.login_staff()
+        response = self.client.post(reverse('staff-products-manage'), {'action':'unavailable', 'products':['1','2','3']})
+        for i in range(1,4):
+            self.assertFalse(Product.objects.get(id=i).available)
+        self.assertRedirects(response, reverse('staff-products'))
