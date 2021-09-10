@@ -2,7 +2,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User, Group
-from staff.models import FAQ, Basket, Category, Collection, Delivery, Device, Order, Product, Promotion, Settings
+from staff.models import FAQ, Basket, Category, Collection, Delivery, Device, Message, Order, Product, Promotion, Settings
 
 class URLTestCase(TestCase):
     @classmethod
@@ -798,6 +798,33 @@ class BasketTest(URLTestCase):
 
     def test_detail_uses_correct_template(self):
         self.template_test_with_login(reverse('staff-basket', kwargs={'pk':'1'}), 'staff/baskets/detail.html')
+
+class MessageTest(URLTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        Message.objects.create(name="Test", email="test@test.com", subject="test", message="test")
+    
+    def test_index_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-messages'), '/staff/?next=/staff/messages/')
+    
+    def test_index_url_exists_at_desired_location(self):
+        self.url_ok_test_with_login('/staff/messages/')
+
+    def test_index_url_accessible_by_name(self):
+        self.url_ok_test_with_login(reverse('staff-messages'))
+
+    def test_index_uses_correct_template(self):
+        self.template_test_with_login(reverse('staff-messages'), 'staff/messages/index.html')
+    
+    def test_delete_redirect_if_not_logged_in(self):
+        self.redirect_test(reverse('staff-message-delete', kwargs={'pk':1}), '/staff/?next=/staff/message/1/delete/')
+    
+    def test_delete_url_exists_at_desired_location(self):
+        self.redirect_test_with_login('/staff/message/1/delete/', '/staff/messages/')
+
+    def test_delete_url_accessible_by_name(self):
+        self.redirect_test_with_login(reverse('staff-message-delete', kwargs={'pk':1}), '/staff/messages/')
 
 class SettingsTest(URLTestCase):
 
