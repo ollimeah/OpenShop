@@ -508,6 +508,10 @@ class ProductTest(TestCase):
 class CollectionTest(TestCase):
     fixtures = ['collections.json', 'categories.json', 'products.json']
 
+    def create_collection(self, name='Test', price=10, available=True, hidden=False):
+        collection = Collection.objects.create(name=name, price=price, available=available, hidden=hidden)
+        return collection
+
     def test_add_products(self):
         collection = Collection.objects.get(id=1)
         collection.add_products(Product.objects.all())
@@ -518,6 +522,47 @@ class CollectionTest(TestCase):
         collections = Collection.get_visible()
         for collection in collections:
             self.assertFalse(collection.hidden)
+
+    def test_num_sold(self):
+        collection = self.create_collection()
+        num_sold = 0
+        for i in range(randint(3, 20)):
+            order = Order.objects.create()
+            quantity = randint(1, 1000)
+            num_sold += quantity
+            OrderCollection.objects.create(order=order, collection_name=collection.name, quantity=quantity, price=collection.price)
+        self.assertEqual(num_sold, collection.num_sold)
+    
+    def test_num_sold_today(self):
+        collection = self.create_collection()
+        num_sold = 0
+        for i in range(randint(3, 20)):
+            order = Order.objects.create()
+            quantity = randint(1, 1000)
+            num_sold += quantity
+            OrderCollection.objects.create(order=order, collection_name=collection.name, quantity=quantity, price=collection.price)
+        self.assertEqual(num_sold, collection.num_sold_today)
+
+    def test_num_in_basket(self):
+        collection = self.create_collection()
+        device = Device.objects.create()
+        basket = Basket.objects.create(device=device) 
+        num = 0
+        for i in range(randint(2, 10)):
+            quantity = randint(1, 100)
+            num += quantity
+            BasketCollection.objects.create(basket=basket, collection=collection, quantity=quantity)
+        self.assertEqual(num, collection.num_in_basket)
+    
+    def test_total_sales(self):
+        collection = self.create_collection()
+        total = 0
+        for i in range(randint(3, 20)):
+            order = Order.objects.create()
+            quantity = randint(1, 1000)
+            total += quantity * collection.price
+            OrderCollection.objects.create(order=order, collection_name=collection.name, quantity=quantity, price=collection.price)
+        self.assertEqual(total, collection.total_sales)
 
 class PromotionTest(TestCase):
     fixtures = ['promotions.json']

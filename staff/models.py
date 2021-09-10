@@ -181,6 +181,33 @@ class Collection(models.Model):
     hidden = models.BooleanField(default=False)
     products = models.ManyToManyField(Product)
 
+    @property
+    def num_sold(self):
+        order_collections = OrderCollection.objects.filter(collection_name=self.name).values_list('quantity', flat=True)
+        return sum(order_collections)
+    
+    @property
+    def num_sold_today(self):
+        orders = Order.objects.filter(date_ordered__date=date.today())
+        total = 0
+        for order in orders:
+            oc = OrderCollection.objects.filter(order=order, collection_name=self.name)
+            if oc: total += oc[0].quantity
+        return total
+    
+    @property
+    def num_in_basket(self):
+        basket_collections = BasketCollection.objects.filter(collection=self).values_list('quantity', flat=True)
+        return sum(basket_collections)
+
+    @property
+    def total_sales(self):
+        order_collections = OrderCollection.objects.filter(collection_name=self.name).values_list('price', 'quantity')
+        total = 0
+        for cost, quantity in order_collections: 
+            total += cost*quantity
+        return total
+
     def add_products(self, products):
         for product in products:
             self.products.add(product)

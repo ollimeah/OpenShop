@@ -14,6 +14,48 @@
         </div>
     </div>
 
+    <div class="row justify-content-center">
+        <div class="col-lg-3 col-6">
+            <div class="card py-2 mb-4">
+                <div class="card-body">
+                    <p class="font-weight-bold text-primary text-uppercase mb-0">Sold</p>
+                    <p class="text-uppercase text-secondary small mb-0">All time</p>
+                    <p class="h3 mb-0 text-right">{{ collection.num_sold }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-6">
+            <div class="card py-2 mb-4">
+                <div class="card-body">
+                    <p class="font-weight-bold text-primary text-uppercase mb-0">Sold</p>
+                    <p class="text-uppercase text-secondary small mb-0">Today</p>
+                    <p class="h3 mb-0 text-right">{{ collection.num_sold_today }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-6">
+            <div class="card py-2 mb-4">
+                <div class="card-body">
+                    <p class="font-weight-bold text-success text-uppercase mb-0">In Basket</p>
+                    <p class="text-uppercase text-secondary small mb-0">Not sold yet</p>
+                    <p class="h3 mb-0 text-right">{{ collection.num_in_basket }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-6">
+            <div class="card py-2 mb-4">
+                <div class="card-body">
+                    <p class="font-weight-bold text-warning text-uppercase mb-0">Sales</p>
+                    <p class="text-uppercase text-secondary small mb-0">All time</p>
+                    <p class="h3 mb-0 text-right">£{{ collection.total_sales }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="card mb-5">
         <div class="card-header bg-white">
             <div class="d-flex justify-content-between">
