@@ -34,11 +34,9 @@ def settings(request):
         form = SettingsForm(request.POST)
         if form.is_valid():
             settings.update(form.cleaned_data)
-
     form = SettingsForm(settings.as_dict())
-        
     context = {'form': form}
-    return render(request, 'settings.html', context)
+    return render(request, 'staff/settings.html', context)
 
 class OrderListView(StaffTestMixin, generic.ListView):
     model = Order
