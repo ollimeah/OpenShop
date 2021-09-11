@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from staff.models import Address, CarouselImage, Category, Collection, Order, Product, Basket
+from django.urls import reverse
+from staff.models import Address, CarouselImage, Category, Collection, Message, Order, Product, Basket
 from django.views import generic
 from staff.forms import DeliveryChoiceForm, ShippingForm
 
@@ -47,6 +48,14 @@ class CollectionDetailView(generic.DetailView):
     slug_field = 'name'
     slug_url_kwarg = 'name'
     queryset = Collection.objects.filter(hidden=False)
+
+class Contact(generic.CreateView):
+    model = Message
+    template_name = 'storefront/contact/contact.html'
+    fields = ['name', 'email', 'subject', 'message']
+
+    def get_success_url(self):
+        return reverse('message-sent')
 
 def shipping(request):
     basket = Basket.get_basket(request.COOKIES['device'])
