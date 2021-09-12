@@ -73,3 +73,27 @@ class ProductTest(URLTestCase):
 
     def test_product_uses_correct_template(self):
         self.template_test(reverse('product', kwargs={'name':self.product.name}), 'storefront/product.html')
+
+class ContactTest(URLTestCase):
+
+    def test_contact_url_exists_at_desired_location(self):
+        self.url_ok_test('/contact/')
+
+    def test_contact_url_accessible_by_name(self):
+        self.url_ok_test(reverse('contact'))
+
+    def test_contact_uses_correct_template(self):
+        self.template_test(reverse('contact'), 'storefront/contact/contact.html')
+    
+    def test_post_message(self):
+        response = self.client.post(reverse('contact'), {'name':'Test', 'email':'test@test.com', 'subject':'test', 'message':'test'}, follow=True)
+        self.assertRedirects(response, reverse('message-sent'))
+    
+    def test_message_sent_url_exists_at_desired_location(self):
+        self.url_ok_test('/contact/sent/')
+
+    def test_message_sent_url_accessible_by_name(self):
+        self.url_ok_test(reverse('message-sent'))
+
+    def test_message_sent_uses_correct_template(self):
+        self.template_test(reverse('message-sent'), 'storefront/contact/sent.html')
