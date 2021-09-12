@@ -34,23 +34,23 @@ def basket(request):
     basket = Basket.get_basket(request.COOKIES['device'])
     unavailable = basket.get_and_remove_unavailable_items()
     context = {'unavailable' : unavailable, 'basket' : basket}
-    if request.method == 'POST':
-        promo_form = PromotionCodeForm(request.POST)
-        if promo_form.is_valid():
-            code = promo_form.cleaned_data['code']
-            try:
-                promotion = Promotion.objects.get(code=code)
-                if promotion:
-                    context['error'] = not basket.add_promotion(promotion)
-            except Exception as e:
-                print(e)
-                context['error'] = True
-    if basket.promotion:
-        promo_form = PromotionCodeForm({'code' : basket.promotion.code})
-    else:
-        promo_form = PromotionCodeForm()
-    context['promo_form'] = promo_form
-    return render(request, 'storefront/basket.html', context)
+    # if request.method == 'POST':
+    #     promo_form = PromotionCodeForm(request.POST)
+    #     if promo_form.is_valid():
+    #         code = promo_form.cleaned_data['code']
+    #         try:
+    #             promotion = Promotion.objects.get(code=code)
+    #             if promotion:
+    #                 context['error'] = not basket.add_promotion(promotion)
+    #         except Exception as e:
+    #             print(e)
+    #             context['error'] = True
+    # if basket.promotion:
+    #     promo_form = PromotionCodeForm({'code' : basket.promotion.code})
+    # else:
+    #     promo_form = PromotionCodeForm()
+    # context['promo_form'] = promo_form
+    return render(request, 'storefront/order/basket.html', context)
 
 def update_product_quantity(request):
     if request.method == 'POST':
