@@ -23,6 +23,7 @@
 
   {% if unavailable %}
   <div class="collapse" id="unavailable">
+    <h1 class="border-bottom pb-1 mb-5">Unavailable Items</h1>
     <div class="d-flex flex-wrap">
       {% for product in unavailable %}
       <div class="col-lg-4 col-6">
@@ -34,3 +35,11 @@
   {% endif %}
 </div>
 {% endblock content %}
+{% block scripts %}
+<script>
+function confirmAdd(button) {
+  button.innerHTML = "<i class=\"bi bi-basket\"></i> Added";
+  setTimeout(function() {button.innerHTML="<i class=\"bi bi-basket\"></i> Add to basket"}, 750);
+}
+</script>
+{% endblock scripts %}
