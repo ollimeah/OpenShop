@@ -174,6 +174,10 @@ class Product(models.Model):
     def make_products_unavailable(product, products):
         for product in products: product.set_unavailable()
 
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    image = models.ImageField()
+
 class Collection(models.Model):
     name = models.CharField(max_length=40, unique=True)
     price = models.DecimalField(max_digits=7, decimal_places=2)
