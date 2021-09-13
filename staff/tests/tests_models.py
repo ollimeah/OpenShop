@@ -505,6 +505,26 @@ class ProductTest(TestCase):
             products.append(product)
         self.assertEqual(products, Product.best_sellers(5))
 
+class ProductImageTest(TestCase):
+    fixtures = ['categories.json']
+
+    def tearDown(self):
+        for prod in Product.objects.all(): prod.image.delete()
+        return super().tearDown()
+    
+    def create_product_image(self):
+        category = Category.objects.get(id=1)
+        prod = Product.objects.create(name='Test', description='Test', price=10, category=category,
+        image=SimpleUploadedFile('test' + '.jpg', b'content'), available=True, hidden=False, min=1, max=12)
+        prod_img = ProductImage.objects.create(product=prod, image=SimpleUploadedFile('test2' + '.jpg', b'content'))
+        return prod_img
+    
+    def test_delete(self):
+        product_image = self.create_product_image()
+        img_path = product_image.image.path
+        product_image.delete()
+        self.assertFalse(path_exists(img_path))
+
 class CollectionTest(TestCase):
     fixtures = ['collections.json', 'categories.json', 'products.json']
 

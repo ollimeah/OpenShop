@@ -178,6 +178,10 @@ class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     image = models.ImageField()
 
+    def delete(self, *args, **kwargs):
+        self.image.delete()
+        super().delete(*args, **kwargs)
+
 class Collection(models.Model):
     name = models.CharField(max_length=40, unique=True)
     price = models.DecimalField(max_digits=7, decimal_places=2)
