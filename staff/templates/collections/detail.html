@@ -55,33 +55,43 @@
             </div>
         </div>
     </div>
-
-    <div class="card mb-5">
-        <div class="card-header bg-white">
-            <div class="d-flex justify-content-between">
-            <h5 class="mb-0 align-self-center">Products <span class="badge bg-info text-dark">{{ collection.products.count }} items</span></h5>
-            <a href="{% url 'staff-collection-products' object.name %}"><button type="button" class="btn btn-primary"><i class="bi bi-pencil-fill"></i> Edit Products</button></a>
-            </div>
+    {% if collection.description %}
+    <div>
+      <h3>Description</h3>
+      <p class="pt-1 lead">{{collection.description}}</p>
+    </div>
+    {% endif %}
+    <div class="row g-4">
+        <div class="col-md-4">
+            <img class="img-fluid rounded w-100" src={{collection.image.url}} alt={{collection.name}}>
         </div>
-        <div class="card-body px-0">
-            <div class="list-group list-group-flush">
-              {% for product in collection.products.all %}
-              <a href="{% url 'staff-product' product.name %}" class="list-group-item list-group-item-action">
-                  <div class="d-flex justify-content-between">
-                      <h5 class="mb-1">{{ product.name }}</h5>
-                      {% if product.hidden %}
-                      <small class="text-danger fw-bold">Hidden</small>
-                      {% elif not product.available %}
-                      <small class="text-danger fw-bold">Unavailable</small>
-                      {% else %}
-                      <small class="text-success fw-bold">Available</small>
-                      {% endif %}
-                  </div>
-                  <p class="mb-1">Category: {{ product.category }}</p>
-                  <p class="mb-0">£{{ product.price }}</p>
-              </a>
-              {% endfor %}
-          </div>
+        <div class="card mb-5 col-md-8">
+            <div class="card-header bg-white">
+                <div class="d-flex justify-content-between">
+                <h5 class="mb-0 align-self-center">Products <span class="badge bg-info text-dark">{{ collection.products.count }} items</span></h5>
+                <a href="{% url 'staff-collection-products' object.name %}"><button type="button" class="btn btn-primary"><i class="bi bi-pencil-fill"></i> Edit Products</button></a>
+                </div>
+            </div>
+            <div class="card-body px-0">
+                <div class="list-group list-group-flush">
+                {% for product in collection.products.all %}
+                <a href="{% url 'staff-product' product.name %}" class="list-group-item list-group-item-action">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="mb-1">{{ product.name }}</h5>
+                        {% if product.hidden %}
+                        <small class="text-danger fw-bold">Hidden</small>
+                        {% elif not product.available %}
+                        <small class="text-danger fw-bold">Unavailable</small>
+                        {% else %}
+                        <small class="text-success fw-bold">Available</small>
+                        {% endif %}
+                    </div>
+                    <p class="mb-1">Category: {{ product.category }}</p>
+                    <p class="mb-0">£{{ product.price }}</p>
+                </a>
+                {% endfor %}
+            </div>
+            </div>
         </div>
     </div>
 </div>
