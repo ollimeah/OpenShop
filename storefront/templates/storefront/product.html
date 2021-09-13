@@ -35,18 +35,16 @@
       </div>
 
       <div class="col-md-7">
-        <h3>{{product.name}}</h3>
-        <p class="mb-2 text-muted text-uppercase">{{product.category}}</p>
-        <p class="mr-1 font-weight-bold">£{{product.price}}</p>
-        <p class="pt-1 text-justify">{{product.description}}</p>
-
+        <h2 class="mb-0 mt-3 mt-md-0">{{product.name}}</h2>
+        <p class="mb-2 text-muted text-uppercase">Category: {{product.category}}</p>
+        <h3 class="font-weight-bold">£{{product.price}}</h3><br>
+        
         {% if product.available %}
-        <form action="{% url 'basket-add-product' %}" method="post">
-          {% csrf_token %}
-          <div class="d-flex mb-2">
+        <form action="{% url 'basket-add-product' %}" method="post">{% csrf_token %}
+          <div class="d-flex">
             <input hidden name="product_name" value="{{ product.name }}"></input>
-            <label for="quantity" class="form-check-label align-self-center mr-2">Quantity:</label>
-            <select class="custom-select" name="quantity" id="quantity">
+            <p class="text-uppercase small">Quantity:</label>
+            <select class="form-select mt-1" name="quantity" id="quantity">
               {% for i in range %}
                 <option value="{{i}}">{{i}}</option>
               {% endfor %}
@@ -63,6 +61,21 @@
 
       </div>
     </div>
+    <div class="mt-5">
+      <h3>Description</h3>
+      <p class="pt-1 lead">{{product.description}}</p>
+      <p class="pt-1 text-danger mb-0">Minimum order: {{product.min}}</p>
+      <p class="text-danger">Maximum order: {{product.max}}</p>
+    </div>
   </div>
 </div>
 {% endblock content %}
+{% block scripts %}
+<script>
+function confirmAdd(button) {
+  button.blur()
+  button.innerHTML = "<i class=\"bi bi-basket\"></i> Added";
+  setTimeout(function() {button.innerHTML="<i class=\"bi bi-basket\"></i> Add to basket"}, 750);
+}
+</script>
+{% endblock scripts %}

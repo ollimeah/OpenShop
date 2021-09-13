@@ -38,6 +38,7 @@
 {% block scripts %}
 <script>
 function confirmAdd(button) {
+  button.blur()
   button.innerHTML = "<i class=\"bi bi-basket\"></i> Added";
   setTimeout(function() {button.innerHTML="<i class=\"bi bi-basket\"></i> Add to basket"}, 750);
 }
