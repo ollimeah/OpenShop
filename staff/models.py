@@ -188,6 +188,8 @@ class Collection(models.Model):
     available = models.BooleanField(default=True)
     hidden = models.BooleanField(default=False)
     products = models.ManyToManyField(Product)
+    description = models.TextField(null=True, blank=True)
+    image = models.ImageField()
 
     @property
     def num_sold(self):
