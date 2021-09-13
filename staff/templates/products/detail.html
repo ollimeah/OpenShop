@@ -91,10 +91,12 @@
             <div class="d-flex justify-content-between">
                 <h5>Images</h5>
                 <form method='post' enctype="multipart/form-data">{% csrf_token %}
-                    {{ image_form.as_p }}
-                    <button type="submit" class="btn btn-primary" value="Save">Save</button>
+                    <div class="visually-hidden">
+                        {{ image_form.product }}
+                        {% render_field image_form.image onchange="form.submit()"%}
+                    </div>
                 </form>
-                {% comment %} <a href="{% url 'staff-products-new' %}" class="align-self-center"><button type="button" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add image</button></a> {% endcomment %}
+                <a onclick="document.getElementById('{{ image_form.image.id_for_label }}').click()" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add image</a>
             </div>
             <div class="d-flex flex-row flex-wrap">
                 <div class="d-flex flex-column col-md-3 col-6 p-1">
