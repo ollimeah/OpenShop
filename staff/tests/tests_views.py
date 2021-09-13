@@ -658,6 +658,16 @@ class ProductTest(URLTestCase):
     def test_detail_uses_correct_template(self):
         self.template_test_with_login(reverse('staff-product', kwargs={'name':'Test'}), 'products/detail.html')
     
+    # def test_post_extra_image(self):
+    #     self.login_staff()
+    #     image = SimpleUploadedFile('test_add.jpg', b'content', content_type="image/jpeg")
+    #     data = {'product':1, 'image':image}
+    #     response = self.client.post(reverse('staff-product', kwargs={'name':'Test'}), data, follow=True)
+    #     self.assertRedirects(response, reverse('staff-product', kwargs={'name':'Test'}))
+
+    # def test_delete_extra_image(self):
+    #     pass
+    
     def test_new_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-products-new'), '/staff/?next=/staff/products/new/')
     

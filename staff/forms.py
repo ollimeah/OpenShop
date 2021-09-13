@@ -1,5 +1,6 @@
 from django import forms
-from .models import Delivery, Product, Address
+from django.forms.widgets import HiddenInput
+from .models import Delivery, Product, Address, ProductImage
 
 ACTION_CHOICES = [
     ('delete', 'Delete'),
@@ -32,3 +33,9 @@ class ShippingForm(forms.ModelForm):
 
 class DeliveryChoiceForm(forms.Form):
     delivery = forms.ModelChoiceField(Delivery.objects.filter(available=True), widget=forms.Select)
+
+class ProductImageForm(forms.ModelForm):
+    class Meta:
+        model = ProductImage
+        fields = '__all__'
+        widgets = {'product':HiddenInput()}

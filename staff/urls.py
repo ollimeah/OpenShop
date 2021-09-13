@@ -12,6 +12,7 @@ urlpatterns = [
     path('product/<str:name>/', views.ProductDetailView.as_view(), name='staff-product'),
     path('product/<str:name>/update/', views.ProductUpdateView.as_view(), name='staff-product-update'),
     path('product/<str:name>/delete/', views.ProductDeleteView.as_view(), name='staff-product-delete'),
+    path('product/image/<int:id>/delete/', views.delete_product_image, name='staff-product-delete-image'),
     path('products/manage/', views.manage_products, name='staff-products-manage'),
 
     path('categories/', views.CategoryListView.as_view(), name='staff-categories'),
