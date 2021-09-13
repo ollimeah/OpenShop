@@ -82,14 +82,14 @@ class ProductDetailView(ProductView, generic.DetailView):
         if form.is_valid():
             product = get_object_or_404(Product, id=form.cleaned_data['product'].id)
             ProductImage.objects.create(product=product, image=form.cleaned_data['image'])
-        return redirect('staff-product', name=product.name)
+        return redirect(reverse('staff-product', kwargs={'name':product.name}) + '#images_card')
 
 @user_passes_test(staff_check, login_url='staff-login')
 def delete_product_image(request, id):
     prod_img = get_object_or_404(ProductImage, id=id)
     product = prod_img.product
     prod_img.delete()
-    return redirect('staff-product', name=product.name)
+    return redirect(reverse('staff-product', kwargs={'name':product.name}) + '#images_card')
 
 class ProductCreateView(ProductView, generic.edit.CreateView): pass
 
