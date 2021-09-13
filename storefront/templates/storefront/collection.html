@@ -4,28 +4,58 @@
 
 {% block content %}
 <div class="container">
-  <div class="d-flex flex-sm-row flex-column justify-content-between pb-1 my-5 border-bottom align-items-center">
-    <h1>{{ collection.name }} - £{{ collection.price }}</h1>
-    {% if collection.available %}
-    <form action="{% url 'basket-add-collection' %}" method="post">{% csrf_token %}
-      {{ collection.get_add_to_basket_form.as_p }}
-      <button type="submit" class="btn btn-sm btn-primary w-100" onclick="confirmAdd(this)">
-        <i class="bi bi-basket"></i> Add to basket
-      </button>
-    </form>
-    {% else %}
-    <button class="btn btn-primary" disabled>
-        <i class="bi bi-basket"></i>
-        Unavailable
-    </button>
-    {% endif %}
-  </div>
-  <div class="d-flex flex-wrap">
+  <div class="my-5">
+    <div class="row">
+
+      <div class="col-md-5">
+        <img class="img-fluid w-100 rounded shadow" src={{collection.image.url}} alt={{collection.name}}>
+      </div>
+
+      <div class="col-md-7">
+        <h2 class="mb-0 mt-3 mt-md-0">{{collection.name}}</h2>
+        <p class="mb-2 text-muted text-uppercase">Collection</p>
+        {% if collection.description %}
+        <div class="mt-5">
+          <h4>Description</h4>
+          <p class="pt-1 lead">{{collection.description}}</p>
+        </div>
+        {% endif %}
+        <h4 class="font-weight-bold">£{{collection.price}}</h4>
+        
+        {% if collection.available %}
+        <form action="{% url 'basket-add-collection' %}" method="post">{% csrf_token %}
+          {{ collection.get_add_to_basket_form.as_p }}
+          <button type="submit" class="btn btn-primary" onclick="confirmAdd(this)"><i class="bi bi-basket"></i> Add to basket</button>
+        </form>
+        {% else %}
+        <button type="submit" disabled class="btn btn-primary">Unavailable</button>
+        {% endif %}
+
+      </div>
+    </div>
+    <h3 class="my-4">This collection contains:</h3>
     {% for product in collection.products.all %}
-    <div class="col-lg-4 col-6">
-      {% include "storefront/product_card.html" with product=product %}
+    <div class="row g-3">
+      <div class="card col-lg-4 col-6 p-1">
+        <a href="{% url 'product' product.name %}"><img class="card-img-top" src="{{product.image.url}}" alt={{product.name}}></a>
+        <div class="card-body px-0">
+          <div class="d-flex justify-content-between">
+            <h5>{{product.name}}</h5>
+            <a href="{% url 'product' product.name %}" class="btn btn-sm btn-primary"><i class="bi bi-search"></i>View</a>
+          </div>
+        </div>
+      </div>
     </div>
     {% endfor %}
   </div>
 </div>
 {% endblock content %}
+{% block scripts %}
+<script>
+function confirmAdd(button) {
+  button.blur()
+  button.innerHTML = "<i class=\"bi bi-basket\"></i> Added";
+  setTimeout(function() {button.innerHTML="<i class=\"bi bi-basket\"></i> Add to basket"}, 750);
+}
+</script>
+{% endblock scripts %}
