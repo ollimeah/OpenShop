@@ -289,9 +289,9 @@ class Address(models.Model):
     name = models.CharField(max_length=127)
     email = models.EmailField(max_length=254)
     line_1 = models.CharField(max_length=255)
-    line_2 = models.CharField(max_length=255, null=True)
+    line_2 = models.CharField(max_length=255, null=True, blank=True)
     city = models.CharField(max_length=35)
-    county = models.CharField(max_length=35, null=True)
+    county = models.CharField(max_length=35, null=True, blank=True)
     postcode = models.CharField(max_length=8)
 
 class Delivery(models.Model):
