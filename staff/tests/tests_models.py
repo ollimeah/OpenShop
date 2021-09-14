@@ -240,6 +240,28 @@ class BasketTest(TestCase):
         self.assertIn(collection, basket.collections.all())
         bc = BasketCollection.objects.get(basket=basket, collection=collection)
         self.assertEqual(bc.quantity, quantity)
+    
+    def test_contains_available_empty(self):
+        basket, device = self.create_empty_basket()
+        self.assertFalse(basket.contains_available())
+    
+    def test_contains_available_with_available_products(self):
+        basket, device = self.create_product_basket()
+        self.assertTrue(basket.contains_available())
+    
+    def test_contains_available_with_available_collections(self):
+        basket, device = self.create_collection_basket()
+        self.assertTrue(basket.contains_available())
+    
+    def test_contains_available_with_unavailable_collections(self):
+        basket, device = self.create_collection_basket()
+        basket.collections.all().update(available=False)
+        self.assertFalse(basket.contains_available())
+    
+    def test_contains_available_with_unavailable_products(self):
+        basket, device = self.create_product_basket()
+        basket.products.all().update(available=False)
+        self.assertFalse(basket.contains_available())
 
 class BasketProductTest(TestCase):
     fixtures = ['categories.json', 'products.json']

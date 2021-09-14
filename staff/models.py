@@ -520,6 +520,9 @@ class Basket(models.Model):
             unavailable.append(collection)
             self.collections.remove(collection)
         return unavailable
+    
+    def contains_available(self):
+        return self.products.filter(available=True) or self.collections.filter(available=True)
 
     @classmethod
     def get_basket(basket, device_code):
