@@ -121,18 +121,7 @@ class ContactTest(URLTestCase):
     def test_message_sent_uses_correct_template(self):
         self.template_test(reverse('message-sent'), 'storefront/contact/sent.html')
 
-class BasketTest(URLTestCase):
-    
-    def test_basket_url_exists_at_desired_location(self):
-        self.url_ok_test('/basket/')
-
-    def test_basket_url_accessible_by_name(self):
-        self.url_ok_test(reverse('basket'))
-
-    def test_basket_uses_correct_template(self):
-        self.template_test(reverse('basket'), 'storefront/order/basket.html')
-
-class ShippingTest(URLTestCase):
+class OrderTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.device = Device.objects.create()
@@ -154,6 +143,19 @@ class ShippingTest(URLTestCase):
     
     def add_basket_product(self):
         BasketProduct.objects.create(basket=self.basket, product=self.product, quantity=3)
+
+class BasketTest(URLTestCase, OrderTest):
+    
+    def test_basket_url_exists_at_desired_location(self):
+        self.url_ok_test('/basket/')
+
+    def test_basket_url_accessible_by_name(self):
+        self.url_ok_test(reverse('basket'))
+
+    def test_basket_uses_correct_template(self):
+        self.template_test(reverse('basket'), 'storefront/order/basket.html')
+
+class ShippingTest(URLTestCase, OrderTest):
     
     def test_redirects_with_empty_basket(self):
         self.redirect_test('/shipping/', reverse('basket'))
@@ -174,6 +176,8 @@ class ShippingTest(URLTestCase):
         self.add_basket_product()
         data = {'name':'Test Name', 'email':'test@test.com', 'line_1':'test road', 'city':'test city', 'postcode':'ab1 cb2', 'delivery':'1'}
         response = self.client.post(reverse('shipping'), data, follow=True)
+        # self.assertIsNotNone(self.basket.address)
+        # self.assertIsNotNone(self.basket.delivery)
         self.assertRedirects(response, reverse('checkout'))
     
     def test_post_invalid_delivery(self):
@@ -190,28 +194,7 @@ class ShippingTest(URLTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'storefront/order/shipping.html')
     
-class CheckoutTest(URLTestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.device = Device.objects.create()
-        category = Category.objects.create(name="Test")
-        cls.product = Product.objects.create(name="Test", description='Test', price=10, category=category,
-        image=SimpleUploadedFile("test" + '.jpg', b'content'), available=True, hidden=False, min=1, max=12)
-        Delivery.objects.create(name="Test", price=10)
-        cls.basket = Basket.objects.create(device=cls.device)
-        return super().setUpTestData()
-    
-    @classmethod
-    def tearDownClass(cls):
-        for prod in Product.objects.all(): prod.image.delete()
-        return super().tearDownClass()
-
-    def setUp(self):
-        self.client.cookies = SimpleCookie({'device':self.device.code})
-        return super().setUp()
-    
-    def add_basket_product(self):
-        BasketProduct.objects.create(basket=self.basket, product=self.product, quantity=3)
+class CheckoutTest(URLTestCase, OrderTest):
     
     def test_redirects_with_empty_basket(self):
         self.redirect_test('/checkout/', reverse('basket'))
