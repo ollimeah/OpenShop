@@ -1,13 +1,65 @@
 {% extends "storefront/main.html" %}
-
+{% load widget_tweaks %}
+{% load dictionary_tags %}
 {% block title %}Shipping{% endblock title %}
 
 {% block content %}
-
-<form method="post">{% csrf_token %}
-    {{ form.as_p }}
-    {{ delivery_form.as_p }}
-    <input type="submit" value="Continue to checkout">
-</form>
-
+<div class="container my-5">
+    <h1 class="pb-2 my-5 border-bottom">Shipping</h1>
+    <form method="post">{% csrf_token %}
+        <div class="row mb-3">
+            <div class="col">
+                <div class="form-floating">
+                {% render_field form.name class="form-control" placeholder="Name" %}
+                <label for="{{ form.name.id_for_label }}">Name</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-floating">
+                {% render_field form.email class="form-control" placeholder="Email" %}
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-floating mb-3">
+            {% render_field form.line_1 class="form-control" placeholder="Line 1" %}
+            <label for="{{ form.line_1.id_for_label }}">Line 1</label>
+        </div>
+        <div class="form-floating mb-3">
+            {% render_field form.line_2 class="form-control" placeholder="Line 2" %}
+            <label for="{{ form.line_2.id_for_label }}">Line 2</label>
+        </div>
+        <div class="form-floating mb-3">
+            {% render_field form.city class="form-control" placeholder="City" %}
+            <label for="{{ form.city.id_for_label }}">City</label>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <div class="form-floating">
+                {% render_field form.county class="form-control" placeholder="County" %}
+                <label for="{{ form.county.id_for_label }}">County</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-floating">
+                {% render_field form.postcode class="form-control" placeholder="Postcode" %}
+                <label for="{{ form.postcode.id_for_label }}">Postcode</label>
+                </div>
+            </div>
+        </div>
+        <h3 class="mt-3">Select Delivery</h3>
+        {% for delivery in delivery_form.delivery %}
+        <div class="d-flex justify-content-between col-md-6">
+            <div class="form-check">
+                {% render_field delivery.tag %}
+                <label class="form-check-label h4 fw-normal" for="{{ delivery.id_for_label }}">{{ delivery.choice_label }}</label>
+            </div>
+            <h4 class="fw-normal">£{{ deliveries | get_item:delivery.choice_label }}</h4>
+        </div>
+        {% endfor %}
+        <div class="d-grid col-md-6 mx-auto mt-3">
+            <button class="btn btn-primary" type="submit">Continue to checkout</button>
+        </div>
+    </form>
+</div>
 {% endblock content %}

@@ -32,7 +32,7 @@ class ShippingForm(forms.ModelForm):
         fields = '__all__'
 
 class DeliveryChoiceForm(forms.Form):
-    delivery = forms.ModelChoiceField(Delivery.objects.filter(available=True), widget=forms.Select)
+    delivery = forms.ModelChoiceField(Delivery.objects.filter(available=True), widget=forms.RadioSelect)
 
 class ProductImageForm(forms.ModelForm):
     class Meta:

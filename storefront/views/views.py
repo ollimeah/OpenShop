@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from staff.models import FAQ, Address, CarouselImage, Category, Collection, Message, Order, Product, Basket
+from staff.models import FAQ, Address, CarouselImage, Category, Collection, Delivery, Message, Order, Product, Basket
 from django.views import generic
 from staff.forms import DeliveryChoiceForm, ShippingForm
 
@@ -84,7 +84,10 @@ def shipping(request):
         delivery_form = DeliveryChoiceForm({'delivery' : basket.delivery})
     else:
         delivery_form = DeliveryChoiceForm()
-    context = {'form' : address_form, 'delivery_form' : delivery_form}
+    deliveries = {}
+    for delivery in Delivery.objects.filter(available=True):
+        deliveries.update({delivery.name:delivery.price})
+    context = {'form' : address_form, 'delivery_form' : delivery_form, 'deliveries' : deliveries}
     return render(request, 'storefront/order/shipping.html', context)
 
 def checkout(request):
