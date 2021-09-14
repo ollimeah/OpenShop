@@ -96,6 +96,3 @@ def checkout(request):
         Order.create_order_and_empty_basket(basket)
         return redirect('order-success')
     return render(request, 'storefront/checkout.html', {'basket' : basket})
-
-def order_success(request):
-    return render(request, 'storefront/order_success.html')

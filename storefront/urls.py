@@ -17,5 +17,5 @@ urlpatterns = [
     path('basket/', basket, name='basket'),
     path('shipping/', shipping, name='shipping'),
     path('checkout/', checkout, name='checkout'),
-    path('success/', order_success, name='order-success'),
+    path('success/', TemplateView.as_view(template_name='storefront/order/success.html'), name='order-success'),
 ]
