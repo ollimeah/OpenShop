@@ -1,4 +1,4 @@
-from staff.models import Category, Product
+from staff.models import Category, Collection, Product
 from django.test import TestCase
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -73,6 +73,27 @@ class ProductTest(URLTestCase):
 
     def test_product_uses_correct_template(self):
         self.template_test(reverse('product', kwargs={'name':self.product.name}), 'storefront/product.html')
+
+class CollectionTest(URLTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.collection = Collection.objects.create(name="Test", description='Test', price=10,
+        image=SimpleUploadedFile("test" + '.jpg', b'content'), available=True, hidden=False)
+        return super().setUpTestData()
+    
+    @classmethod
+    def tearDownClass(cls):
+        for collection in Collection.objects.all(): collection.image.delete()
+        return super().tearDownClass()
+
+    def test_collection_url_exists_at_desired_location(self):
+        self.url_ok_test('/collections/'+self.collection.name+'/')
+
+    def test_collection_url_accessible_by_name(self):
+        self.url_ok_test(reverse('collection', kwargs={'name':self.collection.name}))
+
+    def test_collection_uses_correct_template(self):
+        self.template_test(reverse('collection', kwargs={'name':self.collection.name}), 'storefront/collection.html')
 
 class ContactTest(URLTestCase):
 
