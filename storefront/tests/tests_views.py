@@ -118,3 +118,14 @@ class ContactTest(URLTestCase):
 
     def test_message_sent_uses_correct_template(self):
         self.template_test(reverse('message-sent'), 'storefront/contact/sent.html')
+
+class BasketTest(URLTestCase):
+    
+    def test_basket_url_exists_at_desired_location(self):
+        self.url_ok_test('/basket/')
+
+    def test_basket_url_accessible_by_name(self):
+        self.url_ok_test(reverse('basket'))
+
+    def test_basket_uses_correct_template(self):
+        self.template_test(reverse('basket'), 'storefront/order/basket.html')

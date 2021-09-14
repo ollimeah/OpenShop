@@ -16,7 +16,7 @@
         <div class="card mb-4">
           <div class="card-body">
             <h5 class="mb-4">Basket</h5>
-            {% if basket.is_empty %}
+            {% if not basket or basket.is_empty %}
             <h6 class="text-danger"><strong>Your basket is empty</strong></h6>
             {% endif %}
             {% for basket_product in basket.basketproduct_set.all %}
@@ -101,7 +101,7 @@
 
             {% if not basket.is_empty %}
             <p class="text-danger mb-0"><i class="bi bi-info-circle-fill mr-1"></i> Do not delay the purchase,
-              items in your basket may become unavailable.</p>
+              items in your basket may become unavailable or change in price.</p>
             {% endif %}
           </div>
         </div>

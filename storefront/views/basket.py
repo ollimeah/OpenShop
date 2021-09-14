@@ -31,9 +31,12 @@ def add_collection_to_basket(request):
         return HttpResponse(status=405)
 
 def basket(request):
-    basket = Basket.get_basket(request.COOKIES['device'])
-    unavailable = basket.get_and_remove_unavailable_items()
-    context = {'unavailable' : unavailable, 'basket' : basket}
+    try:
+        basket = Basket.get_basket(request.COOKIES['device'])
+        unavailable = basket.get_and_remove_unavailable_items()
+        context = {'unavailable' : unavailable, 'basket' : basket}
+    except:
+        context = {'basket' : None}
     # if request.method == 'POST':
     #     promo_form = PromotionCodeForm(request.POST)
     #     if promo_form.is_valid():
