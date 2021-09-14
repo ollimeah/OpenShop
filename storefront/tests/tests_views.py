@@ -1,7 +1,9 @@
-from staff.models import Category, Collection, Product
+from django.http.cookie import SimpleCookie
+from staff.models import Basket, BasketProduct, Category, Collection, Delivery, Device, Product
 from django.test import TestCase
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
+from http.cookies import SimpleCookie
 
 class URLTestCase(TestCase):
     def redirect_test(self, get_url, redirect_url):
@@ -129,3 +131,61 @@ class BasketTest(URLTestCase):
 
     def test_basket_uses_correct_template(self):
         self.template_test(reverse('basket'), 'storefront/order/basket.html')
+
+class ShippingTest(URLTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.device = Device.objects.create()
+        category = Category.objects.create(name="Test")
+        cls.product = Product.objects.create(name="Test", description='Test', price=10, category=category,
+        image=SimpleUploadedFile("test" + '.jpg', b'content'), available=True, hidden=False, min=1, max=12)
+        Delivery.objects.create(name="Test", price=10)
+        cls.basket = Basket.objects.create(device=cls.device)
+        return super().setUpTestData()
+    
+    @classmethod
+    def tearDownClass(cls):
+        for prod in Product.objects.all(): prod.image.delete()
+        return super().tearDownClass()
+
+    def setUp(self):
+        self.client.cookies = SimpleCookie({'device':self.device.code})
+        return super().setUp()
+    
+    def add_basket_product(self):
+        BasketProduct.objects.create(basket=self.basket, product=self.product, quantity=3)
+    
+    def test_redirects_with_empty_basket(self):
+        self.redirect_test('/shipping/', reverse('basket'))
+    
+    def test_shipping_url_exists_at_desired_location(self):
+        self.add_basket_product()
+        self.url_ok_test('/shipping/')
+
+    def test_shipping_url_accessible_by_name(self):
+        self.add_basket_product()
+        self.url_ok_test(reverse('shipping'))
+
+    def test_shipping_uses_correct_template(self):
+        self.add_basket_product()
+        self.template_test(reverse('shipping'), 'storefront/order/shipping.html')
+    
+    def test_post_redirect(self):
+        self.add_basket_product()
+        data = {'name':'Test Name', 'email':'test@test.com', 'line_1':'test road', 'city':'test city', 'postcode':'ab1 cb2', 'delivery':'1'}
+        response = self.client.post(reverse('shipping'), data, follow=True)
+        self.assertRedirects(response, reverse('checkout'))
+    
+    def test_post_invalid_delivery(self):
+        self.add_basket_product()
+        data = {'name':'Test Name', 'email':'test@test.com', 'line_1':'test road', 'city':'test city', 'postcode':'ab1 cb2', 'delivery':'3'}
+        response = self.client.post(reverse('shipping'), data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'storefront/order/shipping.html')
+    
+    def test_post_invalid_address(self):
+        self.add_basket_product()
+        data = {'name':'Test Name', 'email':'test@test.com', 'city':'test city', 'postcode':'ab1 cb2', 'delivery':'1'}
+        response = self.client.post(reverse('shipping'), data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'storefront/order/shipping.html')
