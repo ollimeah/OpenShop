@@ -1,14 +1,14 @@
 from django.http import HttpResponse, JsonResponse
 from storefront.forms import AddProductToBasketForm, AddCollectionToBasketForm, PromotionCodeForm
 from staff.models import Product, Collection, Promotion, Basket, BasketProduct, BasketCollection
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 import json
 
 def add_product_to_basket(request):
     if request.method == 'POST':
         form = AddProductToBasketForm(request.POST)
         if form.is_valid():
-            product = Product.objects.get(name = form.cleaned_data['product_name'])
+            product = get_object_or_404(Product, name=form.cleaned_data['product_name'])
             basket = Basket.get_basket(request.COOKIES['device'])
             basket.add_product(product, form.cleaned_data['quantity'])
             return HttpResponse(status=204)

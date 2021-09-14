@@ -154,6 +154,25 @@ class BasketTest(URLTestCase, OrderTest):
 
     def test_basket_uses_correct_template(self):
         self.template_test(reverse('basket'), 'storefront/order/basket.html')
+    
+    def test_add_to_basket_get(self):
+        response = self.client.get(reverse('basket-add-product'))
+        self.assertEqual(response.status_code, 405)
+    
+    def test_add_to_basket_post_valid(self):
+        data = {'product_name':self.product.name, 'quantity':self.product.min}
+        response = self.client.post(reverse('basket-add-product'), data, follow=True)
+        self.assertEqual(response.status_code, 204)
+    
+    def test_add_to_basket_post_invalid_quantity(self):
+        data = {'product_name':self.product.name, 'quantity':'a'}
+        response = self.client.post(reverse('basket-add-product'), data, follow=True)
+        self.assertEqual(response.status_code, 406)
+    
+    def test_add_to_basket_post_invalid_product(self):
+        data = {'product_name':'invalid_name', 'quantity':self.product.min}
+        response = self.client.post(reverse('basket-add-product'), data, follow=True)
+        self.assertEqual(response.status_code, 404)
 
 class ShippingTest(URLTestCase, OrderTest):
     
