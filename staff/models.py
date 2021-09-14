@@ -287,6 +287,7 @@ class Promotion(models.Model):
 
 class Address(models.Model):
     name = models.CharField(max_length=127)
+    email = models.EmailField(max_length=254)
     line_1 = models.CharField(max_length=255)
     line_2 = models.CharField(max_length=255, null=True)
     city = models.CharField(max_length=35)
@@ -394,6 +395,7 @@ class Order(models.Model):
 class OrderShipping(models.Model):
     order = models.OneToOneField(Order, on_delete=models.CASCADE)
     address_name = models.CharField(max_length=127)
+    email = models.EmailField(max_length=254)
     line_1 = models.CharField(max_length=255)
     line_2 = models.CharField(max_length=255, null=True)
     city = models.CharField(max_length=35)
