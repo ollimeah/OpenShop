@@ -189,3 +189,56 @@ class ShippingTest(URLTestCase):
         response = self.client.post(reverse('shipping'), data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'storefront/order/shipping.html')
+    
+class CheckoutTest(URLTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.device = Device.objects.create()
+        category = Category.objects.create(name="Test")
+        cls.product = Product.objects.create(name="Test", description='Test', price=10, category=category,
+        image=SimpleUploadedFile("test" + '.jpg', b'content'), available=True, hidden=False, min=1, max=12)
+        Delivery.objects.create(name="Test", price=10)
+        cls.basket = Basket.objects.create(device=cls.device)
+        return super().setUpTestData()
+    
+    @classmethod
+    def tearDownClass(cls):
+        for prod in Product.objects.all(): prod.image.delete()
+        return super().tearDownClass()
+
+    def setUp(self):
+        self.client.cookies = SimpleCookie({'device':self.device.code})
+        return super().setUp()
+    
+    def add_basket_product(self):
+        BasketProduct.objects.create(basket=self.basket, product=self.product, quantity=3)
+    
+    def test_redirects_with_empty_basket(self):
+        self.redirect_test('/checkout/', reverse('basket'))
+    
+    def test_redirects_with_unavailable_basket(self):
+        self.add_basket_product()
+        self.product.available = False
+        self.product.save()
+        self.redirect_test('/checkout/', reverse('basket'))
+
+    def test_checkout_url_exists_at_desired_location(self):
+        self.add_basket_product()
+        self.url_ok_test('/checkout/')
+
+    def test_checkout_url_accessible_by_name(self):
+        self.add_basket_product()
+        self.url_ok_test(reverse('checkout'))
+
+    def test_checkout_uses_correct_template(self):
+        self.add_basket_product()
+        self.template_test(reverse('checkout'), 'storefront/order/checkout.html')
+
+    def test_order_success_url_exists_at_desired_location(self):
+        self.url_ok_test('/success/')
+
+    def test_order_success_url_accessible_by_name(self):
+        self.url_ok_test(reverse('order-success'))
+
+    def test_order_success_uses_correct_template(self):
+        self.template_test(reverse('order-success'), 'storefront/order/success.html')
