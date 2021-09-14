@@ -85,7 +85,7 @@ def shipping(request):
     else:
         delivery_form = DeliveryChoiceForm()
     context = {'form' : address_form, 'delivery_form' : delivery_form}
-    return render(request, 'storefront/shipping.html', context)
+    return render(request, 'storefront/order/shipping.html', context)
 
 def checkout(request):
     basket = Basket.get_basket(request.COOKIES['device'])
