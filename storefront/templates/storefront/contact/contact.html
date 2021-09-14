@@ -35,5 +35,23 @@
       <button class="btn btn-primary" type="submit"><i class="bi bi-envelope-fill"></i> SEND MESSAGE</button>
     </div>
   </form>
+
+  <h1 class="pb-1 my-5 border-bottom">FAQs</h1>
+  <div class="accordion" id="accordionFAQ">
+    {% for faq in faqs %}
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="faq{{ faq.id }}">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqContent{{ faq.id }}" aria-expanded="false" aria-controls="faqContent{{ faq.id }}">
+          {{ faq.question }}
+        </button>
+      </h2>
+      <div id="faqContent{{ faq.id }}" class="accordion-collapse collapse" aria-labelledby="faq{{ faq.id }}" data-bs-parent="#accordionFAQ">
+        <div class="accordion-body">
+          {{ faq.answer }}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
 </div>
 {% endblock content %}

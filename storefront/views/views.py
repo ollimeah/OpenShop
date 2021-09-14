@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from staff.models import Address, CarouselImage, Category, Collection, Message, Order, Product, Basket
+from staff.models import FAQ, Address, CarouselImage, Category, Collection, Message, Order, Product, Basket
 from django.views import generic
 from staff.forms import DeliveryChoiceForm, ShippingForm
 
@@ -53,6 +53,11 @@ class Contact(generic.CreateView):
     model = Message
     template_name = 'storefront/contact/contact.html'
     fields = ['name', 'email', 'subject', 'message']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['faqs'] = FAQ.objects.all()
+        return context
 
     def get_success_url(self):
         return reverse('message-sent')
