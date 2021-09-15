@@ -62,14 +62,14 @@ def update_product_quantity(request):
         else:
             form = AddProductToBasketForm(json.loads(request.body))
         if form.is_valid():
-            product = Product.objects.get(name = form.cleaned_data['product_name'])
+            product = get_object_or_404(Product, name=form.cleaned_data['product_name'])
             basket = Basket.get_basket(request.COOKIES['device'])
             basket.update_product_quantity(product, form.cleaned_data['quantity'])
             if form.cleaned_data['quantity'] <= 0:
                 return redirect('basket')
             else:
                 bp = BasketProduct.objects.get(basket=basket, product=product)
-                return JsonResponse({'productTotal':bp.total_cost, 'cost':basket.item_cost, 'total':basket.total_cost})
+                return JsonResponse({'productTotal':bp.total_cost, 'cost':basket.item_cost, 'numItems':basket.num_items})
         else:
             return HttpResponse(status=406)
     else:
@@ -82,14 +82,14 @@ def update_collection_quantity(request):
         else:
             form = AddCollectionToBasketForm(json.loads(request.body))
         if form.is_valid():
-            collection = Collection.objects.get(name = form.cleaned_data['collection_name'])
+            collection = get_object_or_404(Collection, name = form.cleaned_data['collection_name'])
             basket = Basket.get_basket(request.COOKIES['device'])
             basket.update_collection_quantity(collection, form.cleaned_data['quantity'])
             if form.cleaned_data['quantity'] <= 0:
                 return redirect('basket')
             else:
                 bc = BasketCollection.objects.get(basket=basket, collection=collection)
-                return JsonResponse({'productTotal':bc.total_cost, 'cost':basket.item_cost, 'total':basket.total_cost})
+                return JsonResponse({'productTotal':bc.total_cost, 'cost':basket.item_cost, 'numItems':basket.num_items})
         else:
             return HttpResponse(status=406)
     else:
