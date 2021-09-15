@@ -106,7 +106,7 @@ def checkout(request):
                 if promotion:
                     context['error'] = not basket.add_promotion(promotion)
             except Exception as e:
-                print(e)
+                # print(e)
                 context['error'] = True
     if basket.promotion:
         promo_form = PromotionCodeForm({'code' : basket.promotion.code})

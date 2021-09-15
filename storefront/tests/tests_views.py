@@ -1,5 +1,5 @@
 from django.http.cookie import SimpleCookie
-from staff.models import Address, Basket, BasketCollection, BasketProduct, Category, Collection, Delivery, Device, Order, Product
+from staff.models import Address, Basket, BasketCollection, BasketProduct, Category, Collection, Delivery, Device, Order, Product, Promotion
 from django.test import TestCase
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -290,8 +290,9 @@ class ShippingTest(URLTestCase, OrderTestCase):
         self.add_basket_product()
         data = {'name':'Test Name', 'email':'test@test.com', 'line_1':'test road', 'city':'test city', 'postcode':'ab1 cb2', 'delivery':'1'}
         response = self.client.post(reverse('shipping'), data, follow=True)
-        # self.assertIsNotNone(self.basket.address)
-        # self.assertIsNotNone(self.basket.delivery)
+        basket = Basket.objects.get(device=self.device)
+        self.assertIsNotNone(basket.address)
+        self.assertIsNotNone(basket.delivery)
         self.assertRedirects(response, reverse('checkout'))
     
     def test_post_invalid_delivery(self):
@@ -353,6 +354,23 @@ class CheckoutTest(URLTestCase, OrderTestCase):
         self.add_shipping()
         self.add_delivery()
         self.template_test(reverse('checkout'), 'storefront/order/checkout.html')
+    
+    def test_post_valid_promo(self):
+        promotion = Promotion.objects.create(code="Test", type=Promotion.FIXED_PRICE, amount=5)
+        self.add_basket_product()
+        self.add_shipping()
+        self.add_delivery()
+        self.client.post(reverse('checkout'), data={'code':promotion.code})
+        basket = Basket.objects.get(device=self.device)
+        self.assertEqual(basket.promotion, promotion)
+    
+    def test_post_invalid_promo(self):
+        self.add_basket_product()
+        self.add_shipping()
+        self.add_delivery()
+        self.client.post(reverse('checkout'), data={'code':'invalid'})
+        basket = Basket.objects.get(device=self.device)
+        self.assertIsNone(basket.promotion)
 
 class OrderTest(URLTestCase, OrderTestCase):
 
