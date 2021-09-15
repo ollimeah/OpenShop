@@ -15,6 +15,7 @@ class SettingsForm(forms.Form):
     secondary_colour = forms.CharField(label="Secondary Colour", max_length=7, widget=forms.TextInput(attrs={'type': 'color'}))
     logo = forms.BooleanField(label="Use logo?", required=False)
     carousel = forms.BooleanField(label="Enable carousel?", required=False)
+    maintenance = forms.BooleanField(label="Maintenance Mode", required=False)
 
 class CategoryProductForm(forms.Form):
     products = forms.ModelMultipleChoiceField(Product.objects, widget = forms.CheckboxSelectMultiple)

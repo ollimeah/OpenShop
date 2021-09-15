@@ -17,12 +17,14 @@ class Settings():
                 self.secondary_colour = settings['secondary_colour']
                 self.logo = settings['logo']
                 self.carousel = settings['carousel']
+                self.maintenance = settings['maintenance']
         except:
             self.shop_name = "No Name"
             self.primary_colour = "#c1c1c1"
             self.secondary_colour = "#c1c1c1"
             self.logo = False
             self.carousel = False
+            self.maintenance = False
 
     def update(self, new_settings):
         try:
