@@ -1,5 +1,5 @@
 from django.http.cookie import SimpleCookie
-from staff.models import Basket, BasketCollection, BasketProduct, Category, Collection, Delivery, Device, Product
+from staff.models import Address, Basket, BasketCollection, BasketProduct, Category, Collection, Delivery, Device, Product
 from django.test import TestCase
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -299,6 +299,16 @@ class ShippingTest(URLTestCase, OrderTest):
         self.assertTemplateUsed(response, 'storefront/order/shipping.html')
     
 class CheckoutTest(URLTestCase, OrderTest):
+
+    def add_shipping(self):
+        address = Address.objects.create(name='Test Name', email='test@test.com', line_1='test road', city='test city', postcode='ab1 cb2')
+        self.basket.address = address
+        self.basket.save()
+    
+    def add_delivery(self):
+        delivery = Delivery.objects.create(name="Test", price=10)
+        self.basket.delivery = delivery
+        self.basket.save()
     
     def test_redirects_with_empty_basket(self):
         self.redirect_test('/checkout/', reverse('basket'))
@@ -308,17 +318,40 @@ class CheckoutTest(URLTestCase, OrderTest):
         self.product.available = False
         self.product.save()
         self.redirect_test('/checkout/', reverse('basket'))
+    
+    def test_redirects_with_no_address(self):
+        self.add_basket_product()
+        self.add_delivery()
+        response = self.client.get(reverse('checkout'))
+        self.assertRedirects(response, reverse('shipping'))
+    
+    def test_redirects_with_no_delivery(self):
+        self.add_basket_product()
+        self.add_shipping()
+        response = self.client.get(reverse('checkout'))
+        self.assertRedirects(response, reverse('shipping'))
+    
+    def test_redirects_with_no_delivery_and_no_shipping(self):
+        self.add_basket_product()
+        response = self.client.get(reverse('checkout'))
+        self.assertRedirects(response, reverse('shipping'))
 
     def test_checkout_url_exists_at_desired_location(self):
         self.add_basket_product()
+        self.add_shipping()
+        self.add_delivery()
         self.url_ok_test('/checkout/')
 
     def test_checkout_url_accessible_by_name(self):
         self.add_basket_product()
+        self.add_shipping()
+        self.add_delivery()
         self.url_ok_test(reverse('checkout'))
 
     def test_checkout_uses_correct_template(self):
         self.add_basket_product()
+        self.add_shipping()
+        self.add_delivery()
         self.template_test(reverse('checkout'), 'storefront/order/checkout.html')
 
     def test_order_success_url_exists_at_desired_location(self):
