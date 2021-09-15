@@ -119,6 +119,8 @@ def checkout(request):
 def place_order(request):
     if request.method == 'POST':
         basket = Basket.get_basket(request.COOKIES['device'])
+        if basket.is_empty() or not basket.contains_available(): return redirect('basket')
+        if not basket.address or not basket.delivery: return redirect('shipping')
         Order.create_order_and_empty_basket(basket)
         return redirect('order-success')
     else:

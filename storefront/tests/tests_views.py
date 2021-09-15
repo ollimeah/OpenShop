@@ -1,5 +1,5 @@
 from django.http.cookie import SimpleCookie
-from staff.models import Address, Basket, BasketCollection, BasketProduct, Category, Collection, Delivery, Device, Product
+from staff.models import Address, Basket, BasketCollection, BasketProduct, Category, Collection, Delivery, Device, Order, Product
 from django.test import TestCase
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -121,7 +121,7 @@ class ContactTest(URLTestCase):
     def test_message_sent_uses_correct_template(self):
         self.template_test(reverse('message-sent'), 'storefront/contact/sent.html')
 
-class OrderTest(TestCase):
+class OrderTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.device = Device.objects.create()
@@ -149,8 +149,18 @@ class OrderTest(TestCase):
     
     def add_basket_collection(self):
         BasketCollection.objects.create(basket=self.basket, collection=self.collection, quantity=3)
+    
+    def add_shipping(self):
+        address = Address.objects.create(name='Test Name', email='test@test.com', line_1='test road', city='test city', postcode='ab1 cb2')
+        self.basket.address = address
+        self.basket.save()
+    
+    def add_delivery(self):
+        delivery = Delivery.objects.create(name="Test", price=10)
+        self.basket.delivery = delivery
+        self.basket.save()
 
-class BasketTest(URLTestCase, OrderTest):
+class BasketTest(URLTestCase, OrderTestCase):
     
     def test_basket_url_exists_at_desired_location(self):
         self.url_ok_test('/basket/')
@@ -259,7 +269,7 @@ class BasketTest(URLTestCase, OrderTest):
         response = self.client.post(reverse('basket-update-collection'), data, follow=True)
         self.assertEqual(response.status_code, 404)
 
-class ShippingTest(URLTestCase, OrderTest):
+class ShippingTest(URLTestCase, OrderTestCase):
     
     def test_redirects_with_empty_basket(self):
         self.redirect_test('/shipping/', reverse('basket'))
@@ -298,17 +308,7 @@ class ShippingTest(URLTestCase, OrderTest):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'storefront/order/shipping.html')
     
-class CheckoutTest(URLTestCase, OrderTest):
-
-    def add_shipping(self):
-        address = Address.objects.create(name='Test Name', email='test@test.com', line_1='test road', city='test city', postcode='ab1 cb2')
-        self.basket.address = address
-        self.basket.save()
-    
-    def add_delivery(self):
-        delivery = Delivery.objects.create(name="Test", price=10)
-        self.basket.delivery = delivery
-        self.basket.save()
+class CheckoutTest(URLTestCase, OrderTestCase):
     
     def test_redirects_with_empty_basket(self):
         self.redirect_test('/checkout/', reverse('basket'))
@@ -353,6 +353,43 @@ class CheckoutTest(URLTestCase, OrderTest):
         self.add_shipping()
         self.add_delivery()
         self.template_test(reverse('checkout'), 'storefront/order/checkout.html')
+
+class OrderTest(URLTestCase, OrderTestCase):
+
+    def test_place_order_get(self):
+        response = self.client.get(reverse('place-order'))
+        self.assertEqual(response.status_code, 405)
+    
+    def test_place_order_post_valid_basket(self):
+        self.add_basket_product()
+        self.add_shipping()
+        self.add_delivery()
+        num_orders = Order.objects.count()
+        response = self.client.post(reverse('place-order'), follow=True)
+        self.assertRedirects(response, reverse('order-success'))
+        self.assertEqual(num_orders + 1, Order.objects.count())
+    
+    def test_place_order_post_empty_basket(self):
+        num_orders = Order.objects.count()
+        response = self.client.post(reverse('place-order'), follow=True)
+        self.assertRedirects(response, reverse('basket'))
+        self.assertEqual(num_orders, Order.objects.count())
+    
+    def test_place_order_post_no_address(self):
+        self.add_basket_product()
+        self.add_delivery()
+        num_orders = Order.objects.count()
+        response = self.client.post(reverse('place-order'), follow=True)
+        self.assertRedirects(response, reverse('shipping'))
+        self.assertEqual(num_orders, Order.objects.count())
+    
+    def test_place_order_post_no_delivery(self):
+        self.add_basket_product()
+        self.add_shipping()
+        num_orders = Order.objects.count()
+        response = self.client.post(reverse('place-order'), follow=True)
+        self.assertRedirects(response, reverse('shipping'))
+        self.assertEqual(num_orders, Order.objects.count())
 
     def test_order_success_url_exists_at_desired_location(self):
         self.url_ok_test('/success/')
