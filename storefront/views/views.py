@@ -1,8 +1,9 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from staff.models import FAQ, Address, CarouselImage, Category, Collection, Delivery, Message, Order, Product, Basket
+from staff.models import FAQ, Address, CarouselImage, Category, Collection, Delivery, Message, Order, Product, Basket, Promotion
 from django.views import generic
 from staff.forms import DeliveryChoiceForm, ShippingForm
+from storefront.forms import PromotionCodeForm
 
 def home(request):
     return render(request, 'storefront/home.html', {"carousel" : CarouselImage.objects.all()})
@@ -94,9 +95,22 @@ def checkout(request):
     basket = Basket.get_basket(request.COOKIES['device'])
     if basket.is_empty() or not basket.contains_available(): return redirect('basket')
     if not basket.address or not basket.delivery: return redirect('shipping')
+    context = {}
     if request.method == 'POST':
-        Order.create_order_and_empty_basket(basket)
-        return redirect('order-success')
+        promo_form = PromotionCodeForm(request.POST)
+        if promo_form.is_valid():
+            code = promo_form.cleaned_data['code']
+            try:
+                promotion = Promotion.objects.get(code=code)
+                if promotion:
+                    context['error'] = not basket.add_promotion(promotion)
+            except Exception as e:
+                print(e)
+                context['error'] = True
+    if basket.promotion:
+        promo_form = PromotionCodeForm({'code' : basket.promotion.code})
+    else:
+        promo_form = PromotionCodeForm()
     unavailable = basket.get_and_remove_unavailable_items()
-    context = {'unavailable' : unavailable, 'basket' : basket}
+    context.update({'unavailable' : unavailable, 'basket' : basket, 'promo_form' : promo_form})
     return render(request, 'storefront/order/checkout.html', context)

@@ -1,5 +1,5 @@
 {% extends "storefront/main.html" %}
-
+{% load widget_tweaks %}
 {% block title %}Checkout{% endblock title %}
 
 {% block content %}
@@ -58,16 +58,41 @@
             <small class="text-muted">{{basket.address.postcode}}</small>
           </div>
         </li>
-        <li class="list-group-item d-flex justify-content-between">
-          <span><strong>Total</strong></span>
-          <strong>£{{basket.total_cost}}</strong>
+        <li class="list-group-item">
+          <div class="d-flex justify-content-between">
+            <span><strong>Total</strong></span>
+            <strong>£{{basket.total_cost}}</strong>
+          </div>
+          <div class="mt-2">
+            <form method="post" class="d-flex justify-content-end">{% csrf_token %}
+              <div class="col-auto">
+                {% render_field promo_form.code class="form-control form-control-sm" placeholder="Promotion Code"%}
+              </div>
+              <div class="col-auto ms-1">
+                <button type="submit" class="btn btn-outline-dark btn-sm" value="Apply">Apply</button>
+              </div>
+            </form>
+          </div>
+          {% if error %}
+          <small class="text-danger float-end">Unable to apply code</small>
+          {% endif %}
+          {% if basket.promotion %}
+          <div class="d-flex justify-content-between mt-2">
+            <span>Promotion Applied!</span>
+            <span>-£{{basket.promotion_amount | floatformat:2}}</span>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span><strong>Final Price</strong></span>
+            <strong>£{{basket.final_price}}</strong>
+          </div>
+          {% endif %}
         </li>
       </ul>
     </div>
   </div>
 
-    <form method="post">{% csrf_token %}
-        <input type="submit" value="Place Order">
-    </form>
+  <form method="post">{% csrf_token %}
+      <input type="submit" value="Place Order">
+  </form>
 </div>
 {% endblock content %}

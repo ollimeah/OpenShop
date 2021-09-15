@@ -253,7 +253,7 @@ class Promotion(models.Model):
     used = models.IntegerField(default=0)
 
     def is_eligible(self, total):
-        if self.used >= self.max_uses or self.expiry <= timezone.now():
+        if (self.max_uses and self.used >= self.max_uses) or (self.expiry and self.expiry <= timezone.now()):
             self.active = False
             self.save()
         if not self.active:
