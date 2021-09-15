@@ -39,16 +39,24 @@
           </li>
         {% endfor %}
         <li class="list-group-item d-flex justify-content-between lh-condensed">
+            <h6 class="my-0">{{ basket.delivery.name }}</h6>
+            <span class="text-muted align-self-center">£{{ basket.delivery.price }}</span>
+          </li>
+        <li class="list-group-item d-flex justify-content-between lh-condensed">
           <div>
             <h6 class="my-0">Delivery Address</h6>
-            {% comment %} <small class="text-muted">{{basket.address.name}}</small><br> {% endcomment %}
+            <small class="text-muted">{{basket.address.email}}</small><br>
+            <small class="text-muted">{{basket.address.name}}</small><br>
             <small class="text-muted">{{basket.address.line_1}}</small><br>
+            {% if basket.address.line_2 %}
             <small class="text-muted">{{basket.address.line_2}}</small><br>
-            <small class="text-muted">{{basket.address.city}}</small>
+            {% endif %}
+            <small class="text-muted">{{basket.address.city}}</small><br>
+            {% if basket.address.county %}
             <small class="text-muted">{{basket.address.county}}</small><br>
+            {% endif %}
             <small class="text-muted">{{basket.address.postcode}}</small>
           </div>
-          <span class="text-muted">£{{basket.delivery.price}}</span>
         </li>
         <li class="list-group-item d-flex justify-content-between">
           <span><strong>Total</strong></span>
