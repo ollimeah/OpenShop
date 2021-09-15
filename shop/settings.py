@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'storefront.middleware.maintenance_mode_middleware.MaintenanceModeMiddleware',
 ]
 
 ROOT_URLCONF = 'shop.urls'
