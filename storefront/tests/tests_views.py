@@ -130,11 +130,14 @@ class OrderTest(TestCase):
         image=SimpleUploadedFile("test" + '.jpg', b'content'), available=True, hidden=False, min=1, max=12)
         Delivery.objects.create(name="Test", price=10)
         cls.basket = Basket.objects.create(device=cls.device)
+        cls.collection = Collection.objects.create(name="Test", description='Test', price=10,
+        image=SimpleUploadedFile("test" + '.jpg', b'content'), available=True, hidden=False)
         return super().setUpTestData()
     
     @classmethod
     def tearDownClass(cls):
         for prod in Product.objects.all(): prod.image.delete()
+        for collection in Collection.objects.all(): collection.image.delete()
         return super().tearDownClass()
 
     def setUp(self):
@@ -155,24 +158,42 @@ class BasketTest(URLTestCase, OrderTest):
     def test_basket_uses_correct_template(self):
         self.template_test(reverse('basket'), 'storefront/order/basket.html')
     
-    def test_add_to_basket_get(self):
+    def test_add_product_to_basket_get(self):
         response = self.client.get(reverse('basket-add-product'))
         self.assertEqual(response.status_code, 405)
     
-    def test_add_to_basket_post_valid(self):
+    def test_add_product_to_basket_post_valid(self):
         data = {'product_name':self.product.name, 'quantity':self.product.min}
         response = self.client.post(reverse('basket-add-product'), data, follow=True)
         self.assertEqual(response.status_code, 204)
     
-    def test_add_to_basket_post_invalid_quantity(self):
+    def test_add_product_to_basket_post_invalid_quantity(self):
         data = {'product_name':self.product.name, 'quantity':'a'}
         response = self.client.post(reverse('basket-add-product'), data, follow=True)
         self.assertEqual(response.status_code, 406)
     
-    def test_add_to_basket_post_invalid_product(self):
+    def test_add_product_to_basket_post_invalid_product(self):
         data = {'product_name':'invalid_name', 'quantity':self.product.min}
         response = self.client.post(reverse('basket-add-product'), data, follow=True)
         self.assertEqual(response.status_code, 404)
+    
+    def test_add_collection_to_basket_get(self):
+        response = self.client.get(reverse('basket-add-collection'))
+        self.assertEqual(response.status_code, 405)
+    
+    def test_add_collection_to_basket_post_valid(self):
+        data = {'collection_name':self.collection.name, 'quantity':2}
+        response = self.client.post(reverse('basket-add-collection'), data, follow=True)
+        self.assertEqual(response.status_code, 204)
+    
+    def test_add_collection_to_basket_post_invalid_quantity(self):
+        data = {'collection_name':self.collection.name, 'quantity':'a'}
+        response = self.client.post(reverse('basket-add-collection'), data, follow=True)
+        self.assertEqual(response.status_code, 406)
+    
+    def test_add_collection_to_basket_post_invalid_collection(self):
+        data = {'collection_name':'invalid_name', 'quantity':2}
+        response = self.client.post(reverse('basket-add-collection'), data, follow=True)
 
 class ShippingTest(URLTestCase, OrderTest):
     

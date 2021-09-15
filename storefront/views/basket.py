@@ -21,7 +21,7 @@ def add_collection_to_basket(request):
     if request.method == 'POST':
         form = AddCollectionToBasketForm(request.POST)
         if form.is_valid():
-            collection = Collection.objects.get(name = form.cleaned_data['collection_name'])
+            collection = get_object_or_404(Collection, name = form.cleaned_data['collection_name'])
             basket = Basket.get_basket(request.COOKIES['device'])
             basket.add_collection(collection, form.cleaned_data['quantity'])
             return HttpResponse(status=204)
