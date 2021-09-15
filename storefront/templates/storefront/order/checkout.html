@@ -3,6 +3,13 @@
 {% block title %}Checkout{% endblock title %}
 
 {% block content %}
+{% if unavailable %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  The following items are no longer available and have been removed from your basket:
+  {% for item in unavailable %} {{item}} {% endfor %}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
 <div class="container py-5" style="min-height:70vh">
   <div class="row">
     <div class="col-md-12 mb-4">

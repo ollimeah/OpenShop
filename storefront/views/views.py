@@ -93,7 +93,9 @@ def shipping(request):
 def checkout(request):
     basket = Basket.get_basket(request.COOKIES['device'])
     if basket.is_empty() or not basket.contains_available(): return redirect('basket')
+    unavailable = basket.get_and_remove_unavailable_items()
+    context = {'unavailable' : unavailable, 'basket' : basket}
     if request.method == 'POST':
         Order.create_order_and_empty_basket(basket)
         return redirect('order-success')
-    return render(request, 'storefront/order/checkout.html', {'basket' : basket})
+    return render(request, 'storefront/order/checkout.html', context)
