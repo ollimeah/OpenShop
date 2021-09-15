@@ -1,5 +1,5 @@
 from django.http.cookie import SimpleCookie
-from staff.models import Basket, BasketProduct, Category, Collection, Delivery, Device, Product
+from staff.models import Basket, BasketCollection, BasketProduct, Category, Collection, Delivery, Device, Product
 from django.test import TestCase
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -146,6 +146,9 @@ class OrderTest(TestCase):
     
     def add_basket_product(self):
         BasketProduct.objects.create(basket=self.basket, product=self.product, quantity=3)
+    
+    def add_basket_collection(self):
+        BasketCollection.objects.create(basket=self.basket, collection=self.collection, quantity=3)
 
 class BasketTest(URLTestCase, OrderTest):
     
@@ -194,6 +197,67 @@ class BasketTest(URLTestCase, OrderTest):
     def test_add_collection_to_basket_post_invalid_collection(self):
         data = {'collection_name':'invalid_name', 'quantity':2}
         response = self.client.post(reverse('basket-add-collection'), data, follow=True)
+        self.assertEqual(response.status_code, 404)
+    
+    def test_update_product_quantity_get(self):
+        response = self.client.get(reverse('basket-update-product'))
+        self.assertEqual(response.status_code, 405)
+    
+    def test_update_product_quantity_post_valid_zero_quantity(self):
+        self.add_basket_product()
+        data = {'product_name':self.product.name, 'quantity':0}
+        response = self.client.post(reverse('basket-update-product'), data, follow=True)
+        self.assertRedirects(response, reverse('basket'))
+    
+    def test_update_product_quantity_post_valid_non_zero_quantity(self):
+        self.add_basket_product()
+        quantity = 5
+        data = {'product_name':self.product.name, 'quantity':quantity}
+        response = self.client.post(reverse('basket-update-product'), data, follow=True)
+        price = "{:.2f}".format(self.product.price*quantity)
+        json = {'productTotal':price, 'cost':price, 'numItems':quantity}
+        self.assertJSONEqual(str(response.content, encoding='utf8'), json)
+        self.assertEqual(response.status_code, 200)
+    
+    def test_update_product_quantity_post_invalid_quantity(self):
+        data = {'product_name':self.product.name, 'quantity':'a'}
+        response = self.client.post(reverse('basket-update-product'), data, follow=True)
+        self.assertEqual(response.status_code, 406)
+    
+    def test_update_product_quantity_post_invalid_product(self):
+        data = {'product_name':'invalid_name', 'quantity':self.product.min}
+        response = self.client.post(reverse('basket-update-product'), data, follow=True)
+        self.assertEqual(response.status_code, 404)
+    
+    def test_update_collection_quantity_get(self):
+        response = self.client.get(reverse('basket-update-collection'))
+        self.assertEqual(response.status_code, 405)
+    
+    def test_update_collection_quantity_post_valid_zero_quantity(self):
+        self.add_basket_collection()
+        data = {'collection_name':self.collection.name, 'quantity':0}
+        response = self.client.post(reverse('basket-update-collection'), data, follow=True)
+        self.assertRedirects(response, reverse('basket'))
+    
+    def test_update_collection_quantity_post_valid_non_zero_quantity(self):
+        self.add_basket_collection()
+        quantity = 5
+        data = {'collection_name':self.collection.name, 'quantity':quantity}
+        response = self.client.post(reverse('basket-update-collection'), data, follow=True)
+        price = "{:.2f}".format(self.collection.price*quantity)
+        json = {'productTotal':price, 'cost':price, 'numItems':quantity}
+        self.assertJSONEqual(str(response.content, encoding='utf8'), json)
+        self.assertEqual(response.status_code, 200)
+    
+    def test_update_product_quantity_post_invalid_quantity(self):
+        data = {'collection_name':self.collection.name, 'quantity':'a'}
+        response = self.client.post(reverse('basket-update-collection'), data, follow=True)
+        self.assertEqual(response.status_code, 406)
+    
+    def test_update_collection_quantity_post_invalid_collection(self):
+        data = {'collection_name':'invalid_name', 'quantity':2}
+        response = self.client.post(reverse('basket-update-collection'), data, follow=True)
+        self.assertEqual(response.status_code, 404)
 
 class ShippingTest(URLTestCase, OrderTest):
     
