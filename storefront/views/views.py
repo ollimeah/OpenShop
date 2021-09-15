@@ -1,3 +1,4 @@
+from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from staff.models import FAQ, Address, CarouselImage, Category, Collection, Delivery, Message, Order, Product, Basket, Promotion
@@ -114,3 +115,11 @@ def checkout(request):
     unavailable = basket.get_and_remove_unavailable_items()
     context.update({'unavailable' : unavailable, 'basket' : basket, 'promo_form' : promo_form})
     return render(request, 'storefront/order/checkout.html', context)
+
+def place_order(request):
+    if request.method == 'POST':
+        basket = Basket.get_basket(request.COOKIES['device'])
+        Order.create_order_and_empty_basket(basket)
+        return redirect('order-success')
+    else:
+        return HttpResponse(status=405)

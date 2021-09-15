@@ -91,8 +91,10 @@
     </div>
   </div>
 
-  <form method="post">{% csrf_token %}
-      <input type="submit" value="Place Order">
+  <form action="{% url 'place-order' %}" method="post">{% csrf_token %}
+    <div class="d-grid col-md-6 mx-auto">
+      <button class="btn btn-primary" type="submit">Place Order</button>
+    </div>
   </form>
 </div>
 {% endblock content %}
