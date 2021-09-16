@@ -47,7 +47,7 @@ class Settings(models.Model):
         return "#000000" if (((r * 0.299) + (g * 0.587) + (b * 0.114)) > 186) else "#FFFFFF"
 
 class CarouselImage(models.Model):
-    image = models.ImageField()
+    image = models.ImageField(upload_to='carousel_images')
     label = models.CharField(max_length=30, null=True)
 
 class Category(models.Model):
@@ -80,7 +80,7 @@ class Product(models.Model):
     name = models.CharField(max_length=75, unique=True)
     description = models.TextField()
     price = models.DecimalField(max_digits=7, decimal_places=2)
-    image = models.ImageField()
+    image = models.ImageField(upload_to='product_images')
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     available = models.BooleanField(default=True)
     hidden = models.BooleanField(default=False)
@@ -166,7 +166,7 @@ class Product(models.Model):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    image = models.ImageField()
+    image = models.ImageField(upload_to='product_images')
 
     def delete(self, *args, **kwargs):
         self.image.delete()
@@ -179,7 +179,7 @@ class Collection(models.Model):
     hidden = models.BooleanField(default=False)
     products = models.ManyToManyField(Product)
     description = models.TextField(null=True, blank=True)
-    image = models.ImageField()
+    image = models.ImageField(upload_to='collection_images')
 
     @property
     def num_sold(self):

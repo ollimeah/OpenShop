@@ -115,3 +115,7 @@ dmypy.json
 
 .metals/
 .vscode/
+
+product_images/
+collection_images/
+carousel_images/
