@@ -417,3 +417,13 @@ class OrderTest(URLTestCase, OrderTestCase):
 
     def test_order_success_uses_correct_template(self):
         self.template_test(reverse('order-success'), 'storefront/order/success.html')
+
+class MaintenanceTest(URLTestCase):
+    def test_maintenance_url_exists_at_desired_location(self):
+        self.url_ok_test('/maintenance/')
+
+    def test_maintenance_url_accessible_by_name(self):
+        self.url_ok_test(reverse('maintenance'))
+
+    def test_maintenance_uses_correct_template(self):
+        self.template_test(reverse('maintenance'), 'storefront/maintenance.html')
