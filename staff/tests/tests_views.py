@@ -838,17 +838,7 @@ class MessageTest(URLTestCase):
         self.redirect_test_with_login(reverse('staff-message-delete', kwargs={'pk':1}), '/staff/messages/')
 
 class SettingsTest(URLTestCase):
-
-    @classmethod
-    def setUpTestData(cls):
-        cls.settings_init = Settings().as_dict()
-        return super().setUpTestData()
     
-    @classmethod
-    def tearDownClass(cls):
-        Settings().update(cls.settings_init)
-        return super().tearDownClass()
-
     def test_settings_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-settings'), '/staff/?next=/staff/settings/')
     

@@ -1,5 +1,4 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from staff.forms import SettingsForm
 from staff.models import Basket, Order, Product, Settings
 from django.contrib.auth.decorators import user_passes_test
 from django.urls import reverse
@@ -27,16 +26,16 @@ def dashboard(request):
 def home(request):
     return render(request, 'staff/home/home.html', {})
 
-@user_passes_test(staff_check, login_url='staff-login')
-def settings(request):
-    settings = Settings()
-    if request.method == 'POST':
-        form = SettingsForm(request.POST)
-        if form.is_valid():
-            settings.update(form.cleaned_data)
-    form = SettingsForm(settings.as_dict())
-    context = {'form': form}
-    return render(request, 'staff/settings.html', context)
+class SettingsView(StaffTestMixin, generic.UpdateView):
+    model = Settings
+    template_name = 'staff/settings.html'
+    fields = '__all__'
+
+    def get_object(self):
+        return Settings.load()
+    
+    def get_success_url(self):
+        return reverse('staff-settings')
 
 class OrderListView(StaffTestMixin, generic.ListView):
     model = Order

@@ -65,5 +65,5 @@ urlpatterns = [
     path('messages/', views.MessageListView.as_view(), name='staff-messages'),
     path('message/<int:pk>/delete/', views.MessageDeleteView.as_view(), name='staff-message-delete'),
 
-    path('settings/', views.settings, name='staff-settings'),
+    path('settings/', views.SettingsView.as_view(), name='staff-settings'),
 ]

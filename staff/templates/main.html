@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
   {% load static %}
   <style>
-    {% with primary=settings.primary_colour primary_text=settings.get_text_colour_primary secondary=settings.secondary_colour secondary_text=settings.get_text_colour_secondary %}
+    {% with primary=settings.primary_colour primary_text=settings.text_colour_primary secondary=settings.secondary_colour secondary_text=settings.text_colour_secondary %}
     .primary-colour {background-color: {{ primary }};}
     .btn-primary {
       color: {{ secondary_text }};

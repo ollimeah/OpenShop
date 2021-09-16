@@ -8,7 +8,7 @@ class MaintenanceModeMiddleware:
 
     def __call__(self, request):
         path = request.META.get('PATH_INFO', "")
-        settings = Settings()
+        settings = Settings.load()
         if settings.maintenance and path!=reverse("maintenance") and not (path.startswith(reverse('admin:index')) or path.startswith(reverse('staff-login'))):
             response = redirect(reverse("maintenance"))
             return response
