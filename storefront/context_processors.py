@@ -8,7 +8,7 @@ def collections(request):
     return {'collections': Collection.get_visible()}
 
 def device_id(request):
-    if request.path.startswith(reverse('admin:index')) or request.path.startswith(reverse('staff-login')):
+    if request.path.startswith(reverse('admin:index')) or request.path.startswith(reverse('staff-login')) or request.path.startswith(reverse('maintenance')):
         return {}
     context = {}
     if 'device' in request.COOKIES:
