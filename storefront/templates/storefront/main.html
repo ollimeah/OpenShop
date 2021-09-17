@@ -13,7 +13,7 @@
   </script>
   {% endif %}
   <style>
-    {% with primary=settings.primary_colour primary_text=settings.get_text_colour_primary secondary=settings.secondary_colour secondary_text=settings.get_text_colour_secondary %}
+    {% with primary=settings.primary_colour primary_text=settings.text_colour_primary secondary=settings.secondary_colour secondary_text=settings.text_colour_secondary %}
     .primary-colour {background-color: {{ primary }};}
     .btn-primary, .btn-primary:disabled {
       color: {{ secondary_text }};
