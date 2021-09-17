@@ -462,7 +462,9 @@ class Basket(models.Model):
     
     @property
     def promotion_amount(self):
-        return self.promotion.get_discount(self.item_cost)
+        if self.promotion:
+            return self.promotion.get_discount(self.item_cost)
+        else: return 0
     
     @property
     def promotion_cost(self):
