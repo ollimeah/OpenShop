@@ -128,8 +128,7 @@ class OrderTestCase(TestCase):
         category = Category.objects.create(name="Test")
         cls.product = Product.objects.create(name="Test", description='Test', price=10, category=category,
         image=SimpleUploadedFile("test" + '.jpg', b'content'), available=True, hidden=False, min=1, max=12)
-        Delivery.objects.create(name="Test", price=10)
-        cls.basket = Basket.objects.create(device=cls.device)
+        cls.delivery = Delivery.objects.create(name="Test", price=10)
         cls.collection = Collection.objects.create(name="Test", description='Test', price=10,
         image=SimpleUploadedFile("test" + '.jpg', b'content'), available=True, hidden=False)
         return super().setUpTestData()
@@ -141,6 +140,7 @@ class OrderTestCase(TestCase):
         return super().tearDownClass()
 
     def setUp(self):
+        self.basket = Basket.objects.create(device=self.device)
         self.client.cookies = SimpleCookie({'device':self.device.code})
         return super().setUp()
     
@@ -156,8 +156,7 @@ class OrderTestCase(TestCase):
         self.basket.save()
     
     def add_delivery(self):
-        delivery = Delivery.objects.create(name="Test", price=10)
-        self.basket.delivery = delivery
+        self.basket.delivery = self.delivery
         self.basket.save()
 
 class BasketTest(URLTestCase, OrderTestCase):
