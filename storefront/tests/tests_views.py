@@ -376,6 +376,21 @@ class OrderTest(URLTestCase, OrderTestCase):
     def test_place_order_get(self):
         response = self.client.get(reverse('place-order'))
         self.assertEqual(response.status_code, 405)
+
+    def test_place_order_get_debug_false(self):
+        with self.settings(DEBUG=False):
+            response = self.client.get(reverse('place-order'))
+            self.assertEqual(response, reverse('basket'))
+    
+    def test_place_order_post_debug_false(self):
+        self.add_basket_product()
+        self.add_shipping()
+        self.add_delivery()
+        num_orders = Order.objects.count()
+        with self.settings(DEBUG=False):
+            response = self.client.post(reverse('place-order'), follow=True)
+            self.assertRedirects(response, reverse('basket'))
+        self.assertEqual(num_orders, Order.objects.count())
     
     def test_place_order_post_valid_basket(self):
         self.add_basket_product()
