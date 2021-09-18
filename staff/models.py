@@ -23,7 +23,7 @@ class Settings(models.Model):
 
     @classmethod
     def load(cls):
-        settings, created = Settings.objects.get_or_create(id=1)
+        settings, _ = Settings.objects.get_or_create(id=1)
         return settings
 
     @staticmethod

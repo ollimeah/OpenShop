@@ -8,6 +8,18 @@ from math import ceil
 from django.core.files.uploadedfile import SimpleUploadedFile
 from os.path import exists as path_exists
 
+class SettingsTest(TestCase):
+
+    def test_load(self):
+        settings = Settings().load()
+        self.assertEqual(settings.id, 1)
+        self.assertEqual(1, Settings.objects.count())
+    
+    def test_delete_does_not_delete(self):
+        settings = Settings().load()
+        settings.delete()
+        self.assertEqual(1, Settings.objects.count())
+
 class DeviceTest(TestCase):
 
     def test_new_device_id(self):
