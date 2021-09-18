@@ -19,6 +19,44 @@ class URLTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, template)
 
+class OrderTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.device = Device.objects.create()
+        category = Category.objects.create(name="Test")
+        cls.product = Product.objects.create(name="Test", description='Test', price=10, category=category,
+            image=SimpleUploadedFile("test" + '.jpg', b'content'), available=True, hidden=False, min=1, max=12)
+        cls.delivery = Delivery.objects.create(name="Test", price=10)
+        cls.collection = Collection.objects.create(name="Test", description='Test', price=10,
+            image=SimpleUploadedFile("test" + '.jpg', b'content'), available=True, hidden=False)
+        cls.address = Address.objects.create(name='Test Name', email='test@test.com', line_1='test road', city='test city', postcode='ab1 cb2')
+        return super().setUpTestData()
+    
+    @classmethod
+    def tearDownClass(cls):
+        for prod in Product.objects.all(): prod.image.delete()
+        for collection in Collection.objects.all(): collection.image.delete()
+        return super().tearDownClass()
+
+    def setUp(self):
+        self.basket = Basket.objects.create(device=self.device)
+        self.client.cookies = SimpleCookie({'device':self.device.code})
+        return super().setUp()
+    
+    def add_basket_product(self):
+        BasketProduct.objects.create(basket=self.basket, product=self.product, quantity=3)
+    
+    def add_basket_collection(self):
+        BasketCollection.objects.create(basket=self.basket, collection=self.collection, quantity=3)
+    
+    def add_shipping(self):
+        self.basket.address = self.address
+        self.basket.save()
+    
+    def add_delivery(self):
+        self.basket.delivery = self.delivery
+        self.basket.save()
+
 class HomeTest(URLTestCase):
 
     def test_home_url_exists_at_desired_location(self):
@@ -120,44 +158,6 @@ class ContactTest(URLTestCase):
 
     def test_message_sent_uses_correct_template(self):
         self.template_test(reverse('message-sent'), 'storefront/contact/sent.html')
-
-class OrderTestCase(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.device = Device.objects.create()
-        category = Category.objects.create(name="Test")
-        cls.product = Product.objects.create(name="Test", description='Test', price=10, category=category,
-        image=SimpleUploadedFile("test" + '.jpg', b'content'), available=True, hidden=False, min=1, max=12)
-        cls.delivery = Delivery.objects.create(name="Test", price=10)
-        cls.collection = Collection.objects.create(name="Test", description='Test', price=10,
-        image=SimpleUploadedFile("test" + '.jpg', b'content'), available=True, hidden=False)
-        return super().setUpTestData()
-    
-    @classmethod
-    def tearDownClass(cls):
-        for prod in Product.objects.all(): prod.image.delete()
-        for collection in Collection.objects.all(): collection.image.delete()
-        return super().tearDownClass()
-
-    def setUp(self):
-        self.basket = Basket.objects.create(device=self.device)
-        self.client.cookies = SimpleCookie({'device':self.device.code})
-        return super().setUp()
-    
-    def add_basket_product(self):
-        BasketProduct.objects.create(basket=self.basket, product=self.product, quantity=3)
-    
-    def add_basket_collection(self):
-        BasketCollection.objects.create(basket=self.basket, collection=self.collection, quantity=3)
-    
-    def add_shipping(self):
-        address = Address.objects.create(name='Test Name', email='test@test.com', line_1='test road', city='test city', postcode='ab1 cb2')
-        self.basket.address = address
-        self.basket.save()
-    
-    def add_delivery(self):
-        self.basket.delivery = self.delivery
-        self.basket.save()
 
 class BasketTest(URLTestCase, OrderTestCase):
     
@@ -427,6 +427,7 @@ class OrderTest(URLTestCase, OrderTestCase):
         self.template_test(reverse('order-failed'), 'storefront/order/failed.html')
 
 class MaintenanceTest(URLTestCase):
+    
     def test_maintenance_url_exists_at_desired_location(self):
         self.url_ok_test('/maintenance/')
 

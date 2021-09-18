@@ -2,7 +2,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User, Group
-from staff.models import FAQ, Basket, Category, Collection, Delivery, Device, Message, Order, Product, Promotion, Settings
+from staff.models import FAQ, Basket, Category, Collection, Delivery, Device, Message, Order, Product, Promotion
 
 class URLTestCase(TestCase):
     @classmethod
@@ -83,7 +83,7 @@ class FAQTest(URLTestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        FAQ.objects.create(question="Test", answer="Test")
+        cls.faq = FAQ.objects.create(question="Test", answer="Test")
     
     def test_index_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-faqs'), '/staff/?next=/staff/faqs/')
@@ -119,41 +119,41 @@ class FAQTest(URLTestCase):
         self.assertRedirects(response, reverse('staff-faqs'))
     
     def test_update_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-faq-update', kwargs={'pk':1}), '/staff/?next=/staff/faq/1/update/')
+        self.redirect_test(reverse('staff-faq-update', kwargs={'pk':self.faq.id}), f'/staff/?next=/staff/faq/{self.faq.id}/update/')
     
     def test_post_update_redirect_if_not_logged_in(self):
-        response = self.client.post(reverse('staff-faq-update', kwargs={'pk':1}), {'question':'Test', 'answer':'Test'}, follow=True)
-        self.assertRedirects(response, '/staff/?next=/staff/faq/1/update/')
+        response = self.client.post(reverse('staff-faq-update', kwargs={'pk':self.faq.id}), {'question':'Test', 'answer':'Test'}, follow=True)
+        self.assertRedirects(response, f'/staff/?next=/staff/faq/{self.faq.id}/update/')
     
     def test_update_url_exists_at_desired_location(self):
-        self.url_ok_test_with_login('/staff/faq/1/update/')
+        self.url_ok_test_with_login(f'/staff/faq/{self.faq.id}/update/')
 
     def test_update_url_accessible_by_name(self):
-        self.url_ok_test_with_login(reverse('staff-faq-update', kwargs={'pk':1}))
+        self.url_ok_test_with_login(reverse('staff-faq-update', kwargs={'pk':self.faq.id}))
 
     def test_update_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-faq-update', kwargs={'pk':1}), 'faqs/view.html')
+        self.template_test_with_login(reverse('staff-faq-update', kwargs={'pk':self.faq.id}), 'faqs/view.html')
     
     def test_post_update(self):
         self.login_staff()
-        response = self.client.post(reverse('staff-faq-update', kwargs={'pk':1}), {'question':'Test', 'answer':'Test'}, follow=True)
+        response = self.client.post(reverse('staff-faq-update', kwargs={'pk':self.faq.id}), {'question':'Test', 'answer':'Test'}, follow=True)
         self.assertRedirects(response, reverse('staff-faqs'))
     
     def test_delete_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-faq-delete', kwargs={'pk':1}), '/staff/?next=/staff/faq/1/delete/')
+        self.redirect_test(reverse('staff-faq-delete', kwargs={'pk':self.faq.id}), f'/staff/?next=/staff/faq/{self.faq.id}/delete/')
     
     def test_delete_url_exists_at_desired_location(self):
-        self.redirect_test_with_login('/staff/faq/1/delete/', '/staff/faqs/')
+        self.redirect_test_with_login(f'/staff/faq/{self.faq.id}/delete/', '/staff/faqs/')
 
     def test_delete_url_accessible_by_name(self):
-        self.redirect_test_with_login(reverse('staff-faq-delete', kwargs={'pk':1}), '/staff/faqs/')
+        self.redirect_test_with_login(reverse('staff-faq-delete', kwargs={'pk':self.faq.id}), '/staff/faqs/')
 
 class PromotionTest(URLTestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        Promotion.objects.create(code="Test", type=Promotion.FIXED_PRICE, amount=10)
-        Promotion.objects.create(code="TestP", type=Promotion.PERCENTAGE, amount=10)
+        cls.fix = Promotion.objects.create(code="Test", type=Promotion.FIXED_PRICE, amount=10)
+        cls.perc = Promotion.objects.create(code="TestP", type=Promotion.PERCENTAGE, amount=10)
 
     def test_index_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-promotions'), '/staff/?next=/staff/promotions/')
@@ -168,16 +168,16 @@ class PromotionTest(URLTestCase):
         self.template_test_with_login(reverse('staff-promotions'), 'promotions/index.html')
     
     def test_detail_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-promotion', kwargs={'code':'Test'}), '/staff/?next=/staff/promotion/Test/')
+        self.redirect_test(reverse('staff-promotion', kwargs={'code':self.fix.code}), f'/staff/?next=/staff/promotion/{self.fix.code}/')
     
     def test_detail_url_exists_at_desired_location(self):
-        self.url_ok_test_with_login('/staff/promotion/Test/')
+        self.url_ok_test_with_login(f'/staff/promotion/{self.fix.code}/')
 
     def test_detail_url_accessible_by_name(self):
-        self.url_ok_test_with_login(reverse('staff-promotion', kwargs={'code':'Test'}))
+        self.url_ok_test_with_login(reverse('staff-promotion', kwargs={'code':self.fix.code}))
 
     def test_detail_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-promotion', kwargs={'code':'Test'}), 'promotions/detail.html')
+        self.template_test_with_login(reverse('staff-promotion', kwargs={'code':self.fix.code}), 'promotions/detail.html')
     
     def test_new_fixed_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-promotions-fixed-new'), '/staff/?next=/staff/promotions/fixed/new/')
@@ -224,37 +224,37 @@ class PromotionTest(URLTestCase):
         self.assertRedirects(response, reverse('staff-promotion', kwargs={'code':'Test2'}))
     
     def test_update_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-promotion-update', kwargs={'code':'Test'}), '/staff/?next=/staff/promotion/Test/update/')
+        self.redirect_test(reverse('staff-promotion-update', kwargs={'code':self.fix.code}), f'/staff/?next=/staff/promotion/{self.fix.code}/update/')
     
     def test_post_update_redirect_if_not_logged_in(self):
-        response = self.client.post(reverse('staff-promotion-update', kwargs={'code':'Test'}), {'amount':'10'}, follow=True)
-        self.assertRedirects(response, '/staff/?next=/staff/promotion/Test/update/')
+        response = self.client.post(reverse('staff-promotion-update', kwargs={'code':self.fix.code}), {'amount':'10'}, follow=True)
+        self.assertRedirects(response, f'/staff/?next=/staff/promotion/{self.fix.code}/update/')
     
     def test_update_url_exists_at_desired_location(self):
-        self.url_ok_test_with_login('/staff/promotion/Test/update/')
+        self.url_ok_test_with_login(f'/staff/promotion/{self.fix.code}/update/')
 
     def test_update_url_accessible_by_name(self):
-        self.url_ok_test_with_login(reverse('staff-promotion-update', kwargs={'code':'Test'}))
+        self.url_ok_test_with_login(reverse('staff-promotion-update', kwargs={'code':self.fix.code}))
 
     def test_update_fixed_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-promotion-update', kwargs={'code':'Test'}), 'promotions/fixed.html')
+        self.template_test_with_login(reverse('staff-promotion-update', kwargs={'code':self.fix.code}), 'promotions/fixed.html')
     
     def test_update_percentage_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-promotion-update', kwargs={'code':'TestP'}), 'promotions/percentage.html')
+        self.template_test_with_login(reverse('staff-promotion-update', kwargs={'code':self.perc.code}), 'promotions/percentage.html')
     
     def test_post_update(self):
         self.login_staff()
-        response = self.client.post(reverse('staff-promotion-update', kwargs={'code':'Test'}), {'code':'Test', 'amount':'100'}, follow=True)
-        self.assertRedirects(response, reverse('staff-promotion', kwargs={'code':'Test'}))
+        response = self.client.post(reverse('staff-promotion-update', kwargs={'code':self.fix.code}), {'code':'Test', 'amount':'100'}, follow=True)
+        self.assertRedirects(response, reverse('staff-promotion', kwargs={'code':self.fix.code}))
     
     def test_delete_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-promotion-delete', kwargs={'code':'Test'}), '/staff/?next=/staff/promotion/Test/delete/')
+        self.redirect_test(reverse('staff-promotion-delete', kwargs={'code':self.fix.code}), f'/staff/?next=/staff/promotion/{self.fix.code}/delete/')
     
     def test_delete_url_exists_at_desired_location(self):
-        self.redirect_test_with_login('/staff/promotion/Test/delete/', '/staff/promotions/')
+        self.redirect_test_with_login(f'/staff/promotion/{self.fix.code}/delete/', '/staff/promotions/')
 
     def test_delete_url_accessible_by_name(self):
-        self.redirect_test_with_login(reverse('staff-promotion-delete', kwargs={'code':'Test'}), '/staff/promotions/')
+        self.redirect_test_with_login(reverse('staff-promotion-delete', kwargs={'code':self.fix.code}), '/staff/promotions/')
     
     def test_disable_all_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-disable-promotions'), '/staff/?next=/staff/promotions/disable-all/')
@@ -268,14 +268,13 @@ class PromotionTest(URLTestCase):
     def test_disable_all(self):
         self.login_staff()
         self.client.get(reverse('staff-disable-promotions'))
-        for promotion in Promotion.objects.all():
-            self.assertFalse(promotion.active)
+        self.assertEqual(0, Promotion.objects.filter(active=True).count())
 
 class DeliveryTest(URLTestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        Delivery.objects.create(name="Test", price="10")
+        cls.delivery = Delivery.objects.create(name="Test", price="10")
     
     def test_index_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-deliveries'), '/staff/?next=/staff/deliveries/')
@@ -311,40 +310,40 @@ class DeliveryTest(URLTestCase):
         self.assertRedirects(response, reverse('staff-deliveries'))
     
     def test_update_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-delivery-update', kwargs={'pk':1}), '/staff/?next=/staff/delivery/1/update/')
+        self.redirect_test(reverse('staff-delivery-update', kwargs={'pk':self.delivery.id}), '/staff/?next=/staff/delivery/1/update/')
     
     def test_post_update_redirect_if_not_logged_in(self):
-        response = self.client.post(reverse('staff-delivery-update', kwargs={'pk':1}), {'name':'Test2', 'price':'10'}, follow=True)
+        response = self.client.post(reverse('staff-delivery-update', kwargs={'pk':self.delivery.id}), {'name':'Test2', 'price':'10'}, follow=True)
         self.assertRedirects(response, '/staff/?next=/staff/delivery/1/update/')
     
     def test_update_url_exists_at_desired_location(self):
-        self.url_ok_test_with_login('/staff/delivery/1/update/')
+        self.url_ok_test_with_login(f'/staff/delivery/{self.delivery.id}/update/')
 
     def test_update_url_accessible_by_name(self):
-        self.url_ok_test_with_login(reverse('staff-delivery-update', kwargs={'pk':1}))
+        self.url_ok_test_with_login(reverse('staff-delivery-update', kwargs={'pk':self.delivery.id}))
 
     def test_update_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-delivery-update', kwargs={'pk':1}), 'delivery/view.html')
+        self.template_test_with_login(reverse('staff-delivery-update', kwargs={'pk':self.delivery.id}), 'delivery/view.html')
     
     def test_post_update(self):
         self.login_staff()
-        response = self.client.post(reverse('staff-delivery-update', kwargs={'pk':1}), {'name':'Test2', 'price':'10'}, follow=True)
+        response = self.client.post(reverse('staff-delivery-update', kwargs={'pk':self.delivery.id}), {'name':'Test2', 'price':'10'}, follow=True)
         self.assertRedirects(response, reverse('staff-deliveries'))
     
     def test_delete_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-delivery-delete', kwargs={'pk':1}), '/staff/?next=/staff/delivery/1/delete/')
+        self.redirect_test(reverse('staff-delivery-delete', kwargs={'pk':self.delivery.id}), f'/staff/?next=/staff/delivery/{self.delivery.id}/delete/')
     
     def test_delete_url_exists_at_desired_location(self):
-        self.redirect_test_with_login('/staff/delivery/1/delete/', '/staff/deliveries/')
+        self.redirect_test_with_login(f'/staff/delivery/{self.delivery.id}/delete/', '/staff/deliveries/')
 
     def test_delete_url_accessible_by_name(self):
-        self.redirect_test_with_login(reverse('staff-delivery-delete', kwargs={'pk':1}), '/staff/deliveries/')
+        self.redirect_test_with_login(reverse('staff-delivery-delete', kwargs={'pk':self.delivery.id}), '/staff/deliveries/')
 
 class OrderTest(URLTestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        Order.objects.create()
+        cls.order = Order.objects.create()
     
     def test_index_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-orders'), '/staff/?next=/staff/orders/')
@@ -359,44 +358,43 @@ class OrderTest(URLTestCase):
         self.template_test_with_login(reverse('staff-orders'), 'staff/orders/index.html')
     
     def test_detail_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-order', kwargs={'pk':'1'}), '/staff/?next=/staff/order/1/')
+        self.redirect_test(reverse('staff-order', kwargs={'pk':self.order.id}), f'/staff/?next=/staff/order/{self.order.id}/')
     
     def test_detail_url_exists_at_desired_location(self):
-        self.url_ok_test_with_login('/staff/order/1/')
+        self.url_ok_test_with_login(f'/staff/order/{self.order.id}/')
 
     def test_detail_url_accessible_by_name(self):
-        self.url_ok_test_with_login(reverse('staff-order', kwargs={'pk':'1'}))
+        self.url_ok_test_with_login(reverse('staff-order', kwargs={'pk':self.order.id}))
 
     def test_detail_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-order', kwargs={'pk':'1'}), 'staff/orders/detail.html')
+        self.template_test_with_login(reverse('staff-order', kwargs={'pk':self.order.id}), 'staff/orders/detail.html')
     
     def test_toggle_shipped_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-order-toggle', kwargs={'pk':'1'}), '/staff/?next=/staff/order/1/toggle-shipped/')
+        self.redirect_test(reverse('staff-order-toggle', kwargs={'pk':self.order.id}), f'/staff/?next=/staff/order/{self.order.id}/toggle-shipped/')
     
     def test_toggle_shipped_url_exists_at_desired_location(self):
-        self.redirect_test_with_login('/staff/order/1/toggle-shipped/', '/staff/order/1/')
+        self.redirect_test_with_login(f'/staff/order/{self.order.id}/toggle-shipped/', f'/staff/order/{self.order.id}/')
 
     def test_toggle_shipped_url_accessible_by_name(self):
-        self.redirect_test_with_login(reverse('staff-order-toggle', kwargs={'pk':'1'}), '/staff/order/1/')
+        self.redirect_test_with_login(reverse('staff-order-toggle', kwargs={'pk':self.order.id}), f'/staff/order/{self.order.id}/')
     
     def test_toggle_shipped(self):
         self.login_staff()
-        self.client.get(reverse('staff-order-toggle', kwargs={'pk':'1'}))
-        self.assertTrue(Order.objects.get(id=1).shipped)
+        self.client.get(reverse('staff-order-toggle', kwargs={'pk':self.order.id}))
+        self.assertTrue(Order.objects.get(id=self.order.id).shipped)
 
 class CategoryTest(URLTestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        Category.objects.create(name="Test")
+        cls.category = Category.objects.create(name="Test")
     
     def tearDown(self):
         for prod in Product.objects.all(): prod.image.delete()
         return super().tearDown()
     
     def create_product(self, name='Test', available=True, hidden=False, file_name='test'):
-        category = Category.objects.get(id=1)
-        prod = Product.objects.create(name=name, description='Test', price=10, category=category,
+        prod = Product.objects.create(name=name, description='Test', price=10, category=self.category,
         image=SimpleUploadedFile(file_name + '.jpg', b'content'), available=available, hidden=hidden, min=1, max=12)
         return prod
 
@@ -413,16 +411,16 @@ class CategoryTest(URLTestCase):
         self.template_test_with_login(reverse('staff-categories'), 'categories/index.html')
     
     def test_detail_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-category', kwargs={'name':'Test'}), '/staff/?next=/staff/category/Test/')
+        self.redirect_test(reverse('staff-category', kwargs={'name':self.category.name}), f'/staff/?next=/staff/category/{self.category.name}/')
     
     def test_detail_url_exists_at_desired_location(self):
-        self.url_ok_test_with_login('/staff/category/Test/')
+        self.url_ok_test_with_login(f'/staff/category/{self.category.name}/')
 
     def test_detail_url_accessible_by_name(self):
-        self.url_ok_test_with_login(reverse('staff-category', kwargs={'name':'Test'}))
+        self.url_ok_test_with_login(reverse('staff-category', kwargs={'name':self.category.name}))
 
     def test_detail_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-category', kwargs={'name':'Test'}), 'categories/detail.html')
+        self.template_test_with_login(reverse('staff-category', kwargs={'name':self.category.name}), 'categories/detail.html')
     
     def test_new_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-categories-new'), '/staff/?next=/staff/categories/new/')
@@ -446,56 +444,56 @@ class CategoryTest(URLTestCase):
         self.assertRedirects(response, reverse('staff-category', kwargs={'name':'Test2'}))
     
     def test_update_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-category-update', kwargs={'name':'Test'}), '/staff/?next=/staff/category/Test/update/')
+        self.redirect_test(reverse('staff-category-update', kwargs={'name':self.category.name}), f'/staff/?next=/staff/category/{self.category.name}/update/')
     
     def test_post_update_redirect_if_not_logged_in(self):
-        response = self.client.post(reverse('staff-category-update', kwargs={'name':'Test'}), {'name':'Test'}, follow=True)
-        self.assertRedirects(response, '/staff/?next=/staff/category/Test/update/')
+        response = self.client.post(reverse('staff-category-update', kwargs={'name':self.category.name}), {'name':'TestUp'}, follow=True)
+        self.assertRedirects(response, f'/staff/?next=/staff/category/{self.category.name}/update/')
     
     def test_update_url_exists_at_desired_location(self):
-        self.url_ok_test_with_login('/staff/category/Test/update/')
+        self.url_ok_test_with_login(f'/staff/category/{self.category.name}/update/')
 
     def test_update_url_accessible_by_name(self):
-        self.url_ok_test_with_login(reverse('staff-category-update', kwargs={'name':'Test'}))
+        self.url_ok_test_with_login(reverse('staff-category-update', kwargs={'name':self.category.name}))
 
     def test_update_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-category-update', kwargs={'name':'Test'}), 'categories/view.html')
+        self.template_test_with_login(reverse('staff-category-update', kwargs={'name':self.category.name}), 'categories/view.html')
     
     def test_post_update(self):
         self.login_staff()
-        response = self.client.post(reverse('staff-category-update', kwargs={'name':'Test'}), {'name':'Test'}, follow=True)
-        self.assertRedirects(response, reverse('staff-category', kwargs={'name':'Test'}))
+        response = self.client.post(reverse('staff-category-update', kwargs={'name':self.category.name}), {'name':'TestUp'}, follow=True)
+        self.assertRedirects(response, reverse('staff-category', kwargs={'name':'TestUp'}))
     
     def test_delete_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-category-delete', kwargs={'name':'Test'}), '/staff/?next=/staff/category/Test/delete/')
+        self.redirect_test(reverse('staff-category-delete', kwargs={'name':self.category.name}), f'/staff/?next=/staff/category/{self.category.name}/delete/')
     
     def test_delete_url_exists_at_desired_location(self):
-        self.redirect_test_with_login('/staff/category/Test/delete/', '/staff/categories/')
+        self.redirect_test_with_login(f'/staff/category/{self.category.name}/delete/', '/staff/categories/')
 
     def test_delete_url_accessible_by_name(self):
-        self.redirect_test_with_login(reverse('staff-category-delete', kwargs={'name':'Test'}), '/staff/categories/')
+        self.redirect_test_with_login(reverse('staff-category-delete', kwargs={'name':self.category.name}), '/staff/categories/')
     
     def test_add_products_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-category-products', kwargs={'name':'Test'}), '/staff/?next=/staff/category/Test/products/')
+        self.redirect_test(reverse('staff-category-products', kwargs={'name':self.category.name}), f'/staff/?next=/staff/category/{self.category.name}/products/')
     
     def test_add_products_url_exists_at_desired_location(self):
-        self.url_ok_test_with_login('/staff/category/Test/products/')
+        self.url_ok_test_with_login(f'/staff/category/{self.category.name}/products/')
 
     def test_add_products_url_accessible_by_name(self):
-        self.url_ok_test_with_login(reverse('staff-category-products', kwargs={'name':'Test'}))
+        self.url_ok_test_with_login(reverse('staff-category-products', kwargs={'name':self.category.name}))
     
     def test_add_products_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-category-products', kwargs={'name':'Test'}), 'categories/products.html')
+        self.template_test_with_login(reverse('staff-category-products', kwargs={'name':self.category.name}), 'categories/products.html')
     
     def test_add_products(self):
         self.login_staff()
         category = Category.objects.create(name="Test2")
         for i in range(1, 4):
             self.create_product(name="Test"+str(i), file_name="Test"+str(i))
-        self.client.post(reverse('staff-category-products', kwargs={'name':'Test2'}), {"products":[1,2]})
-        self.client.post(reverse('staff-category-products', kwargs={'name':'Test2'}), {"products":[1]})
+        self.client.post(reverse('staff-category-products', kwargs={'name':category.name}), {"products":[1,2]})
+        self.client.post(reverse('staff-category-products', kwargs={'name':category.name}), {"products":[1]})
         self.assertEqual(Product.objects.filter(category=category).count(), 2)
-        self.assertEqual(Product.objects.filter(category=Category.objects.get(name="Test")).count(), 1)
+        self.assertEqual(Product.objects.filter(category=self.category).count(), 1)
         self.assertFalse(Product.objects.get(id=2).available)
         self.assertTrue(Product.objects.get(id=2).hidden)
 
@@ -503,8 +501,8 @@ class CollectionTest(URLTestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        Category.objects.create(name="Test")
-        Collection.objects.create(name="Test", price=10, image=SimpleUploadedFile('test.jpg', b'content'))
+        cls.category = Category.objects.create(name="Test")
+        cls.collection = Collection.objects.create(name="Test", price=10, image=SimpleUploadedFile('test.jpg', b'content'))
     
     def tearDown(self):
         for prod in Product.objects.all(): prod.image.delete()
@@ -512,9 +510,8 @@ class CollectionTest(URLTestCase):
         return super().tearDown()
     
     def create_product(self, name='Test', available=True, hidden=False, file_name='test'):
-        category = Category.objects.get(id=1)
-        prod = Product.objects.create(name=name, description='Test', price=10, category=category,
-        image=SimpleUploadedFile(file_name + '.jpg', b'content'), available=available, hidden=hidden, min=1, max=12)
+        prod = Product.objects.create(name=name, description='Test', price=10, category=self.category,
+            image=SimpleUploadedFile(file_name + '.jpg', b'content'), available=available, hidden=hidden, min=1, max=12)
         return prod
 
     def test_index_redirect_if_not_logged_in(self):
@@ -530,16 +527,16 @@ class CollectionTest(URLTestCase):
         self.template_test_with_login(reverse('staff-collections'), 'collections/index.html')
     
     def test_detail_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-collection', kwargs={'name':'Test'}), '/staff/?next=/staff/collection/Test/')
+        self.redirect_test(reverse('staff-collection', kwargs={'name':self.collection.name}), f'/staff/?next=/staff/collection/{self.collection.name}/')
     
     def test_detail_url_exists_at_desired_location(self):
-        self.url_ok_test_with_login('/staff/collection/Test/')
+        self.url_ok_test_with_login(f'/staff/collection/{self.collection.name}/')
 
     def test_detail_url_accessible_by_name(self):
-        self.url_ok_test_with_login(reverse('staff-collection', kwargs={'name':'Test'}))
+        self.url_ok_test_with_login(reverse('staff-collection', kwargs={'name':self.collection.name}))
 
     def test_detail_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-collection', kwargs={'name':'Test'}), 'collections/detail.html')
+        self.template_test_with_login(reverse('staff-collection', kwargs={'name':self.collection.name}), 'collections/detail.html')
     
     def test_new_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-collections-new'), '/staff/?next=/staff/collections/new/')
@@ -565,74 +562,72 @@ class CollectionTest(URLTestCase):
     #     self.assertRedirects(response, reverse('staff-collection', kwargs={'name':'Test2'}))
     
     def test_update_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-collection-update', kwargs={'name':'Test'}), '/staff/?next=/staff/collection/Test/update/')
+        self.redirect_test(reverse('staff-collection-update', kwargs={'name':self.collection.name}), f'/staff/?next=/staff/collection/{self.collection.name}/update/')
     
     def test_post_update_redirect_if_not_logged_in(self):
-        response = self.client.post(reverse('staff-collection-update', kwargs={'name':'Test'}), {'name':'Test', 'price':'10', 'products':['1']}, follow=True)
-        self.assertRedirects(response, '/staff/?next=/staff/collection/Test/update/')
+        response = self.client.post(reverse('staff-collection-update', kwargs={'name':self.collection.name}), {'name':'TestUp', 'price':'10', 'products':['1']}, follow=True)
+        self.assertRedirects(response, f'/staff/?next=/staff/collection/{self.collection.name}/update/')
     
     def test_update_url_exists_at_desired_location(self):
-        self.url_ok_test_with_login('/staff/collection/Test/update/')
+        self.url_ok_test_with_login(f'/staff/collection/{self.collection.name}/update/')
 
     def test_update_url_accessible_by_name(self):
-        self.url_ok_test_with_login(reverse('staff-collection-update', kwargs={'name':'Test'}))
+        self.url_ok_test_with_login(reverse('staff-collection-update', kwargs={'name':self.collection.name}))
 
     def test_update_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-collection-update', kwargs={'name':'Test'}), 'collections/view.html')
+        self.template_test_with_login(reverse('staff-collection-update', kwargs={'name':self.collection.name}), 'collections/view.html')
     
     def test_post_update(self):
         self.login_staff()
-        self.create_product(name="TestU")
-        response = self.client.post(reverse('staff-collection-update', kwargs={'name':'Test'}), {'name':'Test', 'price':'10', 'products':['1']}, follow=True)
-        self.assertRedirects(response, reverse('staff-collection', kwargs={'name':'Test'}))
+        prod = self.create_product(name="TestU")
+        response = self.client.post(reverse('staff-collection-update', kwargs={'name':self.collection.name}), {'name':'TestUp', 'price':'10', 'products':[prod.id]}, follow=True)
+        self.assertRedirects(response, reverse('staff-collection', kwargs={'name':'TestUp'}))
     
     def test_delete_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-collection-delete', kwargs={'name':'Test'}), '/staff/?next=/staff/collection/Test/delete/')
+        self.redirect_test(reverse('staff-collection-delete', kwargs={'name':self.collection.name}), f'/staff/?next=/staff/collection/{self.collection.name}/delete/')
     
     def test_delete_url_exists_at_desired_location(self):
-        self.redirect_test_with_login('/staff/collection/Test/delete/', '/staff/collections/')
+        self.redirect_test_with_login(f'/staff/collection/{self.collection.name}/delete/', '/staff/collections/')
 
     def test_delete_url_accessible_by_name(self):
-        self.redirect_test_with_login(reverse('staff-collection-delete', kwargs={'name':'Test'}), '/staff/collections/')
+        self.redirect_test_with_login(reverse('staff-collection-delete', kwargs={'name':self.collection.name}), '/staff/collections/')
     
     def test_add_products_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-collection-products', kwargs={'name':'Test'}), '/staff/?next=/staff/collection/Test/products/')
+        self.redirect_test(reverse('staff-collection-products', kwargs={'name':self.collection.name}), f'/staff/?next=/staff/collection/{self.collection.name}/products/')
     
     def test_add_products_url_exists_at_desired_location(self):
-        self.url_ok_test_with_login('/staff/collection/Test/products/')
+        self.url_ok_test_with_login(f'/staff/collection/{self.collection.name}/products/')
 
     def test_add_products_url_accessible_by_name(self):
-        self.url_ok_test_with_login(reverse('staff-collection-products', kwargs={'name':'Test'}))
+        self.url_ok_test_with_login(reverse('staff-collection-products', kwargs={'name':self.collection.name}))
     
     def test_add_products_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-collection-products', kwargs={'name':'Test'}), 'collections/products.html')
+        self.template_test_with_login(reverse('staff-collection-products', kwargs={'name':self.collection.name}), 'collections/products.html')
     
     def test_add_products(self):
         self.login_staff()
-        collection = Collection.objects.create(name="Test2", price=10)
         for i in range(1, 4):
             self.create_product(name="Test"+str(i), file_name="Test"+str(i))
-        self.client.post(reverse('staff-collection-products', kwargs={'name':'Test2'}), {"products":[1,2]})
-        self.client.post(reverse('staff-collection-products', kwargs={'name':'Test2'}), {"products":[1]})
-        self.assertIn(Product.objects.get(id=1), collection.products.all())
-        self.assertNotIn(Product.objects.get(id=2), collection.products.all())
+        self.client.post(reverse('staff-collection-products', kwargs={'name':self.collection.name}), {"products":[1,2]})
+        self.client.post(reverse('staff-collection-products', kwargs={'name':self.collection.name}), {"products":[1]})
+        self.assertIn(Product.objects.get(id=1), self.collection.products.all())
+        self.assertNotIn(Product.objects.get(id=2), self.collection.products.all())
     
 class ProductTest(URLTestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        category = Category.objects.create(name="Test")
-        Product.objects.create(name="Test", description='Test', price=10, category=category,
-        image=SimpleUploadedFile("test" + '.jpg', b'content'), available=True, hidden=False, min=1, max=12)
+        cls.category = Category.objects.create(name="Test")
+        cls.product = Product.objects.create(name="Test", description='Test', price=10, category=cls.category,
+            image=SimpleUploadedFile("test" + '.jpg', b'content'), available=True, hidden=False, min=1, max=12)
     
     def tearDown(self):
         for prod in Product.objects.all(): prod.image.delete()
         return super().tearDown()
     
     def create_product(self, name='Prod', available=True, hidden=False, file_name='prod'):
-        category = Category.objects.get(id=1)
-        prod = Product.objects.create(name=name, description='Test', price=10, category=category,
-        image=SimpleUploadedFile(file_name + '.jpg', b'content'), available=available, hidden=hidden, min=1, max=12)
+        prod = Product.objects.create(name=name, description='Test', price=10, category=self.category,
+            image=SimpleUploadedFile(file_name + '.jpg', b'content'), available=available, hidden=hidden, min=1, max=12)
         return prod
 
     def test_index_redirect_if_not_logged_in(self):
@@ -648,16 +643,16 @@ class ProductTest(URLTestCase):
         self.template_test_with_login(reverse('staff-products'), 'products/index.html')
     
     def test_detail_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-product', kwargs={'name':'Test'}), '/staff/?next=/staff/product/Test/')
+        self.redirect_test(reverse('staff-product', kwargs={'name':self.product.name}), f'/staff/?next=/staff/product/{self.product.name}/')
     
     def test_detail_url_exists_at_desired_location(self):
-        self.url_ok_test_with_login('/staff/product/Test/')
+        self.url_ok_test_with_login(f'/staff/product/{self.product.name}/')
 
     def test_detail_url_accessible_by_name(self):
-        self.url_ok_test_with_login(reverse('staff-product', kwargs={'name':'Test'}))
+        self.url_ok_test_with_login(reverse('staff-product', kwargs={'name':self.product.name}))
 
     def test_detail_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-product', kwargs={'name':'Test'}), 'products/detail.html')
+        self.template_test_with_login(reverse('staff-product', kwargs={'name':self.product.name}), 'products/detail.html')
     
     # def test_post_extra_image(self):
     #     self.login_staff()
@@ -698,38 +693,38 @@ class ProductTest(URLTestCase):
     #         self.assertRedirects(response, reverse('staff-product', kwargs={'name':'Test2'}))
     
     def test_update_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-product-update', kwargs={'name':'Test'}), '/staff/?next=/staff/product/Test/update/')
+        self.redirect_test(reverse('staff-product-update', kwargs={'name':self.product.name}), f'/staff/?next=/staff/product/{self.product.name}/update/')
     
     def test_post_update_redirect_if_not_logged_in(self):
-        data = {'name':"Test", 'price':'13', 'description':'Test2', 'category':'1', 'image':'',
+        data = {'name':"Test", 'price':'13', 'description':'Test2', 'category':self.category.id, 'image':'',
                 'available':'True', 'hidden':'False', 'min':1, 'max':4}
-        response = self.client.post(reverse('staff-product-update', kwargs={'name':'Test'}), data, follow=True)
-        self.assertRedirects(response, '/staff/?next=/staff/product/Test/update/')
+        response = self.client.post(reverse('staff-product-update', kwargs={'name':self.product.name}), data, follow=True)
+        self.assertRedirects(response, f'/staff/?next=/staff/product/{self.product.name}/update/')
     
     def test_update_url_exists_at_desired_location(self):
-        self.url_ok_test_with_login('/staff/product/Test/update/')
+        self.url_ok_test_with_login(f'/staff/product/{self.product.name}/update/')
 
     def test_update_url_accessible_by_name(self):
-        self.url_ok_test_with_login(reverse('staff-product-update', kwargs={'name':'Test'}))
+        self.url_ok_test_with_login(reverse('staff-product-update', kwargs={'name':self.product.name}))
 
     def test_update_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-product-update', kwargs={'name':'Test'}), 'products/view.html')
+        self.template_test_with_login(reverse('staff-product-update', kwargs={'name':self.product.name}), 'products/view.html')
     
     def test_post_update(self):
         self.login_staff()
-        data = {'name':"Test", 'price':'13', 'description':'Test2', 'category':'1', 'image':'',
+        data = {'name':"Test", 'price':'13', 'description':'Test2', 'category':self.category.id, 'image':'',
                 'available':'True', 'hidden':'False', 'min':1, 'max':4}
-        response = self.client.post(reverse('staff-product-update', kwargs={'name':'Test'}), data, follow=True)
-        self.assertRedirects(response, reverse('staff-product', kwargs={'name':'Test'}))
+        response = self.client.post(reverse('staff-product-update', kwargs={'name':self.product.name}), data, follow=True)
+        self.assertRedirects(response, reverse('staff-product', kwargs={'name':self.product.name}))
     
     def test_delete_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-product-delete', kwargs={'name':'Test'}), '/staff/?next=/staff/product/Test/delete/')
+        self.redirect_test(reverse('staff-product-delete', kwargs={'name':self.product.name}), f'/staff/?next=/staff/product/{self.product.name}/delete/')
     
     def test_delete_url_exists_at_desired_location(self):
-        self.redirect_test_with_login('/staff/product/Test/delete/', '/staff/products/')
+        self.redirect_test_with_login(f'/staff/product/{self.product.name}/delete/', '/staff/products/')
 
     def test_delete_url_accessible_by_name(self):
-        self.redirect_test_with_login(reverse('staff-product-delete', kwargs={'name':'Test'}), '/staff/products/')
+        self.redirect_test_with_login(reverse('staff-product-delete', kwargs={'name':self.product.name}), '/staff/products/')
     
     def test_manage_products_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-products-manage'), '/staff/?next=/staff/products/manage/')
@@ -784,7 +779,7 @@ class BasketTest(URLTestCase):
     def setUpTestData(cls):
         super().setUpTestData()
         device = Device.objects.create()
-        Basket.objects.create(device=device)
+        cls.basket = Basket.objects.create(device=device)
     
     def test_index_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-baskets'), '/staff/?next=/staff/baskets/')
@@ -799,22 +794,22 @@ class BasketTest(URLTestCase):
         self.template_test_with_login(reverse('staff-baskets'), 'staff/baskets/index.html')
     
     def test_detail_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-basket', kwargs={'pk':'1'}), '/staff/?next=/staff/basket/1/')
+        self.redirect_test(reverse('staff-basket', kwargs={'pk':self.basket.id}), f'/staff/?next=/staff/basket/{self.basket.id}/')
     
     def test_detail_url_exists_at_desired_location(self):
-        self.url_ok_test_with_login('/staff/basket/1/')
+        self.url_ok_test_with_login(f'/staff/basket/{self.basket.id}/')
 
     def test_detail_url_accessible_by_name(self):
-        self.url_ok_test_with_login(reverse('staff-basket', kwargs={'pk':'1'}))
+        self.url_ok_test_with_login(reverse('staff-basket', kwargs={'pk':self.basket.id}))
 
     def test_detail_uses_correct_template(self):
-        self.template_test_with_login(reverse('staff-basket', kwargs={'pk':'1'}), 'staff/baskets/detail.html')
+        self.template_test_with_login(reverse('staff-basket', kwargs={'pk':self.basket.id}), 'staff/baskets/detail.html')
 
 class MessageTest(URLTestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        Message.objects.create(name="Test", email="test@test.com", subject="test", message="test")
+        cls.message = Message.objects.create(name="Test", email="test@test.com", subject="test", message="test")
     
     def test_index_redirect_if_not_logged_in(self):
         self.redirect_test(reverse('staff-messages'), '/staff/?next=/staff/messages/')
@@ -829,13 +824,13 @@ class MessageTest(URLTestCase):
         self.template_test_with_login(reverse('staff-messages'), 'staff/messages/index.html')
     
     def test_delete_redirect_if_not_logged_in(self):
-        self.redirect_test(reverse('staff-message-delete', kwargs={'pk':1}), '/staff/?next=/staff/message/1/delete/')
+        self.redirect_test(reverse('staff-message-delete', kwargs={'pk':self.message.id}), f'/staff/?next=/staff/message/{self.message.id}/delete/')
     
     def test_delete_url_exists_at_desired_location(self):
-        self.redirect_test_with_login('/staff/message/1/delete/', '/staff/messages/')
+        self.redirect_test_with_login(f'/staff/message/{self.message.id}/delete/', '/staff/messages/')
 
     def test_delete_url_accessible_by_name(self):
-        self.redirect_test_with_login(reverse('staff-message-delete', kwargs={'pk':1}), '/staff/messages/')
+        self.redirect_test_with_login(reverse('staff-message-delete', kwargs={'pk':self.message.id}), '/staff/messages/')
 
 class SettingsTest(URLTestCase):
     
