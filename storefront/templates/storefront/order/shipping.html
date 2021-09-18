@@ -16,8 +16,13 @@
             </div>
             <div class="col">
                 <div class="form-floating">
+                {% if form.email.errors %}
+                {% render_field form.email class="form-control is-invalid" placeholder="Email" %}
+                <label for="{{ form.email.id_for_label }}">Invalid email</label>
+                {% else %}
                 {% render_field form.email class="form-control" placeholder="Email" %}
                 <label for="{{ form.email.id_for_label }}">Email</label>
+                {% endif %}
                 </div>
             </div>
         </div>
