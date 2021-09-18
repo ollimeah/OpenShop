@@ -417,6 +417,15 @@ class OrderTest(URLTestCase, OrderTestCase):
 
     def test_order_success_uses_correct_template(self):
         self.template_test(reverse('order-success'), 'storefront/order/success.html')
+    
+    def test_order_failed_url_exists_at_desired_location(self):
+        self.url_ok_test('/failed/')
+
+    def test_order_failed_url_accessible_by_name(self):
+        self.url_ok_test(reverse('order-failed'))
+
+    def test_order_failed_uses_correct_template(self):
+        self.template_test(reverse('order-failed'), 'storefront/order/failed.html')
 
 class MaintenanceTest(URLTestCase):
     def test_maintenance_url_exists_at_desired_location(self):
