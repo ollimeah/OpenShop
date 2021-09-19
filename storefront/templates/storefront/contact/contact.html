@@ -36,6 +36,7 @@
     </div>
   </form>
 
+  {% if faqs %}
   <h1 class="pb-1 my-5 border-bottom">FAQs</h1>
   <div class="accordion" id="accordionFAQ">
     {% for faq in faqs %}
@@ -53,5 +54,6 @@
     </div>
     {% endfor %}
   </div>
+  {% endif %}
 </div>
 {% endblock content %}
