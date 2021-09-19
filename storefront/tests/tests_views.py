@@ -1,6 +1,6 @@
 from django.http.cookie import SimpleCookie
 from staff.models import Address, Basket, BasketCollection, BasketProduct, Category, Collection, Delivery, Device, Order, Product, Promotion
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 from http.cookies import SimpleCookie
@@ -371,16 +371,17 @@ class CheckoutTest(URLTestCase, OrderTestCase):
         basket = Basket.objects.get(device=self.device)
         self.assertIsNone(basket.promotion)
 
+@override_settings(DEBUG=True)
 class OrderTest(URLTestCase, OrderTestCase):
 
     def test_place_order_get(self):
-        response = self.client.get(reverse('place-order'))
+        response = self.client.get(reverse('place-order'), status=405)
         self.assertEqual(response.status_code, 405)
 
     def test_place_order_get_debug_false(self):
         with self.settings(DEBUG=False):
             response = self.client.get(reverse('place-order'))
-            self.assertEqual(response, reverse('basket'))
+            self.assertRedirects(response, reverse('basket'))
     
     def test_place_order_post_debug_false(self):
         self.add_basket_product()

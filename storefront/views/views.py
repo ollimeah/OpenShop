@@ -5,7 +5,7 @@ from staff.models import FAQ, Address, CarouselImage, Category, Collection, Deli
 from django.views import generic
 from staff.forms import DeliveryChoiceForm, ShippingForm
 from storefront.forms import PromotionCodeForm
-from shop.settings import DEBUG
+from django.conf import settings
 
 def home(request):
     return render(request, 'storefront/home.html', {"carousel" : CarouselImage.objects.all()})
@@ -114,11 +114,11 @@ def checkout(request):
     else:
         promo_form = PromotionCodeForm()
     unavailable = basket.get_and_remove_unavailable_items()
-    context.update({'unavailable' : unavailable, 'basket' : basket, 'promo_form' : promo_form, 'debug' : DEBUG})
+    context.update({'unavailable' : unavailable, 'basket' : basket, 'promo_form' : promo_form, 'debug' : settings.DEBUG})
     return render(request, 'storefront/order/checkout.html', context)
 
 def place_order(request):
-    if not DEBUG: return redirect('basket')
+    if not settings.DEBUG: return redirect('basket')
     if request.method == 'POST':
         basket = Basket.get_basket(request.COOKIES['device'])
         if basket.is_empty() or not basket.contains_available(): return redirect('basket')
