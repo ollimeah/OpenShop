@@ -11,11 +11,18 @@ class Settings(models.Model):
     primary_colour = models.CharField(max_length=7, default="#c1c1c1")
     secondary_colour = models.CharField(max_length=7, default="#c1c1c1")
     logo = models.BooleanField(default=False)
+    logo_image = models.ImageField(blank=True, null=True, upload_to='logo')
     carousel = models.BooleanField(default=False)
     maintenance = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         self.id = 1
+        try:
+            settings = Settings.objects.get(id=1)
+            if settings.logo_image != self.logo_image:
+                settings.logo_image.delete()
+        except:
+            pass
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
