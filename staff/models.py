@@ -98,6 +98,15 @@ class Product(models.Model):
         self.image.delete()
         super().delete(*args, **kwargs)
     
+    def save(self, *args, **kwargs):
+        try:
+            product = Product.objects.get(id=self.id)
+            if product.image != self.image:
+                product.image.delete()
+        except:
+            pass
+        super().save(*args, **kwargs)
+    
     def set_available(self):
         self.available = True
         self.hidden = False
