@@ -1,8 +1,23 @@
 from django.contrib import admin
 from .models import *
 
-# Register your models here.
-admin.site.register(Product)
-admin.site.register(Category)
+admin.site.register(Settings)
 admin.site.register(CarouselImage)
+admin.site.register(Category)
+admin.site.register(Product)
+admin.site.register(ProductImage)
+admin.site.register(Collection)
+admin.site.register(FAQ)
+admin.site.register(Promotion)
+admin.site.register(Address)
+admin.site.register(Delivery)
+admin.site.register(Order)
+admin.site.register(OrderShipping)
+admin.site.register(OrderProduct)
+admin.site.register(OrderCollection)
+admin.site.register(OrderCollectionProduct)
+admin.site.register(Device)
+admin.site.register(Basket)
+admin.site.register(BasketProduct)
+admin.site.register(BasketCollection)
 admin.site.register(Message)
